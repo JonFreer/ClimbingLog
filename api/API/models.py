@@ -1,0 +1,31 @@
+import datetime
+from sqlalchemy import DDL, Column, DateTime, Float, Integer, String, event
+from sqlalchemy.dialects.postgresql import JSONB, UUID
+import uuid
+from sqlalchemy.orm import DeclarativeBase
+from fastapi_users.db import SQLAlchemyBaseUserTableUUID
+
+class Base(DeclarativeBase):
+    pass
+
+class User(SQLAlchemyBaseUserTableUUID, Base):
+    pass
+
+class Routes(Base):
+    __tablename__ = "routes"
+    id: uuid.UUID = Column(
+        UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4
+    )
+    grade: str = Column(String, index=True, nullable=False)
+    location: str = Column(String, index=True, nullable=False)
+    style: str = Column(String, index=True, nullable=False)
+    circuit_id: uuid.UUID = Column( UUID(as_uuid=True), index=True, nullable=False)
+    name: str = Column(String, index=True, nullable=True)
+
+class Circuits(Base):
+    __tablename__ = "circuits"
+    id: uuid.UUID = Column(
+        UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4
+    )
+    name: str = Column(String, index=True, nullable=False)
+    color: str = Column(String, index=False, nullable=False)
