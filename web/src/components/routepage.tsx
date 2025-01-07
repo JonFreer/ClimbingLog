@@ -97,28 +97,7 @@ import { useEffect, useState } from 'react';
         <div className="mt-5 flex lg:ml-4 lg:mt-0">
           <span className="hidden sm:block">
             <button
-              onClick={()=>{
-                const token = localStorage.getItem('token');
-                const formData = new FormData();
-                if (id) {
-                  formData.append('route', id);
-                } else {
-                  console.error('Route ID is undefined');
-                  return;
-                }
-
-                fetch('/api/climbs/me/add_attempt', {
-                  method: 'POST',
-                  headers: {
-                    'Authorization': `Bearer ${token}`
-                  },
-                  body: formData
-                })
-                  .then(response => response.json())
-                  .then(data => console.log('Attempt added:', data))
-                  .catch(error => console.error('Error adding attempt:', error));
-
-              }}  
+              onClick={()=>{add_attempt(id);}}  
               type="button"
               className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
             >
@@ -132,27 +111,7 @@ import { useEffect, useState } from 'react';
               type="button"
               className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
               onClick={()=>{
-                const token = localStorage.getItem('token');
-                const formData = new FormData();
-                if (id) {
-                  formData.append('route', id);
-                } else {
-                  console.error('Route ID is undefined');
-                  return;
-                }
-
-                fetch('/api/climbs/me/add_send', {
-                  method: 'POST',
-                  headers: {
-                    'Authorization': `Bearer ${token}`
-                  },
-                  body: formData
-                })
-                  .then(response => response.json())
-                  .then(data => console.log('Attempt added:', data))
-                  .catch(error => console.error('Error adding attempt:', error));
-
-              }}  
+                add_send(id);}}
             >
               <LinkIcon aria-hidden="true" className="-ml-0.5 mr-1.5 size-5 text-gray-400" />
               Add Send
@@ -178,22 +137,24 @@ import { useEffect, useState } from 'react';
   
             <MenuItems
               transition
-              className="absolute right-0 z-10 -mr-1 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+              className="absolute left-0 z-10 -mr-1 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
             >
               <MenuItem>
                 <a
                   href="#"
                   className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+                  onClick={()=>{add_attempt(id);}}  
                 >
-                  Edit
+                  Add Attempt
                 </a>
               </MenuItem>
               <MenuItem>
                 <a
                   href="#"
                   className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+                  onClick={()=>{add_send(id);}}  
                 >
-                  View
+                  Add Send
                 </a>
               </MenuItem>
             </MenuItems>
@@ -204,4 +165,51 @@ import { useEffect, useState } from 'react';
      
       </div>
     )
+  }
+
+
+  function add_send(id:string | undefined){
+    const token = localStorage.getItem('token');
+    const formData = new FormData();
+    if (id) {
+      formData.append('route', id);
+    } else {
+      console.error('Route ID is undefined');
+      return;
+    }
+
+    fetch('/api/climbs/me/add_send', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => console.log('Attempt added:', data))
+      .catch(error => console.error('Error adding attempt:', error));
+
+  }
+  
+  function add_attempt(id:string | undefined){
+    const token = localStorage.getItem('token');
+    const formData = new FormData();
+    if (id) {
+      formData.append('route', id);
+    } else {
+      console.error('Route ID is undefined');
+      return;
+    }
+
+    fetch('/api/climbs/me/add_attempt', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => console.log('Attempt added:', data))
+      .catch(error => console.error('Error adding attempt:', error));
+
   }
