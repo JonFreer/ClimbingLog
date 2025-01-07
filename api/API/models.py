@@ -1,5 +1,5 @@
 import datetime
-from sqlalchemy import DDL, Column, DateTime, Float, Integer, String, event
+from sqlalchemy import DDL, Column, DateTime, Float, Integer, String, event,Boolean, ForeignKey
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 import uuid
 from sqlalchemy.orm import DeclarativeBase
@@ -29,3 +29,13 @@ class Circuits(Base):
     )
     name: str = Column(String, index=True, nullable=False)
     color: str = Column(String, index=False, nullable=False)
+
+class Climbs(Base):
+    __tablename__ = "climbs"
+    id: uuid.UUID = Column(
+        UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4
+    )
+    sent: bool = Column(Boolean, index=True, nullable=False)
+    time: datetime.datetime = Column(DateTime, index=True, nullable=False)
+    route: uuid.UUID = Column(UUID(as_uuid=True), ForeignKey('routes.id'), index=True, nullable=False)
+    user: uuid.UUID = Column(UUID(as_uuid=True), ForeignKey('user.id'), index=True, nullable=False)

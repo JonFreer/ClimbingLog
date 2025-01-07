@@ -102,7 +102,7 @@ async def create_circuit(
     return new_circuit
 
 
-@router.get("/img/{img_id}",response_class=FileResponse, tags=["submissions"]) #Add resposne model
+@router.get("/img/{img_id}",response_class=FileResponse, tags=["routes"]) #Add resposne model
 def get_img(response: Response,
             img_id:str):
     return "./imgs/"+img_id

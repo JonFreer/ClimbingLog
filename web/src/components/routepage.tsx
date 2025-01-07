@@ -27,16 +27,30 @@ import { useEffect, useState } from 'react';
 
     const { id } = useParams();
     const [routes, setRoutes] = useState<Route[]>([]);
-    
+    const [climbs, setClimbs] = useState<any[]>([]);
+
     useEffect(() => {
     fetch('/api/routes/get_all')
         .then(response => response.json())
         .then(data => setRoutes(data))
         .catch(error => console.error('Error fetching routes:', error));
     }, []);
+
+    useEffect(() => {
+      const token = localStorage.getItem('token');
+      fetch('/api/climbs/me/get_all', {
+          headers: {
+          'Authorization': `Bearer ${token}`
+          }
+      })
+          .then(response => response.json())
+          .then(data => {setClimbs(data); console.log(data)})
+          .catch(error => console.error('Error fetching routes:', error));
+      }, []);
     
     const route = routes.find((route) => route.id == id);
-    
+    const complete = climbs.find((climb) => climb.route == id && climb.sent == true);
+    console.log("complete", complete,climbs);
     return (
     <div>
         <div className='bg-gray-300'>
@@ -45,7 +59,11 @@ import { useEffect, useState } from 'react';
       <div className="lg:flex lg:items-center lg:justify-between m-8">
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl/7 font-bold text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-             {route?.name}
+             {route?.name} {
+                complete ? <div className="float-right inline-flex items-center px-2.5 py-1 rounded-full font-medium bg-green-100 text-green-800">
+                Sent
+                </div> : ''
+             }
           </h2>
           <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
             <div className="mt-2 flex items-center text-sm text-gray-500">
@@ -74,33 +92,77 @@ import { useEffect, useState } from 'react';
         <div className="mt-5 flex lg:ml-4 lg:mt-0">
           <span className="hidden sm:block">
             <button
+              onClick={()=>{
+                const token = localStorage.getItem('token');
+                const formData = new FormData();
+                if (id) {
+                  formData.append('route', id);
+                } else {
+                  console.error('Route ID is undefined');
+                  return;
+                }
+
+                fetch('/api/climbs/me/add_attempt', {
+                  method: 'POST',
+                  headers: {
+                    'Authorization': `Bearer ${token}`
+                  },
+                  body: formData
+                })
+                  .then(response => response.json())
+                  .then(data => console.log('Attempt added:', data))
+                  .catch(error => console.error('Error adding attempt:', error));
+
+              }}  
               type="button"
               className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
             >
               <PencilIcon aria-hidden="true" className="-ml-0.5 mr-1.5 size-5 text-gray-400" />
-              Edit
-            </button>
+              Add attempt
+            </button >
           </span>
   
           <span className="ml-3 hidden sm:block">
             <button
               type="button"
               className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              onClick={()=>{
+                const token = localStorage.getItem('token');
+                const formData = new FormData();
+                if (id) {
+                  formData.append('route', id);
+                } else {
+                  console.error('Route ID is undefined');
+                  return;
+                }
+
+                fetch('/api/climbs/me/add_send', {
+                  method: 'POST',
+                  headers: {
+                    'Authorization': `Bearer ${token}`
+                  },
+                  body: formData
+                })
+                  .then(response => response.json())
+                  .then(data => console.log('Attempt added:', data))
+                  .catch(error => console.error('Error adding attempt:', error));
+
+              }}  
             >
               <LinkIcon aria-hidden="true" className="-ml-0.5 mr-1.5 size-5 text-gray-400" />
-              View
+              Add Send
             </button>
           </span>
   
-          <span className="sm:ml-3">
+          {/* <span className="sm:ml-3">
             <button
               type="button"
               className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               <CheckIcon aria-hidden="true" className="-ml-0.5 mr-1.5 size-5" />
-              Publish
+              Sent
             </button>
-          </span>
+          </span> */}
   
           {/* Dropdown */}
           <Menu as="div" className="relative ml-3 sm:hidden">
