@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { colors } from "../types/colors";
 
 export function AdminPage() {
   const [routes, setRoutes] = useState<Route[]>([]);
@@ -55,7 +56,7 @@ export function AdminPage() {
             >
               {circuit.name}
 
-            <span className={"inline-flex items-center rounded-md bg-"+circuit.color+"-600 px-2 py-1 text-xs font-medium text-white ml-4 "}>
+            <span className={ "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ml-4 " + (colors[circuit.color] || "")}>
                 {routes
                   .filter((route) => route.circuit_id === circuit.id).length} Routes
             </span>
@@ -180,17 +181,20 @@ export default function AddRow(props: {
                       Add a new route
                     </DialogTitle>
                     <div className="mt-2">
-                      <p className="text-sm text-gray-500 w-100%">
+                      <p className="text-sm text-gray-500 ">
                         Add a new route to the circuit
                       </p>
                     </div>
                     <div>
+                        <div className="flex items-center justify-between">
                       <label
                         htmlFor="name"
                         className="block text-sm/6 font-medium text-gray-900"
                       >
                         Route Name
                       </label>
+                      </div>
+
                       <div className="mt-2">
                         <input
                           id="name"
@@ -310,7 +314,7 @@ function ImageUpload(props:{imageCallback: (image: File) => void}) {
   };
 
   return (
-    <div className="px-4 py-6">
+    <div className="px-4 pt-6">
       <div
         id="image-preview"
         className="max-w-sm p-6 mb-4 bg-gray-100 border-dashed border-2 border-gray-400 rounded-lg items-center mx-auto text-center cursor-pointer"
@@ -452,12 +456,14 @@ export function AddCircuit(props: {
                         </p> */}
                       </div>
                       <div>
+                        <div className="flex items-center justify-between">
                         <label
                           htmlFor="name"
                           className="block text-sm/6 font-medium text-gray-900"
                         >
                           Route Name
                         </label>
+                        </div>
                         <div className="mt-2">
                           <input
                             id="name"

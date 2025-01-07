@@ -1,6 +1,7 @@
 import { NavLink } from "react-router";
-import { Route } from "../types/routes";
+import { Circuit, Route } from "../types/routes";
 import { useEffect, useState } from "react";
+import { colors } from "../types/colors";
 
 export function RouteList(props: { routes: Route[] }) {
   const [routes, setRoutes] = useState<Route[]>([]);
@@ -8,6 +9,7 @@ export function RouteList(props: { routes: Route[] }) {
 
   const [routeModalOpen, setRouteModalOpen] = useState<string>("");
   const [circuiteModalOpen, setCircuitsModalOpen] = useState<boolean>(false);
+  const [climbs, setClimbs] = useState<any[]>([]);
 
   useEffect(() => {
     fetch("api/routes/get_all")
@@ -22,6 +24,30 @@ export function RouteList(props: { routes: Route[] }) {
       .then((data) => setCircuits(data))
       .catch((error) => console.error("Error fetching routes:", error));
   }, [circuiteModalOpen]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    fetch("/api/climbs/me/get_all", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setClimbs(data);
+        console.log(data);
+      })
+      .catch((error) => console.error("Error fetching routes:", error));
+  }, []);
+
+  const sent_ids = climbs
+    .filter((climb) => climb.sent == true)
+    .map((climb) => climb.route);
 
   return (
     <>
@@ -41,9 +67,8 @@ export function RouteList(props: { routes: Route[] }) {
 
               <span
                 className={
-                  "inline-flex items-center rounded-md bg-" +
-                  circuit.color +
-                  "-600 px-2 py-1 text-xs font-medium text-white ml-4 "
+                  "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ml-4 " +
+                  (colors[circuit.color] || "")
                 }
               >
                 {
@@ -51,6 +76,22 @@ export function RouteList(props: { routes: Route[] }) {
                     .length
                 }{" "}
                 Routes
+              </span>
+
+              <span
+                className={
+                  "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ml-4 " +
+                  (colors[circuit.color] || "")
+                }
+              >
+                {
+                  routes.filter(
+                    (route) =>
+                      route.circuit_id == circuit.id &&
+                      sent_ids.includes(route.id)
+                  ).length
+                }{" "}
+                Sent
               </span>
             </button>
             {circuit.open && (
@@ -62,6 +103,19 @@ export function RouteList(props: { routes: Route[] }) {
                       key={route.id}
                       className="bg-gray-100 p-2 rounded mt-1 flex gap-2"
                     >
+                      {sent_ids.includes(route.id) ? (
+                        <span
+                          className={
+                            "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ml-4 " +
+                            (colors[circuit.color] || "")
+                          }
+                        >
+                          Sent
+                        </span>
+                      ) : (
+                        <div className={"w-14"}>  </div>
+                      )}
+
                       {route.name}
 
                       {/* <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">

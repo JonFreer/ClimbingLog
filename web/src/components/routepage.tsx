@@ -43,7 +43,12 @@ import { useEffect, useState } from 'react';
           'Authorization': `Bearer ${token}`
           }
       })
-          .then(response => response.json())
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error('Network response was not ok');
+              }
+              return response.json();
+          })
           .then(data => {setClimbs(data); console.log(data)})
           .catch(error => console.error('Error fetching routes:', error));
       }, []);
