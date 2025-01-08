@@ -2,6 +2,7 @@ import { NavLink } from "react-router";
 import { Circuit, Route } from "../types/routes";
 import { useEffect, useState } from "react";
 import { colors } from "../types/colors";
+import { ChevronRightIcon } from "@heroicons/react/24/solid";
 
 export function RouteList(props:{routes:Route[],climbs:any[],circuits:Circuit[], updateData : () => void}) {
 
@@ -34,86 +35,89 @@ export function RouteList(props:{routes:Route[],climbs:any[],circuits:Circuit[],
         {props.circuits.map((circuit) => (
           <div key={circuit.id} className="mt-4">
             <button
-              className="bg-gray-200 hover:bg-gray-300 text-black font-bold py-2 px-4 rounded shadow-lg w-full text-left"
+              className="bg-gray-0 hover:bg-gray-100 text-black font-semibold py-2 px-4 rounded-lg shadow-md w-full text-left flex justify-between items-center"
               onClick={() => {
-                setCircuits((prev) => ({
-                  ...prev,
-                  [circuit.id]: !prev[circuit.id],
-                }));
+              setCircuits((prev) => ({
+                ...prev,
+                [circuit.id]: !prev[circuit.id],
+              }));
               }}
             >
-              {circuit.name}
-
+              <div className="flex items-center">
+              <span className="text-lg">{circuit.name}</span>
               <span
                 className={
-                  "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ml-4 " +
-                  (colors[circuit.color] || "")
+                "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-white ml-4 " +
+                (colors[circuit.color] || "")
                 }
               >
                 {
-                  props.routes.filter((route) => route.circuit_id === circuit.id)
-                    .length
+                props.routes.filter((route) => route.circuit_id === circuit.id)
+                  .length
                 }{" "}
                 Routes
               </span>
-
               <span
                 className={
-                  "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ml-4 " +
-                  (colors[circuit.color] || "")
+                "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-white ml-4 " +
+                (colors[circuit.color] || "")
                 }
               >
                 {
-                  props.routes.filter(
-                    (route) =>
-                      route.circuit_id == circuit.id &&
-                      sent_ids.includes(route.id)
-                  ).length
+                props.routes.filter(
+                  (route) =>
+                  route.circuit_id == circuit.id &&
+                  sent_ids.includes(route.id)
+                ).length
                 }{" "}
                 Sent
               </span>
+              </div>
+              <ChevronRightIcon
+              className={`h-5 w-5 transform transition-transform ${
+                openCircuits[circuit.id] ? "rotate-90" : ""
+              }`}
+              />
             </button>
             {openCircuits[circuit.id] && (
-              <div className="ml-4 mt-2">
+              <div className="ml mt-2">
                 {props.routes
                   .filter((route) => route.circuit_id === circuit.id)
                   .map((route) => (
                     <div
                       key={route.id}
-                      className="bg-gray-100 p-2 rounded mt-1 flex gap-2"
+                      className="bg-white shadow-md p-4 rounded-lg mt-2 flex items-center gap-4"
                     >
                       {sent_ids.includes(route.id) ? (
-                        <span
-                          className={
-                            "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ml-4 " +
-                            (colors[circuit.color] || "")
-                          }
-                        >
-                          Sent
-                        </span>
+                      <span
+                        className={
+                        "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white " +
+                        (colors[circuit.color] || "")
+                        }
+                      >
+                        Sent
+                      </span>
                       ) : (
-                        <div className={"w-14"}>  </div>
+                      <div className={"w-14"}>  </div>
                       )}
 
-                      {route.name}
-
-                      {/* <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-                        Red
-                      </span> */}
-                      <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-                        {route.location}
-                      </span>
-                      {route.style.split(",").map((style) => (
-                        <span className="inline-flex items-center rounded-md bg-indigo-100 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                      <div className="flex-1">
+                      <div className="text-lg font-semibold">{route.name}</div>
+                      <div className="text-sm text-gray-500">{route.location}</div>
+                      <div className="flex gap-2 mt-1">
+                        {route.style.split(",").map((style) => (
+                        <span className="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-gray-600">
                           {style}
                         </span>
-                      ))}
+                        ))}
+                      </div>
+                      </div>
 
                       <NavLink
-                        to={"/route/" + route.id}
-                        className="ml-auto bg-green-600 hover:bg-green-700 text-white text-xs py-1 px-4 rounded self-center"
+                      to={"/route/" + route.id}
+                      className="ml-auto bg-blue-500 hover:bg-blue-600 text-white text-xs p-2 px-4 rounded-full flex items-center"
                       >
-                        {"View"}
+                      <ChevronRightIcon className="h-5 w-5" />
                       </NavLink>
                     </div>
                   ))}
