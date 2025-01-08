@@ -48,7 +48,7 @@ services:
       REACT_APP_HOST: ${DOMAIN:-climbing.localhost}
     labels:
       - "traefik.docker.network=depottracker_traefik_web"
-      - "traefik.http.services.cc_web.loadbalancer.server.port=5173"
+      - "traefik.http.services.climb_web.loadbalancer.server.port=5173"
     # labels:
       # - "traefik.http.routers.web.rule=Host(`${DOMAIN:-badlyparked.localhost}`)"
     volumes:
