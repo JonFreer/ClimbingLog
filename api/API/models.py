@@ -9,7 +9,10 @@ class Base(DeclarativeBase):
     pass
 
 class User(SQLAlchemyBaseUserTableUUID, Base):
-    pass
+    username = Column(String, index=True, nullable=False, unique=True)
+    profile_visible = Column(Boolean, index=True, nullable=False, default=True)
+    send_visible = Column(Boolean, index=True, nullable=False, default=True)
+    about = Column(String, index=False, nullable=False, default="")
 
 class Routes(Base):
     __tablename__ = "routes"

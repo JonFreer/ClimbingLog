@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 import { Circuit, Route } from "../types/routes";
-
+import { CheckCircleIcon } from '@heroicons/react/16/solid'
 // export function RoutePage(){
 
 //     const { id } = useParams();

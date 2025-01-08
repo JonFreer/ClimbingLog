@@ -2,17 +2,23 @@ import uuid
 from pydantic import BaseModel
 from fastapi_users import schemas
 import datetime
+from typing import Optional
 
 class UserRead(schemas.BaseUser[uuid.UUID]):
-    pass
+    username: str
+    about:str
+    profile_visible: bool
+    send_visible: bool
 
 
 class UserCreate(schemas.BaseUserCreate):
-    pass
-
+    username: str
 
 class UserUpdate(schemas.BaseUserUpdate):
-    pass
+    username: Optional[str]
+    profile_visible: Optional[bool]
+    send_visible: Optional[bool]
+    about: Optional[str]
 
 class Route(BaseModel):
     name: str

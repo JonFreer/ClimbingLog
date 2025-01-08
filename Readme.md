@@ -28,3 +28,6 @@ this resolves to `127.0.0.1`!
 ## API
 
 The api can be found at betterstreets.localhost/api/docs
+
+## Update user to super-user
+`UPDATE "user" SET is_superuser = 't' WHERE id = '{id}';`

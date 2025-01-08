@@ -30,6 +30,7 @@ export function AdminPage() {
       .catch((error) => console.error("Error fetching routes:", error));
   }, [circuiteModalOpen]);
 
+
   return (
     <div className="m-5">
       <AddRow circuit_id={routeModalOpen} setOpen={setRouteModalOpen} />
