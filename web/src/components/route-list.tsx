@@ -3,64 +3,43 @@ import { Circuit, Route } from "../types/routes";
 import { useEffect, useState } from "react";
 import { colors } from "../types/colors";
 
-export function RouteList(props: { routes: Route[] }) {
-  const [routes, setRoutes] = useState<Route[]>([]);
-  const [circuits, setCircuits] = useState<Circuit[]>([]);
+export function RouteList(props:{routes:Route[],climbs:any[],circuits:Circuit[], updateData : () => void}) {
 
   const [routeModalOpen, setRouteModalOpen] = useState<string>("");
   const [circuiteModalOpen, setCircuitsModalOpen] = useState<boolean>(false);
-  const [climbs, setClimbs] = useState<any[]>([]);
+// const [openCircuits, setCircuits] = useState<{ [key: string]: boolean }>({});
+    const [openCircuits, setCircuits] = useState<{ [key: string]: boolean }>(() => {
+        const savedOpenCircuits = localStorage.getItem("openCircuits");
+        return savedOpenCircuits ? JSON.parse(savedOpenCircuits) : {};
+    });
 
-  useEffect(() => {
-    fetch("api/routes/get_all")
-      .then((response) => response.json())
-      .then((data) => setRoutes(data))
-      .catch((error) => console.error("Error fetching routes:", error));
-  }, [routeModalOpen]);
-
-  useEffect(() => {
-    fetch("api/circuits/get_all")
-      .then((response) => response.json())
-      .then((data) => setCircuits(data))
-      .catch((error) => console.error("Error fetching routes:", error));
-  }, [circuiteModalOpen]);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    fetch("/api/climbs/me/get_all", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setClimbs(data);
-        console.log(data);
-      })
-      .catch((error) => console.error("Error fetching routes:", error));
-  }, []);
-
-  const sent_ids = climbs
+  var sent_ids:string[] = [];
+  if(props.climbs != undefined){
+    sent_ids = props.climbs
     .filter((climb) => climb.sent == true)
     .map((climb) => climb.route);
+  }
+
+  if (props.circuits == undefined){
+    return <div> Loading </div>
+  }
+
+    useEffect(() => {
+        localStorage.setItem("openCircuits", JSON.stringify(openCircuits));
+    }, [openCircuits]);
 
   return (
     <>
       <div className={"m-8"}>
-        {circuits.map((circuit) => (
+        {props.circuits.map((circuit) => (
           <div key={circuit.id} className="mt-4">
             <button
               className="bg-gray-200 hover:bg-gray-300 text-black font-bold py-2 px-4 rounded shadow-lg w-full text-left"
               onClick={() => {
-                const updatedCircuits = circuits.map((c) =>
-                  c.id === circuit.id ? { ...c, open: !c.open } : c
-                );
-                setCircuits(updatedCircuits);
+                setCircuits((prev) => ({
+                  ...prev,
+                  [circuit.id]: !prev[circuit.id],
+                }));
               }}
             >
               {circuit.name}
@@ -72,7 +51,7 @@ export function RouteList(props: { routes: Route[] }) {
                 }
               >
                 {
-                  routes.filter((route) => route.circuit_id === circuit.id)
+                  props.routes.filter((route) => route.circuit_id === circuit.id)
                     .length
                 }{" "}
                 Routes
@@ -85,7 +64,7 @@ export function RouteList(props: { routes: Route[] }) {
                 }
               >
                 {
-                  routes.filter(
+                  props.routes.filter(
                     (route) =>
                       route.circuit_id == circuit.id &&
                       sent_ids.includes(route.id)
@@ -94,9 +73,9 @@ export function RouteList(props: { routes: Route[] }) {
                 Sent
               </span>
             </button>
-            {circuit.open && (
+            {openCircuits[circuit.id] && (
               <div className="ml-4 mt-2">
-                {routes
+                {props.routes
                   .filter((route) => route.circuit_id === circuit.id)
                   .map((route) => (
                     <div

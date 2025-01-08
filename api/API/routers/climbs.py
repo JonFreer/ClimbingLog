@@ -51,3 +51,17 @@ async def create_send(
     await db.commit()
     await db.refresh(new_climb)
     return new_climb
+
+@router.delete("/climbs/me/remove_climb", response_model=schemas.Climb, tags=["climbs"])
+async def remove_climb(
+    climb_id: Annotated[uuid.UUID, Form(...)],
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(current_active_user),
+):
+    result = await db.execute(select(Climbs).where(Climbs.id == climb_id, Climbs.user == user.id))
+    climb = result.scalars().first()
+    if not climb:
+        raise HTTPException(status_code=404, detail="Climb not found")
+    await db.delete(climb)
+    await db.commit()
+    return climb
