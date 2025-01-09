@@ -4,6 +4,10 @@ ENV FORWARDED_ALLOW_IPS="*"
 
 COPY ./ /app/
 WORKDIR "/app"
+RUN mkdir -p ./imgs
+RUN mkdir -p ./imgs/routes/
+RUN mkdir -p ./imgs/routes/full
+RUN mkdir -p ./imgs/routes/thumb
 
 RUN pip install -r requirements.txt
 

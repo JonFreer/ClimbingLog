@@ -62,7 +62,9 @@ services:
         max-size: "100m"
         max-file: "5"
     volumes:
-      - "./data/api/routes:/app/imgs"
+      - "./data/api/imgs/:/app/imgs"
+      - "./data/api/imgs/routes/full:/app/imgs/routes/full"
+      - "./data/api/imgs/routes/thumb:/app/imgs/routes/thumb"
 
   
 networks:

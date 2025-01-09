@@ -6,7 +6,7 @@ from ..db import get_db
 from ..models import Circuits, Routes
 from sqlalchemy.future import select
 from typing import Annotated, List
-from PIL import Image
+from PIL import Image,ImageOps
 import uuid
 import io
 router = APIRouter()
@@ -72,6 +72,9 @@ async def create_route_with_image(
         
         request_object_content = await file.read()
         im = Image.open(io.BytesIO(request_object_content))
+        img_thumb = Image.open(io.BytesIO(request_object_content))
+        MAX_SIZE_2 = (200, 250) 
+        img_thumb = ImageOps.fit(img_thumb, MAX_SIZE_2, Image.LANCZOS)
 
         new_route = Routes(grade=grade, location=location, style=style, circuit_id=circuit_id,name=name,x=x,y=y)
         db.add(new_route)
@@ -79,7 +82,8 @@ async def create_route_with_image(
         await db.refresh(new_route)
 
         # Save the image
-        im.save("./imgs/" + str(new_route.id) + ".webp", "webp")
+        im.save("./imgs/routes/full/" + str(new_route.id) + ".webp", "webp",quality=30)
+        img_thumb.save("./imgs/routes/thumb/" + str(new_route.id) + ".webp", "webp",quality=50)
         
         return new_route
 
@@ -109,4 +113,9 @@ async def create_circuit(
 @router.get("/img/{img_id}",response_class=FileResponse, tags=["routes"]) #Add resposne model
 def get_img(response: Response,
             img_id:str):
-    return "./imgs/"+img_id
+    return "./imgs/routes/full/"+img_id
+
+@router.get("/img_thumb/{img_id}",response_class=FileResponse, tags=["routes"]) #Add resposne model
+def get_img(response: Response,
+            img_id:str):
+    return "./imgs/routes/thumb/"+img_id

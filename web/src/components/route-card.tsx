@@ -21,18 +21,10 @@ export function RouteCard(props:{route:Route,climbs:any[],circuits:Circuit[], up
                   >
                     <div className="px-4 py-5 sm:px-6 flex items-center justify-between">
                     <div className="flex items-center">
-                      {sent_ids.includes(props.route.id) ? (
-                      <span
-                        className={
-                        "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white " +
-                        (circuit ? colors[circuit.color] || "" : "")
-                        }
-                      >
-                        Sent
-                      </span>
-                      ) : (
-                      <div className={"w-14"}> </div>
-                      )}
+                      <img
+                        className="h-24 rounded"
+                        src={"/api/img_thumb/"+props.route.id + ".webp"}
+                        alt=""></img>
                       <div className="ml-4">
                       <h3 className="text-lg leading-6 font-medium text-gray-900">
                         {props.route.name}
@@ -49,12 +41,26 @@ export function RouteCard(props:{route:Route,climbs:any[],circuits:Circuit[], up
                       </div>
                       </div>
                     </div>
+                    <div>
+                    {sent_ids.includes(props.route.id) ? (
+                      <span
+                        className={
+                        "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white " +
+                        (circuit ? colors[circuit.color] || "" : "")
+                        }
+                      >
+                        Sent
+                      </span>
+                      ) : (
+                      <div className={"w-14"}> </div>
+                      )}
                     <NavLink
                       to={"/route/" + props.route.id}
-                      className={"ml-aut text-white text-xs p-2 px-4 rounded-full flex items-center " + (circuit ? colors[circuit.color] || "" : "bg-turquoise-500 hover:bg-turquoise-600")}
+                      className={"ml-aut mt-2 text-white text-xs p-2 px-4 rounded-full flex items-center " + (circuit ? colors[circuit.color] || "" : "bg-turquoise-500 hover:bg-turquoise-600")}
                     >
                       <ChevronRightIcon className="h-5 w-5" />
                     </NavLink>
+                    </div>
                     </div>
                   </div>
   );
