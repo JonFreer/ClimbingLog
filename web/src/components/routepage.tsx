@@ -165,7 +165,7 @@ export function RoutePage(props: {
               >
                 {climb.sent ? "Send" : "Attempt"}
               </div>
-              <button className="text-gray-300 hover:text-gray-700" onClick={()=>remove_climb(climb.id,props.updateData)}>
+              <button className="text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md" onClick={()=>remove_climb(climb.id,props.updateData)}>
                 <TrashIcon aria-hidden="true" className="h-5 w-5" />
               </button>
             </div>

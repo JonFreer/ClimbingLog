@@ -1,90 +1,241 @@
 import { useEffect, useRef, useState } from "react";
-import { Circuit, Route } from "../types/routes";
+import { Circuit, Route, User } from "../types/routes";
 import {
   Dialog,
   DialogBackdrop,
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { ExclamationTriangleIcon, TrashIcon, ArrowDownCircleIcon, ArrowUpCircleIcon } from "@heroicons/react/24/outline";
 import { colors } from "../types/colors";
 import DraggableDotsCanvas, { Dot } from "./map";
+import DangerDialog from "./modal-dialogs";
 
 export function AdminPage() {
   const [routes, setRoutes] = useState<Route[]>([]);
   const [circuits, setCircuits] = useState<Circuit[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   const [routeModalOpen, setRouteModalOpen] = useState<string>("");
+  const [deleteRouteModalOpen, setDeleteRouteModalOpen] = useState<string>("");
+  const [deleteCircuitModalOpen, setDeleteCircuitModalOpen] = useState<string>("");
   const [circuiteModalOpen, setCircuitsModalOpen] = useState<boolean>(false);
 
-  useEffect(() => {
+  function updateRoutes(){
     fetch("api/routes/get_all")
-      .then((response) => response.json())
-      .then((data) => setRoutes(data))
-      .catch((error) => console.error("Error fetching routes:", error));
+    .then((response) => response.json())
+    .then((data) => setRoutes(data))
+    .catch((error) => console.error("Error fetching routes:", error));
+  }
+
+  function updateCircuits(){
+    fetch("api/circuits/get_all")
+    .then((response) => response.json())
+    .then((data) => setCircuits(data))
+    .catch((error) => console.error("Error fetching circuits:", error));
+  }
+
+  function updateUsers(){
+    fetch("api/admin/users/get_all", {
+      headers: {
+      "Authorization": `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+    .then((response) => response.json())
+    .then((data) => setUsers(data))
+    .catch((error) => console.error("Error fetching users:", error));
+  }
+
+  useEffect(() => {
+    updateUsers();
+  },[])
+  useEffect(() => {
+    updateRoutes();
   }, [routeModalOpen]);
 
   useEffect(() => {
-    fetch("api/circuits/get_all")
-      .then((response) => response.json())
-      .then((data) => setCircuits(data))
-      .catch((error) => console.error("Error fetching routes:", error));
+    updateCircuits();
   }, [circuiteModalOpen]);
+
+  const removeRoute = (route_id:string) => {
+    fetch(`api/routes/remove_route/${route_id}`, {
+      method: "DELETE",
+      headers: {
+      "Authorization": `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+      .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else if (response.status === 400) {
+        return response.json().then((errorData) => {
+        throw new Error(errorData.detail);
+        });
+      } else {
+        throw new Error("Network response was not ok");
+      }
+      })
+      .then((data) => {
+        console.log("Success:", data);
+        updateRoutes();
+        setDeleteRouteModalOpen('');
+      })
+      .catch((error) => {
+      console.error(error);
+      });
+  };
+
+  const removeCircuit = (circuit_id:string) => {
+    fetch(`api/circuits/remove_circuit/${circuit_id}`, {
+      method: "DELETE",
+      headers: {
+      "Authorization": `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+      .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else if (response.status === 400) {
+        return response.json().then((errorData) => {
+        throw new Error(errorData.detail);
+        });
+      } else {
+        throw new Error("Network response was not ok");
+      }
+      })
+      .then((data) => {
+        console.log("Success:", data);
+        updateCircuits();
+        setDeleteCircuitModalOpen('');
+      })
+      .catch((error) => {
+      console.error(error);
+      });
+  };
+
+  const promoteUser = (user_id:string) => {
+    fetch(`api/admin/users/promote/${user_id}`, {
+      method: "POST",
+      headers: {
+      "Authorization": `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+      .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else if (response.status === 400) {
+        return response.json().then((errorData) => {
+        throw new Error(errorData.detail);
+        });
+      } else {
+        throw new Error("Network response was not ok");
+      }
+      })
+      .then((data) => {
+        console.log("Success:", data);
+        updateUsers();
+      })
+      .catch((error) => {
+      console.error(error);
+      });
+  };
+
 
 
   return (
     <div className="m-5">
       <AddRow circuit_id={routeModalOpen} setOpen={setRouteModalOpen} />
       <AddCircuit open={circuiteModalOpen} setOpen={setCircuitsModalOpen} />
-      
+      <DangerDialog title={"Delete route"} 
+            body={"Are you sure you want to delete this route? This route will be removed for everybody and cannot be undone."} 
+            actionCallback={()=>removeRoute(deleteRouteModalOpen)}
+            cancleCallback={()=>setDeleteRouteModalOpen('')}
+            open={deleteRouteModalOpen!==""}
+            action_text="Delete route"/>
+
+    <DangerDialog title={"Delete circuit"} 
+              body={"Are you sure you want to delete this circuit? This circuit will be removed for everybody and all routes belonging to it."} 
+              actionCallback={()=>removeCircuit(deleteCircuitModalOpen)}
+              cancleCallback={()=>setDeleteCircuitModalOpen('')}
+              open={deleteCircuitModalOpen!==""}
+              action_text="Delete circuit"/>
       <div className="flex gap-4 mt-5">
       <h1 className="font-bold text-3xl">Admin</h1>
-        <button onClick={()=> setCircuitsModalOpen(true)} className="ml-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-700 hover:to-blue-900 text-white font-bold py-2 px-4 rounded shadow-lg transform transition-transform duration-300 hover:scale-105">
-          Add Circuit
-        </button>
+      <button onClick={()=> setCircuitsModalOpen(true)} className="ml-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-700 hover:to-blue-900 text-white font-bold py-2 px-4 rounded shadow-lg transform transition-transform duration-300 hover:scale-105">
+        Add Circuit
+      </button>
       </div>
       <h1 className="font-bold text-1xl mt-4">Circuits</h1>
       <div>
-        {circuits.map((circuit) => (
-          <div key={circuit.id} className="mt-4">
-            <button
-              className="bg-gray-200 hover:bg-gray-300 text-black font-bold py-2 px-4 rounded shadow-lg w-full text-left"
-              onClick={() => {
-                const updatedCircuits = circuits.map((c) =>
-                  c.id === circuit.id ? { ...c, open: !c.open } : c
-                );
-                setCircuits(updatedCircuits);
-              }}
+      {circuits.map((circuit) => (
+        <div key={circuit.id} className="mt-4 bg-white rounded-lg shadow-md p-4">
+        <button
+          className="bg-gray-200 flex hover:bg-gray-300 text-black font-bold p-1 px-4 rounded shadow-lg w-full text-left"
+          onClick={() => {
+          const updatedCircuits = circuits.map((c) =>
+            c.id === circuit.id ? { ...c, open: !c.open } : c
+          );
+          setCircuits(updatedCircuits);
+          }}
+        >
+          <span className="p-2">{circuit.name}</span>
+          <span className={ "inline-flex items-center rounded-md px-2 m-2 text-xs font-medium text-white ml-4 " + (colors[circuit.color] || "")}>
+          {routes
+            .filter((route) => route.circuit_id === circuit.id).length} Routes
+          </span>
+          <button className="ml-auto text-gray-400 p-2 hover:text-gray-700 hover:bg-gray-400 rounded-md z-50" onClick={()=>setDeleteCircuitModalOpen(circuit.id)}>
+          <TrashIcon aria-hidden="true" className="h-5 w-5" />
+          </button>
+        </button>
+        {circuit.open && (
+          <div className="ml-4 mt-2">
+          {routes
+            .filter((route) => route.circuit_id === circuit.id)
+            .map((route) => (
+            <div
+              key={route.id}
+              className="bg-gray-100 p-1 flex rounded mt-1"
             >
-              {circuit.name}
-
-            <span className={ "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ml-4 " + (colors[circuit.color] || "")}>
-                {routes
-                  .filter((route) => route.circuit_id === circuit.id).length} Routes
-            </span>
-            </button>
-            {circuit.open && (
-              <div className="ml-4 mt-2">
-                {routes
-                  .filter((route) => route.circuit_id === circuit.id)
-                  .map((route) => (
-                    <div
-                      key={route.id}
-                      className="bg-gray-100 p-2 rounded mt-1"
-                    >
-                      {route.name}
-                    </div>
-                  ))}
-                <button
-                  className="inline-flex w-full justify-center rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-500 sm:w-auto mt-3 ml-auto"
-                  onClick={() => setRouteModalOpen(circuit.id)}
-                >
-                  Add Route
-                </button>
-              </div>
-            )}
+              <span className="p-2">{route.name}</span>
+              <button className="ml-auto text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md" onClick={()=>setDeleteRouteModalOpen(route.id)}>
+              <TrashIcon aria-hidden="true" className="h-5 w-5" />
+              </button>
+            </div>
+            ))}
+          <button
+            className="inline-flex w-full justify-center rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-500 sm:w-auto mt-3 ml-auto"
+            onClick={() => setRouteModalOpen(circuit.id)}
+          >
+            Add Route
+          </button>
           </div>
-        ))}
+        )}
+        </div>
+      ))}
+      </div>
+      <h1 className="font-bold text-1xl mt-4">Users: {users.length}</h1>
+      <div className="grid grid-cols-1 gap-4">
+      {users.map((user) => (
+        <div key={user.username} className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between">
+        <div>
+          <p className="font-semibold">
+            <span className={`mr-4 px-2 py-1 rounded-full text-xs font-medium ${user.is_superuser ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                {user.is_superuser ? "Admin" : "User"}
+        </span>
+        {user.username}</p>
+          <p className="text-gray-500">{user.email} </p>
+          
+        </div>
+        <div>
+        
+
+        <button onClick={()=>promoteUser(user.id)}className="p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-200 rounded-md z-50">
+          <ArrowUpCircleIcon className="h-5 w-5 text-green-500"/>
+        </button>
+        </div>
+
+        </div>
+      ))}
       </div>
     </div>
   );
@@ -139,28 +290,31 @@ export default function AddRow(props: {
 
     fetch("api/routes/create_with_image", {
       method: "POST",
+      headers: {
+      "Authorization": `Bearer ${localStorage.getItem("token")}`
+      },
       body: formDataToSend,
     })
       .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else if (response.status === 400) {
-          return response.json().then((errorData) => {
-            throw new Error(errorData.detail);
-          });
-        } else {
-          throw new Error("Network response was not ok");
-        }
+      if (response.ok) {
+        return response.json();
+      } else if (response.status === 400) {
+        return response.json().then((errorData) => {
+        throw new Error(errorData.detail);
+        });
+      } else {
+        throw new Error("Network response was not ok");
+      }
       })
       .then((data) => {
-        console.log("Success:", data);
-        // localStorage.setItem("token", data.access_token);
-        // // props.onSuccess(data.access_token);
-        // window.location.href = "/";
-        props.setOpen("");
+      console.log("Success:", data);
+      // localStorage.setItem("token", data.access_token);
+      // // props.onSuccess(data.access_token);
+      // window.location.href = "/";
+      props.setOpen("");
       })
       .catch((error) => {
-        console.error(error);
+      console.error(error);
       });
   };
 
@@ -420,24 +574,24 @@ export function AddCircuit(props: {
 
       fetch("api/circuits/create", {
         method: "POST",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
         body: formDataToSend
       })
         .then((response) => {
           if (response.ok) {
-            return response.json();
+        return response.json();
           } else if (response.status === 400) {
-            return response.json().then((errorData) => {
-              throw new Error(errorData.detail);
-            });
+        return response.json().then((errorData) => {
+          throw new Error(errorData.detail);
+        });
           } else {
-            throw new Error("Network response was not ok");
+        throw new Error("Network response was not ok");
           }
         })
         .then((data) => {
           console.log("Success:", data);
-          // localStorage.setItem("token", data.access_token);
-          // // props.onSuccess(data.access_token);
-          // window.location.href = "/";
           props.setOpen(false);
         })
         .catch((error) => {
