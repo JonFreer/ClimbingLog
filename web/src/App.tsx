@@ -16,6 +16,7 @@ import { RoutesPage } from "./components/routespage";
 import { RoutePage } from "./components/routepage";
 import { API } from "./types/api";
 import Settings from "./components/settings";
+import DraggableDotsCanvas from "./components/map";
 
 const ProtectedRoute = ({ authed, children }) => {
   if (!authed) {
@@ -92,6 +93,7 @@ function App() {
   return (
     <BrowserRouter>
       <NavBar user={user} />
+      <DraggableDotsCanvas/>
       <Routes>
         <Route
           path="/register"
