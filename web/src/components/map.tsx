@@ -225,17 +225,12 @@ function drawCanvas(){
       drawCanvas();
   };
 
-
   const handleTouchStart = (e) => {
     const touch = e.touches[0];
     const rect = canvasRef.current.getBoundingClientRect();
-    const x =
-      (touch.clientX - rect.left - transformRef.current.translateX) /
-      transformRef.current.scale;
-    const y =
-      (touch.clientY - rect.top - transformRef.current.translateY) /
-      transformRef.current.scale;
-
+    const x = (touch.clientX - rect.left - transformRef.current.translateX) / transformRef.current.scale;
+    const y = (touch.clientY - rect.top - transformRef.current.translateY) / transformRef.current.scale;
+  
     const dotClicked = dotsRef.current.some((dot) => {
       if (Math.hypot(dot.x - x, dot.y - y) < 5) {
         dotsRef.current = dotsRef.current.map((d) =>
@@ -251,7 +246,7 @@ function drawCanvas(){
       lastMousePosRef.current = { x: touch.clientX, y: touch.clientY };
     }
   };
-
+  
   const handleTouchMove = (e) => {
     const touch = e.touches[0];
     if (isDraggingCanvas) {
@@ -265,20 +260,16 @@ function drawCanvas(){
       lastMousePosRef.current = { x: touch.clientX, y: touch.clientY };
     } else {
       const rect = canvasRef.current.getBoundingClientRect();
-      const x =
-        (touch.clientX - rect.left - transformRef.current.translateX) /
-        transformRef.current.scale;
-      const y =
-        (touch.clientY - rect.top - transformRef.current.translateY) /
-        transformRef.current.scale;
+      const x = (touch.clientX - rect.left - transformRef.current.translateX) / transformRef.current.scale;
+      const y = (touch.clientY - rect.top - transformRef.current.translateY) / transformRef.current.scale;
       dotsRef.current = dotsRef.current.map((dot) =>
         dot.isDragging ? { ...dot, x, y } : dot
       );
     }
-
+  
     drawCanvas();
   };
-
+  
   const handleTouchEnd = () => {
     setIsDraggingCanvas(false);
     dotsRef.current = dotsRef.current.map((dot) => ({
