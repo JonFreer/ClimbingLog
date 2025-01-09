@@ -226,6 +226,7 @@ function drawCanvas(){
   };
 
   const handleTouchStart = (e) => {
+    e.preventDefault();
     const touch = e.touches[0];
     const rect = canvasRef.current.getBoundingClientRect();
     const x = (touch.clientX - rect.left - transformRef.current.translateX) / transformRef.current.scale;
@@ -248,6 +249,7 @@ function drawCanvas(){
   };
   
   const handleTouchMove = (e) => {
+    e.preventDefault();
     const touch = e.touches[0];
     if (isDraggingCanvas) {
       const dx = touch.clientX - lastMousePosRef.current.x;
@@ -271,6 +273,7 @@ function drawCanvas(){
   };
   
   const handleTouchEnd = () => {
+    e.preventDefault();
     setIsDraggingCanvas(false);
     dotsRef.current = dotsRef.current.map((dot) => ({
       ...dot,
