@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { NavLink } from 'react-router';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 
 export function RegisterOld() {
     const [formData, setFormData] = useState({
@@ -124,11 +125,20 @@ export function Register() {
               className="mx-auto h-10 w-auto"
             />
             <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-              Register for an account
+              Register for an account <br/>
+              (Beta Tester)
             </h2>
           </div>
 
-          <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+     
+      <div className="mt-1 sm:mx-auto sm:w-full sm:max-w-sm">
+            <div className="flex bg-red-50 p-3 m-2 rounded-md">
+              <div className="p-2">
+                <ExclamationTriangleIcon aria-hidden="true" className="size-5 mt-5 text-red-400" />
+              </div>
+              <div className="ml-2 text-red-800 text-sm p-2">Warning! This app is still under development. Your data may be deleted at any point and you will have to reregister.  </div>
+          </div>
+
             <div className="sm:col-span-4">
               <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900">
                 Username

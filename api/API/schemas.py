@@ -27,6 +27,8 @@ class Route(BaseModel):
     location: str
     style: str
     circuit_id: uuid.UUID
+    x: float
+    y: float 
 
 class Circuit(BaseModel):
     id: uuid.UUID

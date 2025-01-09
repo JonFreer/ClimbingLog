@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Circuit, Route } from "../types/routes";
 import {
   Dialog,
@@ -8,6 +8,7 @@ import {
 } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { colors } from "../types/colors";
+import DraggableDotsCanvas, { Dot } from "./map";
 
 export function AdminPage() {
   const [routes, setRoutes] = useState<Route[]>([]);
@@ -94,6 +95,12 @@ export default function AddRow(props: {
   setOpen: (value: string) => void;
 }) {
 
+  const [dots, setDots] = useState<Dot[]>([
+    // { x: 50, y: 50, isDragging: false, complete: false, radius: 3},
+    // { x: 150, y: 150, isDragging: false, complete: false, radius: 5 },
+    { x: 0, y: 0, isDragging: false, complete: true, radius:4, draggable:true, color: '#ff0000',id:''},
+  ]);
+
   const open = props.circuit_id !== "";
    
   const [formData, setFormData] = useState<{name:string, location:string, grade:string, style:string, img:File | null}>({
@@ -121,6 +128,8 @@ export default function AddRow(props: {
     formDataToSend.append("grade", formData.grade);
     formDataToSend.append("style", formData.style);
     formDataToSend.append("circuit_id", props.circuit_id);
+    formDataToSend.append("x", dots[0].x.toString());
+    formDataToSend.append("y", dots[0].y.toString());
 
     if (formData.img == null){
         return;
@@ -186,6 +195,17 @@ export default function AddRow(props: {
                         Add a new route to the circuit
                       </p>
                     </div>
+
+                      <div className="flex mt-3 items-center justify-between">
+                      <label
+                        htmlFor="name"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
+                        Route Location
+                      </label>
+                      </div>
+
+                    <DraggableDotsCanvas dots={dots} updateDots={(dots)=>setDots(dots)} setSelected={(_id)=>{}}/>
                     <div>
                         <div className="flex items-center justify-between">
                       <label

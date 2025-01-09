@@ -20,38 +20,40 @@ async def get_all_routes(
     routes = result.scalars().all()
     return routes
 
-@router.post("/routes/create", response_model=schemas.Route, tags=["routes"])
-async def create_route(
-    name: str,
-    grade: str,
-    location: str,
-    style:str,
-    circuit_id: uuid.UUID,
-    response: Response,
-    db: AsyncSession = Depends(get_db),
-):
-    new_route = Routes(grade=grade,location=location,style=style,circuit_id=circuit_id,name=name)
-    db.add(new_route)
-    await db.commit()
-    await db.refresh(new_route)
-    return new_route
+# @router.post("/routes/create", response_model=schemas.Route, tags=["routes"])
+# async def create_route(
+#     name: str,
+#     grade: str,
+#     location: str,
+#     style:str,
+#     x: float,
+#     y:float, 
+#     circuit_id: uuid.UUID,
+#     response: Response,
+#     db: AsyncSession = Depends(get_db),
+# ):
+#     new_route = Routes(grade=grade,location=location,style=style,circuit_id=circuit_id,name=name)
+#     db.add(new_route)
+#     await db.commit()
+#     await db.refresh(new_route)
+#     return new_route
 
 
-@router.post("/routes/create", response_model=schemas.Route, tags=["routes"])
-async def create_route(
-    name: str,
-    grade: str,
-    location: str,
-    style:str,
-    circuit_id: uuid.UUID,
-    response: Response,
-    db: AsyncSession = Depends(get_db),
-):
-    new_route = Routes(grade=grade,location=location,style=style,circuit_id=circuit_id,name=name)
-    db.add(new_route)
-    await db.commit()
-    await db.refresh(new_route)
-    return new_route
+# @router.post("/routes/create", response_model=schemas.Route, tags=["routes"])
+# async def create_route(
+#     name: str,
+#     grade: str,
+#     location: str,
+#     style:str,
+#     circuit_id: uuid.UUID,
+#     response: Response,
+#     db: AsyncSession = Depends(get_db),
+# ):
+#     new_route = Routes(grade=grade,location=location,style=style,circuit_id=circuit_id,name=name)
+#     db.add(new_route)
+#     await db.commit()
+#     await db.refresh(new_route)
+#     return new_route
 
 @router.post("/routes/create_with_image", response_model=schemas.Route, tags=["routes"])
 async def create_route_with_image(
@@ -60,6 +62,8 @@ async def create_route_with_image(
         location: Annotated[str, Form(...)],
         style: Annotated[str, Form(...)],
         circuit_id: Annotated[uuid.UUID, Form(...)],
+        x: Annotated[float, Form(...)],
+        y: Annotated[float, Form(...)],
         file: UploadFile = File(...),
         db: AsyncSession = Depends(get_db),
     ):
@@ -69,7 +73,7 @@ async def create_route_with_image(
         request_object_content = await file.read()
         im = Image.open(io.BytesIO(request_object_content))
 
-        new_route = Routes(grade=grade, location=location, style=style, circuit_id=circuit_id,name=name)
+        new_route = Routes(grade=grade, location=location, style=style, circuit_id=circuit_id,name=name,x=x,y=y)
         db.add(new_route)
         await db.commit()
         await db.refresh(new_route)

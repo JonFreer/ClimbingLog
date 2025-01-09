@@ -5,6 +5,8 @@ export interface Route{
     circuit_id:string;
     style:string;
     name:string;
+    x:number;
+    y:number;
 }
 
 export interface Circuit{
@@ -28,7 +30,7 @@ export interface User{
 
 export interface Climb{
     id:string;
-    send: boolean;
+    sent: boolean;
     time: string;
     route: string;
     user: string;

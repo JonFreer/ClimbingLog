@@ -93,7 +93,6 @@ function App() {
   return (
     <BrowserRouter>
       <NavBar user={user} />
-      <DraggableDotsCanvas/>
       <Routes>
         <Route
           path="/register"

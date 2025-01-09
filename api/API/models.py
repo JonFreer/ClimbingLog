@@ -24,6 +24,8 @@ class Routes(Base):
     style: str = Column(String, index=True, nullable=False)
     circuit_id: uuid.UUID = Column( UUID(as_uuid=True), index=True, nullable=False)
     name: str = Column(String, index=True, nullable=True)
+    x: float = Column(Float, index=False, nullable=False)
+    y: float = Column(Float, index=False, nullable=False)
 
 class Circuits(Base):
     __tablename__ = "circuits"

@@ -1,15 +1,24 @@
 import React, { useRef, useState, useEffect } from "react";
 
-const DraggableDotsCanvas = () => {
-  console.log("Asset render");
+export interface Dot {
+  x: number;
+  y: number;
+  isDragging: boolean;
+  complete: boolean;
+  radius: number;
+  draggable: boolean;
+  color: string;
+  id: string;
+}
 
-  const dotsRef = useRef([
-    { x: 50, y: 50, isDragging: false, complete: false },
-    { x: 150, y: 150, isDragging: false, complete: false },
-    { x: 0, y: 0, isDragging: false, complete: true },
-  ]);
+const DraggableDotsCanvas = (props: {
+  dots: Dot[];
+  updateDots: (dots: Dot[]) => void;
+  setSelected: (id: string) => void;
+}) => {
 
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [isPinching, setIsPinching] = useState(false);
   const initialPinchDistanceRef = useRef(0);
   const initialScaleRef = useRef(1);
@@ -23,8 +32,6 @@ const DraggableDotsCanvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const svgImageRef = useRef<HTMLImageElement | null>(null);
 
-  console.log(transformRef.current);
-
   useEffect(() => {
     window.addEventListener("resize", handleResize);
     handleResize();
@@ -33,6 +40,10 @@ const DraggableDotsCanvas = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    drawCanvas();
+  }, [props]);
 
   //set the intial translation
   useEffect(() => {
@@ -52,14 +63,12 @@ const DraggableDotsCanvas = () => {
     const img = new Image();
     img.src = "depot.svg";
     img.onload = () => {
-      console.log("svg loaded", img);
       svgImageRef.current = img;
       drawCanvas();
     };
   }, []);
 
   function handleResize() {
-    console.log("canvasRef.current", canvasRef.current);
     const canvas = canvasRef.current;
     if (!canvas) return;
     const parentDiv = canvas.parentElement;
@@ -94,11 +103,9 @@ const DraggableDotsCanvas = () => {
   }, []);
 
   function drawCanvas() {
-    console.log(transformRef.current);
     const ctx = canvasRef.current?.getContext("2d");
     if (ctx) {
       const { width, height } = ctx.canvas;
-      console.log("draw", width, height);
 
       ctx.clearRect(0, 0, width, height);
       ctx.save();
@@ -131,16 +138,13 @@ const DraggableDotsCanvas = () => {
       // Draw SVG
       if (svgImageRef.current) {
         ctx.drawImage(svgImageRef.current, -150, -70);
-        console.log("yes svg");
-      } else {
-        console.log("no svg");
       }
 
       // Draw dots
-      dotsRef.current.forEach((dot) => {
+      props.dots.forEach((dot) => {
         ctx.beginPath();
-        ctx.arc(dot.x, dot.y, 3, 0, 2 * Math.PI);
-        ctx.fillStyle = dot.complete ? "red" : "#FF00005e";
+        ctx.arc(dot.x, dot.y, dot.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = dot.complete ? dot.color : dot.color + "5e";
         ctx.fill();
         ctx.closePath();
       });
@@ -149,32 +153,9 @@ const DraggableDotsCanvas = () => {
     }
   }
 
-  const handleMouseDown = (e) => {
-    const rect = canvasRef.current.getBoundingClientRect();
-    const x =
-      (e.clientX - rect.left - transformRef.current.translateX) /
-      transformRef.current.scale;
-    const y =
-      (e.clientY - rect.top - transformRef.current.translateY) /
-      transformRef.current.scale;
-
-    const dotClicked = dotsRef.current.some((dot) => {
-      if (Math.hypot(dot.x - x, dot.y - y) < 5) {
-        dotsRef.current = dotsRef.current.map((d) =>
-          d.x === dot.x && d.y === dot.y ? { ...d, isDragging: true } : d
-        );
-        return true;
-      }
-      return false;
-    });
-    console.log("dot clicked", dotClicked);
-    if (!dotClicked) {
-      setIsDraggingCanvas(true);
-      lastMousePosRef.current = { x: e.clientX, y: e.clientY };
-    }
-  };
 
   const handleMouseMove = (e) => {
+    setIsDragging(true);
     if (isDraggingCanvas) {
       const dx = e.clientX - lastMousePosRef.current.x;
       const dy = e.clientY - lastMousePosRef.current.y;
@@ -192,25 +173,18 @@ const DraggableDotsCanvas = () => {
       const y =
         (e.clientY - rect.top - transformRef.current.translateY) /
         transformRef.current.scale;
-      dotsRef.current = dotsRef.current.map((dot) =>
-        dot.isDragging ? { ...dot, x, y } : dot
+      props.updateDots(
+        props.dots.map((dot) => (dot.isDragging ? { ...dot, x, y } : dot))
       );
     }
 
     drawCanvas();
   };
 
-  const handleMouseUp = () => {
-    setIsDraggingCanvas(false);
-    dotsRef.current = dotsRef.current.map((dot) => ({
-      ...dot,
-      isDragging: false,
-    }));
-  };
 
   const handleWheel = (e) => {
     e.preventDefault();
-    const scaleAmount = e.deltaY < 0 ? 1.1 : 0.9;
+    const scaleAmount = e.deltaY < 0 ? 1.05 : 0.95;
     const newScale = transformRef.current.scale * scaleAmount;
 
     const prev = transformRef.current;
@@ -232,40 +206,38 @@ const DraggableDotsCanvas = () => {
     drawCanvas();
   };
 
+
+  /////////////////////////// MOVE EVENTS ///////////////////////////
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    move(e);
+  };
+
   const handleTouchStart = (e) => {
     e.preventDefault();
     if (e.touches.length === 2) {
       setIsPinching(true);
       initialPinchDistanceRef.current = getPinchDistance(e.touches);
       initialScaleRef.current = transformRef.current.scale;
-    } 
-    
-    
-      const touch = e.touches[0];
-      const rect = canvasRef.current.getBoundingClientRect();
-      const x =
-        (touch.clientX - rect.left - transformRef.current.translateX) /
-        transformRef.current.scale;
-      const y =
-        (touch.clientY - rect.top - transformRef.current.translateY) /
-        transformRef.current.scale;
-
-      const dotClicked = dotsRef.current.some((dot) => {
-        if (Math.hypot(dot.x - x, dot.y - y) < 5) {
-          dotsRef.current = dotsRef.current.map((d) =>
-            d.x === dot.x && d.y === dot.y ? { ...d, isDragging: true } : d
-          );
-          return true;
-        }
-        return false;
-      });
-      console.log("dot clicked", dotClicked);
-      if (!dotClicked) {
-        setIsDraggingCanvas(true);
-        lastMousePosRef.current = { x: touch.clientX, y: touch.clientY };
-      }
-    
+    }
+    move(e.touches[0])
   };
+
+  function move(event: Touch | MouseEvent) {
+    const rect = canvasRef.current.getBoundingClientRect();
+    const x =
+      (event.clientX - rect.left - transformRef.current.translateX) /
+      transformRef.current.scale;
+    const y =
+      (event.clientY - rect.top - transformRef.current.translateY) /
+      transformRef.current.scale;
+
+    if (!dotClicked(x,y)) {
+      setIsDraggingCanvas(true);
+      lastMousePosRef.current = { x: event.clientX, y: event.clientY };
+    }
+  }
 
   const handleTouchMove = (e) => {
     e.preventDefault();
@@ -273,22 +245,30 @@ const DraggableDotsCanvas = () => {
       const newPinchDistance = getPinchDistance(e.touches);
       const scaleAmount = newPinchDistance / initialPinchDistanceRef.current;
       const newScale = initialScaleRef.current * scaleAmount;
-  
+
       const rect = canvasRef.current.getBoundingClientRect();
-      const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
-      const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
-  
-      const newTranslateX = centerX - ((centerX - transformRef.current.translateX) * newScale / transformRef.current.scale);
-      const newTranslateY = centerY - ((centerY - transformRef.current.translateY) * newScale / transformRef.current.scale);
-  
+      const centerX =
+        (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+      const centerY =
+        (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+
+      const newTranslateX =
+        centerX -
+        ((centerX - transformRef.current.translateX) * newScale) /
+          transformRef.current.scale;
+      const newTranslateY =
+        centerY -
+        ((centerY - transformRef.current.translateY) * newScale) /
+          transformRef.current.scale;
+
       transformRef.current = {
         scale: newScale,
         translateX: newTranslateX,
         translateY: newTranslateY,
       };
-  
+
       drawCanvas();
-    } 
+    }
 
     const touch = e.touches[0];
     if (isDraggingCanvas) {
@@ -308,23 +288,34 @@ const DraggableDotsCanvas = () => {
       const y =
         (touch.clientY - rect.top - transformRef.current.translateY) /
         transformRef.current.scale;
-      dotsRef.current = dotsRef.current.map((dot) =>
-        dot.isDragging ? { ...dot, x, y } : dot
+      props.updateDots(
+        props.dots.map((dot) => (dot.isDragging ? { ...dot, x, y } : dot))
       );
     }
-
 
     drawCanvas();
   };
 
+  /////////////////////////// END MOVE EVENTS ///////////////////////////
+
   const handleTouchEnd = () => {
     setIsDraggingCanvas(false);
-    setIsPinching(false);
-    dotsRef.current = dotsRef.current.map((dot) => ({
-      ...dot,
-      isDragging: false,
-    }));
+    endMove();
   };
+
+  const handleMouseUp = () => {
+    endMove();
+  };
+
+  function endMove(){
+    setIsDraggingCanvas(false);
+    props.updateDots(
+      props.dots.map((dot) => ({
+        ...dot,
+        isDragging: false,
+      }))
+    );
+  }
 
   const getPinchDistance = (touches) => {
     const dx = touches[0].clientX - touches[1].clientX;
@@ -332,9 +323,50 @@ const DraggableDotsCanvas = () => {
     return Math.sqrt(dx * dx + dy * dy);
   };
 
+  const handleClick = (e) => {
+    console.log("click", e);
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const x =
+      (e.clientX - rect.left - transformRef.current.translateX) /
+      transformRef.current.scale;
+    const y =
+      (e.clientY - rect.top - transformRef.current.translateY) /
+      transformRef.current.scale;
+
+    const clickedDot = props.dots.filter((dot) => {
+      return Math.hypot(dot.x - x, dot.y - y) < 5;
+    });
+
+    if (clickedDot.length > 0) {
+      props.setSelected(clickedDot[0].id);
+    }
+
+  };
+
+  function dotClicked(x:number, y: number) {
+    props.dots.some((dot) => {
+      if (dot.draggable && Math.hypot(dot.x - x, dot.y - y) < 5) {
+        props.updateDots(
+          props.dots.map((d) =>
+            d.x === dot.x && d.y === dot.y ? { ...d, isDragging: true } : d
+          )
+        );
+        return true;
+      }
+      return false;
+    });
+    return false;
+  }
+
+
+
   return (
     <div className="max-h-96 touch-none">
       <canvas
+        className="w-full"
         ref={canvasRef}
         width={800}
         height={1200}
@@ -346,6 +378,7 @@ const DraggableDotsCanvas = () => {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onClick={handleClick}
       ></canvas>
     </div>
   );
