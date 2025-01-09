@@ -4,18 +4,21 @@ const DraggableDotsCanvas = () => {
   console.log("Asset render");
 
   const dotsRef = useRef([
-    { x: 50, y: 50, isDragging: false ,complete: false},
-    { x: 150, y: 150, isDragging: false,complete: false} ,
-    { x: 0, y: 0, isDragging: false,complete: true} ,
+    { x: 50, y: 50, isDragging: false, complete: false },
+    { x: 150, y: 150, isDragging: false, complete: false },
+    { x: 0, y: 0, isDragging: false, complete: true },
   ]);
 
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
+  const [isPinching, setIsPinching] = useState(false);
+  const initialPinchDistanceRef = useRef(0);
+  const initialScaleRef = useRef(1);
 
- const lastMousePosRef = useRef({ x: 0, y: 0 });
+  const lastMousePosRef = useRef({ x: 0, y: 0 });
   const transformRef = useRef({
     scale: 2,
     translateX: 0,
-    translateY: 0
+    translateY: 0,
   });
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const svgImageRef = useRef<HTMLImageElement | null>(null);
@@ -37,14 +40,14 @@ const DraggableDotsCanvas = () => {
     if (!canvas) return;
     const parentDiv = canvas.parentElement;
     const { width, height } = parentDiv.getBoundingClientRect();
-  
+
     // Set initial translation to center (0, 0)
     transformRef.current = {
       ...transformRef.current,
       translateX: width / 2,
       translateY: height / 2,
     };
-  
+
     // Load SVG
     const img = new Image();
     img.src = "depot.svg";
@@ -54,8 +57,6 @@ const DraggableDotsCanvas = () => {
       drawCanvas();
     };
   }, []);
-
-
 
   function handleResize() {
     console.log("canvasRef.current", canvasRef.current);
@@ -79,7 +80,7 @@ const DraggableDotsCanvas = () => {
 
       drawCanvas();
     }
-  };
+  }
 
   useEffect(() => {
     // Load SVG
@@ -92,9 +93,8 @@ const DraggableDotsCanvas = () => {
     };
   }, []);
 
-
-function drawCanvas(){
-    console.log(transformRef.current)
+  function drawCanvas() {
+    console.log(transformRef.current);
     const ctx = canvasRef.current?.getContext("2d");
     if (ctx) {
       const { width, height } = ctx.canvas;
@@ -103,13 +103,12 @@ function drawCanvas(){
       ctx.clearRect(0, 0, width, height);
       ctx.save();
 
-    ctx.translate(
-    (transformRef.current.translateX ),
-    (transformRef.current.translateY)
-    );
+      ctx.translate(
+        transformRef.current.translateX,
+        transformRef.current.translateY
+      );
 
-    ctx.scale(transformRef.current.scale,transformRef.current.scale )
-
+      ctx.scale(transformRef.current.scale, transformRef.current.scale);
 
       // Draw grid
       const gridSize = 10;
@@ -129,7 +128,6 @@ function drawCanvas(){
         ctx.stroke();
       }
 
-
       // Draw SVG
       if (svgImageRef.current) {
         ctx.drawImage(svgImageRef.current, -150, -70);
@@ -142,96 +140,24 @@ function drawCanvas(){
       dotsRef.current.forEach((dot) => {
         ctx.beginPath();
         ctx.arc(dot.x, dot.y, 3, 0, 2 * Math.PI);
-        ctx.fillStyle = dot.complete? "red":'#FF00005e';
+        ctx.fillStyle = dot.complete ? "red" : "#FF00005e";
         ctx.fill();
         ctx.closePath();
       });
 
-
-
       ctx.restore();
     }
-  };
+  }
 
   const handleMouseDown = (e) => {
     const rect = canvasRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left - transformRef.current.translateX) / transformRef.current.scale;
-    const y = (e.clientY - rect.top - transformRef.current.translateY) / transformRef.current.scale;
+    const x =
+      (e.clientX - rect.left - transformRef.current.translateX) /
+      transformRef.current.scale;
+    const y =
+      (e.clientY - rect.top - transformRef.current.translateY) /
+      transformRef.current.scale;
 
-    const dotClicked = dotsRef.current.some((dot) => {
-      if (Math.hypot(dot.x - x, dot.y - y) < 5) {
-        dotsRef.current = dotsRef.current.map((d) =>
-            d.x === dot.x && d.y === dot.y ? { ...d, isDragging: true } : d
-    )
-        return true;
-      }
-      return false;
-    });
-    console.log("dot clicked",dotClicked)
-    if (!dotClicked) {
-      setIsDraggingCanvas(true);
-      lastMousePosRef.current = { x: e.clientX, y: e.clientY }
-    }
-  };
-
-  const handleMouseMove = (e) => {
-      if (isDraggingCanvas) {
-          const dx = e.clientX - lastMousePosRef.current.x;
-          const dy = e.clientY - lastMousePosRef.current.y;
-          transformRef.current = {
-              ...transformRef.current,
-              translateX: transformRef.current.translateX + dx,
-              translateY: transformRef.current.translateY + dy,
-          };
-          lastMousePosRef.current = { x: e.clientX, y: e.clientY }
-      } else {
-          const rect = canvasRef.current.getBoundingClientRect();
-          const x = (e.clientX - rect.left - transformRef.current.translateX) / transformRef.current.scale;
-          const y = (e.clientY - rect.top - transformRef.current.translateY) / transformRef.current.scale;
-          dotsRef.current = dotsRef.current.map((dot) =>
-            dot.isDragging ? { ...dot, x, y } : dot
-        )
-       
-      }
-
-      drawCanvas();
-  };
-
-  const handleMouseUp = () => {
-      setIsDraggingCanvas(false);
-      dotsRef.current = dotsRef.current.map((dot) => ({ ...dot, isDragging: false }))
-  };
-
-  const handleWheel = (e) => {
-      e.preventDefault();
-      const scaleAmount = e.deltaY < 0 ? 1.1 : 0.9;
-      const newScale = transformRef.current.scale * scaleAmount;
-
-      const prev = transformRef.current ;
-      // Adjust translation to keep zoom centered on the mouse position
-    
-        const rect = canvasRef.current.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-        const newTranslateX = mouseX - ((mouseX - prev.translateX)) * newScale / prev.scale;
-        const newTranslateY = mouseY - ((mouseY - prev.translateY)) * newScale / prev.scale;
-        transformRef.current = {
-            scale: newScale,
-            translateX: newTranslateX,
-            translateY: newTranslateY,
-        };
-
-
-      drawCanvas();
-  };
-
-  const handleTouchStart = (e) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const rect = canvasRef.current.getBoundingClientRect();
-    const x = (touch.clientX - rect.left - transformRef.current.translateX) / transformRef.current.scale;
-    const y = (touch.clientY - rect.top - transformRef.current.translateY) / transformRef.current.scale;
-  
     const dotClicked = dotsRef.current.some((dot) => {
       if (Math.hypot(dot.x - x, dot.y - y) < 5) {
         dotsRef.current = dotsRef.current.map((d) =>
@@ -244,12 +170,123 @@ function drawCanvas(){
     console.log("dot clicked", dotClicked);
     if (!dotClicked) {
       setIsDraggingCanvas(true);
-      lastMousePosRef.current = { x: touch.clientX, y: touch.clientY };
+      lastMousePosRef.current = { x: e.clientX, y: e.clientY };
     }
   };
-  
+
+  const handleMouseMove = (e) => {
+    if (isDraggingCanvas) {
+      const dx = e.clientX - lastMousePosRef.current.x;
+      const dy = e.clientY - lastMousePosRef.current.y;
+      transformRef.current = {
+        ...transformRef.current,
+        translateX: transformRef.current.translateX + dx,
+        translateY: transformRef.current.translateY + dy,
+      };
+      lastMousePosRef.current = { x: e.clientX, y: e.clientY };
+    } else {
+      const rect = canvasRef.current.getBoundingClientRect();
+      const x =
+        (e.clientX - rect.left - transformRef.current.translateX) /
+        transformRef.current.scale;
+      const y =
+        (e.clientY - rect.top - transformRef.current.translateY) /
+        transformRef.current.scale;
+      dotsRef.current = dotsRef.current.map((dot) =>
+        dot.isDragging ? { ...dot, x, y } : dot
+      );
+    }
+
+    drawCanvas();
+  };
+
+  const handleMouseUp = () => {
+    setIsDraggingCanvas(false);
+    dotsRef.current = dotsRef.current.map((dot) => ({
+      ...dot,
+      isDragging: false,
+    }));
+  };
+
+  const handleWheel = (e) => {
+    e.preventDefault();
+    const scaleAmount = e.deltaY < 0 ? 1.1 : 0.9;
+    const newScale = transformRef.current.scale * scaleAmount;
+
+    const prev = transformRef.current;
+    // Adjust translation to keep zoom centered on the mouse position
+
+    const rect = canvasRef.current.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const newTranslateX =
+      mouseX - ((mouseX - prev.translateX) * newScale) / prev.scale;
+    const newTranslateY =
+      mouseY - ((mouseY - prev.translateY) * newScale) / prev.scale;
+    transformRef.current = {
+      scale: newScale,
+      translateX: newTranslateX,
+      translateY: newTranslateY,
+    };
+
+    drawCanvas();
+  };
+
+  const handleTouchStart = (e) => {
+    e.preventDefault();
+    if (e.touches.length === 2) {
+      setIsPinching(true);
+      initialPinchDistanceRef.current = getPinchDistance(e.touches);
+      initialScaleRef.current = transformRef.current.scale;
+    } else {
+      const touch = e.touches[0];
+      const rect = canvasRef.current.getBoundingClientRect();
+      const x =
+        (touch.clientX - rect.left - transformRef.current.translateX) /
+        transformRef.current.scale;
+      const y =
+        (touch.clientY - rect.top - transformRef.current.translateY) /
+        transformRef.current.scale;
+
+      const dotClicked = dotsRef.current.some((dot) => {
+        if (Math.hypot(dot.x - x, dot.y - y) < 5) {
+          dotsRef.current = dotsRef.current.map((d) =>
+            d.x === dot.x && d.y === dot.y ? { ...d, isDragging: true } : d
+          );
+          return true;
+        }
+        return false;
+      });
+      console.log("dot clicked", dotClicked);
+      if (!dotClicked) {
+        setIsDraggingCanvas(true);
+        lastMousePosRef.current = { x: touch.clientX, y: touch.clientY };
+      }
+    }
+  };
+
   const handleTouchMove = (e) => {
     e.preventDefault();
+    if (isPinching && e.touches.length === 2) {
+      const newPinchDistance = getPinchDistance(e.touches);
+      const scaleAmount = newPinchDistance / initialPinchDistanceRef.current;
+      const newScale = initialScaleRef.current * scaleAmount;
+  
+      const rect = canvasRef.current.getBoundingClientRect();
+      const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+      const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+  
+      const newTranslateX = centerX - ((centerX - transformRef.current.translateX) * newScale / transformRef.current.scale);
+      const newTranslateY = centerY - ((centerY - transformRef.current.translateY) * newScale / transformRef.current.scale);
+  
+      transformRef.current = {
+        scale: newScale,
+        translateX: newTranslateX,
+        translateY: newTranslateY,
+      };
+  
+      drawCanvas();
+    } else {
     const touch = e.touches[0];
     if (isDraggingCanvas) {
       const dx = touch.clientX - lastMousePosRef.current.x;
@@ -262,23 +299,34 @@ function drawCanvas(){
       lastMousePosRef.current = { x: touch.clientX, y: touch.clientY };
     } else {
       const rect = canvasRef.current.getBoundingClientRect();
-      const x = (touch.clientX - rect.left - transformRef.current.translateX) / transformRef.current.scale;
-      const y = (touch.clientY - rect.top - transformRef.current.translateY) / transformRef.current.scale;
+      const x =
+        (touch.clientX - rect.left - transformRef.current.translateX) /
+        transformRef.current.scale;
+      const y =
+        (touch.clientY - rect.top - transformRef.current.translateY) /
+        transformRef.current.scale;
       dotsRef.current = dotsRef.current.map((dot) =>
         dot.isDragging ? { ...dot, x, y } : dot
       );
     }
-  
+}
+
     drawCanvas();
   };
-  
+
   const handleTouchEnd = () => {
-    e.preventDefault();
     setIsDraggingCanvas(false);
+    setIsPinching(false);
     dotsRef.current = dotsRef.current.map((dot) => ({
       ...dot,
       isDragging: false,
     }));
+  };
+
+  const getPinchDistance = (touches) => {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
   };
 
   return (
