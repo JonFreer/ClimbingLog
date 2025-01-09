@@ -238,7 +238,9 @@ const DraggableDotsCanvas = () => {
       setIsPinching(true);
       initialPinchDistanceRef.current = getPinchDistance(e.touches);
       initialScaleRef.current = transformRef.current.scale;
-    } else {
+    } 
+    
+    
       const touch = e.touches[0];
       const rect = canvasRef.current.getBoundingClientRect();
       const x =
@@ -262,7 +264,7 @@ const DraggableDotsCanvas = () => {
         setIsDraggingCanvas(true);
         lastMousePosRef.current = { x: touch.clientX, y: touch.clientY };
       }
-    }
+    
   };
 
   const handleTouchMove = (e) => {
@@ -286,7 +288,8 @@ const DraggableDotsCanvas = () => {
       };
   
       drawCanvas();
-    } else {
+    } 
+
     const touch = e.touches[0];
     if (isDraggingCanvas) {
       const dx = touch.clientX - lastMousePosRef.current.x;
@@ -309,7 +312,7 @@ const DraggableDotsCanvas = () => {
         dot.isDragging ? { ...dot, x, y } : dot
       );
     }
-}
+
 
     drawCanvas();
   };
@@ -330,7 +333,7 @@ const DraggableDotsCanvas = () => {
   };
 
   return (
-    <div className="max-h-96 ">
+    <div className="max-h-96 touch-none">
       <canvas
         ref={canvasRef}
         width={800}
