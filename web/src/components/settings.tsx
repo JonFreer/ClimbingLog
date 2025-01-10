@@ -10,7 +10,7 @@ export default function Settings(props:{user:User | false}) {
     return;
   }
     const [toastOpen, setToastOpen] = useState(false);
-
+    const [usernameError, setUserNameError] = useState(false);
     const [formData, setFormData] = useState({
           username: props.user.username,
           about:props.user.about,
@@ -28,6 +28,7 @@ export default function Settings(props:{user:User | false}) {
       };
 
       const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        setUserNameError(false);
         e.preventDefault();
         console.log(formData);
         fetch('api/users/me', {
@@ -44,6 +45,9 @@ export default function Settings(props:{user:User | false}) {
             return response.json();
             } else if (response.status === 400) {
             return response.json().then(errorData => {
+                if(errorData.detail ==='UPDATE_USERNAME_ALREADY_EXISTS'){
+                  setUserNameError(true);
+                }
                 throw new Error(errorData.detail);
             });
             } else {
@@ -89,6 +93,10 @@ export default function Settings(props:{user:User | false}) {
                   />
                 </div>
               </div>
+              {usernameError?
+              <div className="flex bg-red-50 p-3 m-2 rounded-md">
+                <div className="text-red-800 text-sm p-2">A user with this username already exists.</div>
+              </div>:<></>}
             </div>
 
             <div className="col-span-full">

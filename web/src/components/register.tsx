@@ -3,61 +3,11 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 
-export function RegisterOld() {
-    const [formData, setFormData] = useState({
-        username: '',
-        password: '',
-        email: ''
-    });
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    };
-
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        fetch('api/auth/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-    };
-
-    return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label htmlFor="username">Username:</label>
-                <input type="text" id="username" name="username" value={formData.username} onChange={handleChange} required />
-            </div>
-            <div>
-                <label htmlFor="password">Password:</label>
-                <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required />
-            </div>
-            <div>
-                <label htmlFor="email">Email:</label>
-                <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
-            </div>
-            <button type="submit">Register</button>
-        </form>
-    );
-}
-
-
 export function Register() {
 
+  const [emailError, setEmailError] = useState(false);
+  const [usernameError, setUserNameError] = useState(false);
+
 
 
     const [formData, setFormData] = useState({
@@ -75,6 +25,8 @@ export function Register() {
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        setEmailError(false);
+        setUserNameError(false);
         e.preventDefault();
         fetch('api/auth/register', {
             method: 'POST',
@@ -88,7 +40,14 @@ export function Register() {
                 return response.json();
             } else if (response.status === 400) {
                 return response.json().then(errorData => {
+                    if(errorData.detail ==='REGISTER_USER_ALREADY_EXISTS'){
+                      setEmailError(true);
+                    }
+                    if(errorData.detail ==='REGISTER_USERNAME_ALREADY_EXISTS'){
+                      setUserNameError(true);
+                    }
                     throw new Error(errorData.detail);
+
                 });
             } else {
                 throw new Error('Network response was not ok');
@@ -121,7 +80,7 @@ export function Register() {
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">
             <img
               alt="Your Company"
-              src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
+              src="/logo.svg"
               className="mx-auto h-10 w-auto"
             />
             <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
@@ -130,13 +89,13 @@ export function Register() {
             </h2>
           </div>
 
-     
-      <div className="mt-1 sm:mx-auto sm:w-full sm:max-w-sm">
-            <div className="flex bg-red-50 p-3 m-2 rounded-md">
+          
+          <div className="mt-1 sm:mx-auto sm:w-full sm:max-w-sm">
+            <div className="flex bg-yellow-50 p-3 m-2 rounded-md">
               <div className="p-2">
-                <ExclamationTriangleIcon aria-hidden="true" className="size-5 mt-5 text-red-400" />
+                <ExclamationTriangleIcon aria-hidden="true" className="size-5 mt-5 text-yellow-400" />
               </div>
-              <div className="ml-2 text-red-800 text-sm p-2">Warning! This app is still under development. Your data may be deleted at any point and you will have to reregister.  </div>
+              <div className="ml-2 text-yellow-800 text-sm p-2">Warning! This app is still under development. Your data may be deleted at any point and you will have to reregister.  </div>
           </div>
 
             <div className="sm:col-span-4">
@@ -158,7 +117,13 @@ export function Register() {
                 </div>
               </div>
             </div>
+            {usernameError?
+              <div className="flex bg-red-50 p-3 m-2 rounded-md">
+                <div className="text-red-800 text-sm p-2">A user with this username already exists.</div>
+              </div>:<></>}
           </div>
+
+      
   
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <form action="#" method="POST" className="space-y-6" onSubmit={handleSubmit}>
@@ -178,6 +143,11 @@ export function Register() {
                   />
                 </div>
               </div>
+
+              {emailError?
+              <div className="flex bg-red-50 p-3 m-2 rounded-md">
+                <div className="text-red-800 text-sm p-2">A user with this email already exists.</div>
+              </div>:<></>}
   
               <div>
                 <div className="flex items-center justify-between">

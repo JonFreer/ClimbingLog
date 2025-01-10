@@ -42,6 +42,10 @@ export function RoutePage(props: {
     (climb) => climb.route == id && climb.sent == true
   );
 
+
+
+
+
   const circuit = props.circuits.find((circuit) => circuit.id == route?.circuit_id);
   console.log("complete", complete, props.climbs);
   return (

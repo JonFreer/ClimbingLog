@@ -8,6 +8,16 @@ export const colors: { [key: string]: string } = {
     "black":"bg-gray-600",
 }
 
+export const colorsBorder: { [key: string]: string } = {
+    "violet":"border-violet-500",
+    "red":"border-red-500",
+    "green":"border-green-500",
+    "blue":"border-blue-500",
+    "yellow":"border-yellow-500",
+    "orange":"border-orange-500",
+    "black":"border-gray-500",
+}
+
 export const colorsBold: { [key: string]: string } = {
     "violet":"bg-violet-700",
     "red":"bg-red-700",

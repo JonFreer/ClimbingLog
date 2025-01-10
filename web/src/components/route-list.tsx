@@ -90,7 +90,7 @@ export function RouteList(props: {
                       onClick={()=>props.setSidebarRoute(route.id)}
                       className="bg-white shadow overflow-hidden sm:rounded-lg mt-2 cursor-pointer hover:bg-slate-50"
                     >
-                      <div className="px-4 py-5 sm:px-6 flex items-center justify-between">
+                      <div className="px-4 py-4 sm:px-6 flex items-center justify-between">
                         <div className="flex items-center">
                           <img
                             className="h-24 rounded"

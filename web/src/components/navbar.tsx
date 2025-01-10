@@ -58,9 +58,9 @@ export function NavBar(props: { user: User | false }) {
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex shrink-0 items-center">
               <img
-                alt="Your Company"
-                src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
-                className="h-8 w-auto"
+              alt="Your Company"
+              src="/logo.svg"
+              className="h-8 w-auto"// This will invert the colors and apply a hue shift to the SVG
               />
             </div>
             <div className="hidden sm:ml-6 sm:block">
@@ -149,11 +149,11 @@ export function NavBar(props: { user: User | false }) {
               <NavLink
                 to={"/login"}
                 // aria-current={item.current ? 'page' : undefined}
-                className={classNames("inline-flex w-full justify-center rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-500 sm:ml-3 sm:w-auto",
+                className={classNames("inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 sm:ml-3 sm:w-auto",
          
                 )}
               >
-                Login
+                + Login
               </NavLink>
             </div>
           )}

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router';
 
 export function Login() {
-
+    const [error, setError]= useState(false);
     const [formData, setFormData] = useState({
         username: '',
         password: ''
@@ -32,7 +32,10 @@ export function Login() {
                 return response.json();
             } else if (response.status === 400) {
                 return response.json().then(errorData => {
-                    throw new Error(errorData.detail);
+                    if (errorData.detail === 'LOGIN_BAD_CREDENTIALS') {
+                        setError(true);
+                    }
+                    // throw new Error(errorData.detail);
                 });
             } else {
                 throw new Error('Network response was not ok');
@@ -65,7 +68,7 @@ export function Login() {
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">
             <img
               alt="Your Company"
-              src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
+              src="/logo.svg"
               className="mx-auto h-10 w-auto"
             />
             <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
@@ -115,7 +118,11 @@ export function Login() {
                   />
                 </div>
               </div>
-  
+            {error?
+              <div className="flex bg-red-50 p-3 m-2 rounded-md">
+                <div className="text-red-800 text-sm p-2">The password or email entered is invalid.</div>
+              </div>:<></>}
+
               <div>
                 <button
                   type="submit"
