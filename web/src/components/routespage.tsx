@@ -47,6 +47,7 @@ useEffect(() => {
           color: colorsHex[props.circuits.find(circuit => circuit.id === route.circuit_id)?.color || 'black']
         
         }))}
+        selected_id={selectedRoute}
         updateDots={(_dots) => {}}
         setSelected={setSelectedRoute}
       />

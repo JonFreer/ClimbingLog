@@ -13,6 +13,7 @@ export interface Dot {
 
 const DraggableDotsCanvas = (props: {
   dots: Dot[];
+  selected_id: string|null;
   updateDots: (dots: Dot[]) => void;
   setSelected: (id: string) => void;
 }) => {
@@ -141,7 +142,17 @@ const DraggableDotsCanvas = (props: {
       }
 
       // Draw dots
+
+
       props.dots.forEach((dot) => {
+        if(dot.id === props.selected_id){
+          ctx.beginPath();
+          ctx.arc(dot.x, dot.y, dot.radius+2, 0, 2 * Math.PI);
+          ctx.fillStyle = dot.complete ? dot.color + "5e" : dot.color + "5e";
+          ctx.fill();
+          ctx.closePath();
+        }
+
         ctx.beginPath();
         ctx.arc(dot.x, dot.y, dot.radius, 0, 2 * Math.PI);
         ctx.fillStyle = dot.complete ? dot.color : dot.color + "5e";
