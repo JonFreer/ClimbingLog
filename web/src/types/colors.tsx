@@ -6,6 +6,7 @@ export const colors: { [key: string]: string } = {
     "yellow":"bg-yellow-600",
     "orange":"bg-orange-600",
     "black":"bg-gray-600",
+    "pink":"bg-pink-600",
 }
 
 export const colorsBorder: { [key: string]: string } = {
@@ -16,6 +17,7 @@ export const colorsBorder: { [key: string]: string } = {
     "yellow":"border-yellow-500",
     "orange":"border-orange-500",
     "black":"border-gray-500",
+    "pink":"border-pink-500",
 }
 
 export const colorsBold: { [key: string]: string } = {
@@ -26,6 +28,7 @@ export const colorsBold: { [key: string]: string } = {
     "yellow":"bg-yellow-700",
     "orange":"bg-orange-700",
     "black":"bg-gray-700",
+    "pink":"bg-pink-700",
 }
 
 export const colorsPastel: { [key: string]: string } = {
@@ -36,6 +39,7 @@ export const colorsPastel: { [key: string]: string } = {
     "yellow":"bg-yellow-500",
     "orange":"bg-orange-500",
     "black":"bg-gray-500",
+    "pink":"bg-pink-500",
 }
 
 export const colorsHex: { [key: string]: string } = {
@@ -46,4 +50,5 @@ export const colorsHex: { [key: string]: string } = {
     "yellow":"#ca8a040",
     "orange":"#ea580c",
     "black":"#4b5563",
+    "pink":"#db2777",
 }
