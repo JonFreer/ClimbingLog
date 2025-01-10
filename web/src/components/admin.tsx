@@ -277,6 +277,9 @@ export default function AddRow(props: {
       style: props.route?props.route.style:"",
       img: null, 
     });
+    setDots([
+      { x: (props.route?props.route.x:0), y: (props.route?props.route.y:0), isDragging: false, complete: true, radius:4, draggable:true, color: '#ff0000',id:''},
+    ])
   }, [props.route]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
