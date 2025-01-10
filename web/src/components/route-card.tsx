@@ -3,7 +3,7 @@ import { colors } from "../types/colors";
 import { Circuit, Route } from "../types/routes";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 
-export function RouteCard(props:{route:Route,climbs:any[],circuits:Circuit[], updateData : () => void}) {
+export function RouteCard(props:{route:Route,climbs:any[],circuits:Circuit[], updateData : () => void, setSidebarRoute: (route: string) => void}) {
 
     var sent_ids:string[] = [];
     if(props.climbs != undefined){
@@ -54,12 +54,12 @@ export function RouteCard(props:{route:Route,climbs:any[],circuits:Circuit[], up
                       ) : (
                       <div className={"w-14"}> </div>
                       )}
-                    <NavLink
-                      to={"/route/" + props.route.id}
+                    <button
+                      onClick={()=>props.setSidebarRoute(props.route.id)}
                       className={"ml-aut mt-2 text-white text-xs p-2 px-4 rounded-full flex items-center " + (circuit ? colors[circuit.color] || "" : "bg-turquoise-500 hover:bg-turquoise-600")}
                     >
                       <ChevronRightIcon className="h-5 w-5" />
-                    </NavLink>
+                    </button>
                     </div>
                     </div>
                   </div>

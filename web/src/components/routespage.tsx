@@ -4,6 +4,7 @@ import { RouteList } from "./route-list";
 import DraggableDotsCanvas from "./map";
 import { colorsHex } from "../types/colors";
 import { RouteCard } from "./route-card";
+import RouteSideBar from "./route-sidebar";
 
 export function RoutesPage(props: {
   routes: Route[];
@@ -13,10 +14,16 @@ export function RoutesPage(props: {
 }) {
 
 const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
+const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(undefined);
 
   return (
     <div>
-      
+      <RouteSideBar 
+        route={props.routes.find(route => route.id === sidebarRoute)}
+        circuits={props.circuits}
+        climbs={props.climbs}
+        updateData={props.updateData}
+        closeCallback={()=>setSidebarRoute(undefined)}></RouteSideBar>
       <DraggableDotsCanvas
         dots={props.routes.map((route) => ({
           id: route.id,
@@ -37,9 +44,10 @@ const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
         <RouteCard route={props.routes.find(route => route.id === selectedRoute)}
         circuits={props.circuits}
         climbs={props.climbs}
-        updateData={props.updateData}/>:''
+        updateData={props.updateData}
+        setSidebarRoute={setSidebarRoute}/>:''
         
-        }
+}
         
       
 
@@ -49,6 +57,7 @@ const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
         circuits={props.circuits}
         climbs={props.climbs}
         updateData={props.updateData}
+        setSidebarRoute={setSidebarRoute}
       />
     </div>
   );
