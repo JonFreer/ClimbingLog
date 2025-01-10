@@ -145,7 +145,7 @@ export function NavBar(props: { user: User | false }) {
               </Menu>
             </div>
           ) : (
-            <div>
+            <div className="absolute inset-y-0 top-3 right-0">
               <NavLink
                 to={"/login"}
                 // aria-current={item.current ? 'page' : undefined}

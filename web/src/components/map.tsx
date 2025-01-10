@@ -96,7 +96,7 @@ const DraggableDotsCanvas = (props: {
     const img = new Image();
     img.src = "depot.svg";
     img.onload = () => {
-      console.log("svg loaded", img);
+      console.log("svg loaded", img.width,img.height);
       svgImageRef.current = img;
       drawCanvas();
     };
@@ -137,7 +137,7 @@ const DraggableDotsCanvas = (props: {
 
       // Draw SVG
       if (svgImageRef.current) {
-        ctx.drawImage(svgImageRef.current, -150, -70);
+        ctx.drawImage(svgImageRef.current, -55, -70);
       }
 
       // Draw dots
