@@ -6,7 +6,7 @@ import {
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
-import { ExclamationTriangleIcon, TrashIcon, ArrowDownCircleIcon, ArrowUpCircleIcon } from "@heroicons/react/24/outline";
+import { ExclamationTriangleIcon, TrashIcon, ArrowDownCircleIcon, ArrowUpCircleIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { colors } from "../types/colors";
 import DraggableDotsCanvas, { Dot } from "./map";
 import DangerDialog from "./modal-dialogs";
@@ -16,7 +16,9 @@ export function AdminPage() {
   const [circuits, setCircuits] = useState<Circuit[]>([]);
   const [users, setUsers] = useState<User[]>([]);
 
-  const [routeModalOpen, setRouteModalOpen] = useState<string>("");
+  const [routeModalOpen, setRouteModalOpen] = useState<{
+    circuit_id: string;
+    route: null| Route;}>({circuit_id:"",route_id:null});
   const [deleteRouteModalOpen, setDeleteRouteModalOpen] = useState<string>("");
   const [deleteCircuitModalOpen, setDeleteCircuitModalOpen] = useState<string>("");
   const [circuiteModalOpen, setCircuitsModalOpen] = useState<boolean>(false);
@@ -144,7 +146,7 @@ export function AdminPage() {
 
   return (
     <div className="m-5">
-      <AddRow circuit_id={routeModalOpen} setOpen={setRouteModalOpen} />
+      <AddRow circuit_id={routeModalOpen.circuit_id} setOpen={setRouteModalOpen} route={routeModalOpen.route} />
       <AddCircuit open={circuiteModalOpen} setOpen={setCircuitsModalOpen} />
       <DangerDialog title={"Delete route"} 
             body={"Are you sure you want to delete this route? This route will be removed for everybody and cannot be undone."} 
@@ -197,14 +199,18 @@ export function AdminPage() {
               className="bg-gray-100 p-1 flex rounded mt-1"
             >
               <span className="p-2">{route.name}</span>
-              <button className="ml-auto text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md" onClick={()=>setDeleteRouteModalOpen(route.id)}>
+
+              <button className="ml-auto text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md" onClick={() => setRouteModalOpen({circuit_id:circuit.id,route:route})}>
+              <PencilIcon aria-hidden="true" className="h-5 w-5" />
+              </button>
+              <button className="ml-2 text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md" onClick={()=>setDeleteRouteModalOpen(route.id)}>
               <TrashIcon aria-hidden="true" className="h-5 w-5" />
               </button>
             </div>
             ))}
           <button
             className="inline-flex w-full justify-center rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-500 sm:w-auto mt-3 ml-auto"
-            onClick={() => setRouteModalOpen(circuit.id)}
+            onClick={() => setRouteModalOpen({circuit_id:circuit.id,route:null})}
           >
             Add Route
           </button>
@@ -243,24 +249,35 @@ export function AdminPage() {
 
 export default function AddRow(props: {
   circuit_id: string;
-  setOpen: (value: string) => void;
-}) {
+  route: Route | null;
+  setOpen: (value: {circuit_id:string, route:null}) => void;
+}
+) {
 
+  
   const [dots, setDots] = useState<Dot[]>([
-    // { x: 50, y: 50, isDragging: false, complete: false, radius: 3},
-    // { x: 150, y: 150, isDragging: false, complete: false, radius: 5 },
-    { x: 0, y: 0, isDragging: false, complete: true, radius:4, draggable:true, color: '#ff0000',id:''},
+    { x: (props.route?props.route.x:0), y: (props.route?props.route.y:0), isDragging: false, complete: true, radius:4, draggable:true, color: '#ff0000',id:''},
   ]);
 
   const open = props.circuit_id !== "";
    
   const [formData, setFormData] = useState<{name:string, location:string, grade:string, style:string, img:File | null}>({
-    name: "",
-    location: "",
-    grade: "",
-    style: "",
+    name: props.route?props.route.name:"",
+    location: props.route?props.route.location:"",
+    grade: props.route?props.route.name:"",
+    style: props.route?props.route.style:"",
     img: null, 
   });
+
+  useEffect(() => {
+    setFormData({
+      name: props.route?props.route.name:"",
+      location: props.route?props.route.location:"",
+      grade: props.route?props.route.name:"",
+      style: props.route?props.route.style:"",
+      img: null, 
+    });
+  }, [props.route]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -272,6 +289,7 @@ export default function AddRow(props: {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     
     const formDataToSend = new FormData();
     formDataToSend.append("name", formData.name);
@@ -282,14 +300,21 @@ export default function AddRow(props: {
     formDataToSend.append("x", dots[0].x.toString());
     formDataToSend.append("y", dots[0].y.toString());
 
-    if (formData.img == null){
+    if (formData.img == null && !props.route) {
         return;
     }
+    if (formData.img){
+      formDataToSend.append("file", formData.img);
+    }
 
-    formDataToSend.append("file", formData.img);
+    const url = props.route? "api/routes/update":"api/routes/create_with_image"
+    const method = props.route? "PATCH":"POST"
+    if(props.route){
+      formDataToSend.append("route_id", props.route.id);
+    }
 
-    fetch("api/routes/create_with_image", {
-      method: "POST",
+    fetch(url, {
+      method: method,
       headers: {
       "Authorization": `Bearer ${localStorage.getItem("token")}`
       },
@@ -311,7 +336,7 @@ export default function AddRow(props: {
       // localStorage.setItem("token", data.access_token);
       // // props.onSuccess(data.access_token);
       // window.location.href = "/";
-      props.setOpen("");
+      props.setOpen({circuit_id:"",route:null});
       })
       .catch((error) => {
       console.error(error);
@@ -319,7 +344,7 @@ export default function AddRow(props: {
   };
 
   return (
-    <Dialog open={open} onClose={()=>props.setOpen("")} className="relative z-10">
+    <Dialog open={open} onClose={()=>props.setOpen({circuit_id:"",route:null})} className="relative z-10">
       <DialogBackdrop
         transition
         className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
@@ -342,11 +367,11 @@ export default function AddRow(props: {
                       as="h3"
                       className="text-base font-semibold text-gray-900"
                     >
-                      Add a new route
+                      {props.route? "Edit Route":"Add a new route"}
                     </DialogTitle>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500 ">
-                        Add a new route to the circuit
+                      {props.route? "Update properties for existing route":"Add a new route to the circuit"}
                       </p>
                     </div>
 
@@ -375,6 +400,7 @@ export default function AddRow(props: {
                           id="name"
                           name="name"
                           type="text"
+                          defaultValue={props.route?.name}
                           required
                           className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                           onChange={handleChange}
@@ -396,6 +422,7 @@ export default function AddRow(props: {
                           id="location"
                           name="location"
                           required
+                          defaultValue={props.route?.location}
                           className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                           onChange={handleChange}
                         />
@@ -415,6 +442,7 @@ export default function AddRow(props: {
                         <input
                           id="grade"
                           name="grade"
+                          defaultValue={props.route?.grade}
                           required
                           className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                           onChange={handleChange}
@@ -435,6 +463,7 @@ export default function AddRow(props: {
                         <input
                           id="style"
                           name="style"
+                          defaultValue={props.route?.style}
                           required
                           className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                           onChange={handleChange}
@@ -442,7 +471,7 @@ export default function AddRow(props: {
                       </div>
                     </div>
                     <div>
-                      <ImageUpload imageCallback={(image)=>{setFormData({ ...formData,"img":image})}}></ImageUpload>
+                      <ImageUpload imageCallback={(image)=>{setFormData({ ...formData,"img":image})}} defaultUrl={props.route?"/api/img/"+props.route.id+".webp":""}></ImageUpload>
                     </div>
                   </div>
                 </div>
@@ -454,12 +483,12 @@ export default function AddRow(props: {
                 //   onClick={() => props.setOpen("")}
                   className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto"
                 >
-                  Add
+                  {props.route? "Update Route":"Add Route"}
                 </button>
                 <button
                   type="button"
                   data-autofocus
-                  onClick={() => props.setOpen("")}
+                  onClick={() => props.setOpen({circuit_id:"",route:null})}
                   className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                 >
                   Cancel
@@ -473,8 +502,14 @@ export default function AddRow(props: {
   );
 }
 
-function ImageUpload(props:{imageCallback: (image: File) => void}) {
+function ImageUpload(props:{imageCallback: (image: File) => void, defaultUrl: string}) {
+
+ 
   const [preview, setPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPreview(props.defaultUrl);
+  },[props.defaultUrl])
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

@@ -6,7 +6,7 @@ from ..db import get_db
 from ..models import Circuits, Routes
 from ..users import current_active_user, User
 from sqlalchemy.future import select
-from typing import Annotated, List
+from typing import Annotated, List, Optional
 from PIL import Image,ImageOps
 import uuid
 import io
@@ -55,6 +55,55 @@ async def create_route_with_image(
         img_thumb.save("./imgs/routes/thumb/" + str(new_route.id) + ".webp", "webp",quality=50)
         
         return new_route
+
+@router.patch("/routes/update", response_model=schemas.Route, tags=["routes"])
+async def update_route(
+    route_id: Annotated[uuid.UUID, Form(...)],
+    name: Annotated[str, Form(...)],
+    grade: Annotated[str, Form(...)],
+    location: Annotated[str, Form(...)],
+    style: Annotated[str, Form(...)],
+    circuit_id: Annotated[uuid.UUID, Form(...)],
+    x: Annotated[float, Form(...)],
+    y: Annotated[float, Form(...)],
+    file: Optional[UploadFile] = File(None),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(current_active_user),
+    ):
+    if not user.is_superuser:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    
+ 
+    if file is not None:
+        request_object_content = await file.read()
+        im = Image.open(io.BytesIO(request_object_content))
+        img_thumb = Image.open(io.BytesIO(request_object_content))
+        MAX_SIZE_2 = (200, 250) 
+        img_thumb = ImageOps.fit(img_thumb, MAX_SIZE_2, Image.LANCZOS)
+        im.save("./imgs/routes/full/" + str(route_id) + ".webp", "webp", quality=30)
+        img_thumb.save("./imgs/routes/thumb/" + str(route_id) + ".webp", "webp", quality=50)
+    
+
+    result = await db.execute(select(Routes).filter(Routes.id == route_id))
+    route = result.scalars().first()
+    if not route:
+        raise HTTPException(status_code=404, detail="Route not found")
+
+    route.name = name
+    route.grade = grade
+    route.location = location
+    route.style = style
+    route.circuit_id = circuit_id
+    route.x = x
+    route.y = y
+
+    db.add(route)
+    await db.commit()
+    await db.refresh(route)
+
+    # Save the image
+
+    return route
 
 @router.delete("/routes/remove_route/{route_id}", response_model=None, tags=["routes"])
 async def remove_route(
