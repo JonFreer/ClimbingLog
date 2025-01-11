@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogBackdrop,
@@ -19,6 +19,7 @@ export default function RouteSideBar(props: {
   updateData: () => void;
   closeCallback: () => void;
 }) {
+
   const [route, setRoute] = useState<Route>({
     id: "",
     name: "",
@@ -29,6 +30,12 @@ export default function RouteSideBar(props: {
     y: 0,
     grade: "",
   });
+
+  const [justCompleted, setJustCompleted] = useState(false);
+
+  useEffect(() => {
+    setJustCompleted(false);
+  },[props.route?.id]);
 
   useEffect(() => {
     if (props.route != undefined) {
@@ -87,13 +94,13 @@ export default function RouteSideBar(props: {
                
                 <div className="relative flex-1 ">
                 <div className={"relative p-4 flex justify-center items-center " + (circuit ? colorsPastel[circuit.color] || "" : "")}>
-                    <div className="relative inline-block m-auto">
+                    <div className="relative inline-block m-auto rounded-xl bg-white">
                         {complete? <div className="absolute bg-green-600 text-white right-[-13px] top-[-13px] z-50 rounded-lg px-3 py-2 font-bold text-xl drop-shadow-lg m-2">
                         Sent
                         </div> : ""}
-                       
+                          
                         <img
-                        className="max-h-96 rounded-xl"
+                        className={"max-h-96 rounded-xl " + (justCompleted ? "shimmer" : "")}
                         src={"/api/img/" + route.id + ".webp"}
                         ></img>
                     </div>
@@ -137,6 +144,7 @@ export default function RouteSideBar(props: {
                     <button
                       onClick={() => {
                         add_send(route.id, props.updateData);
+                        setJustCompleted(true);
                       }}
                       className={"rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  " +  (circuit ? colors[circuit.color] || "" : "") +" "+  (circuit ? "hover:"+colorsBold[circuit.color] || "" : "") }
                     >
