@@ -27,6 +27,24 @@ useEffect(() => {
 }, [filterCircuits]);
 
   const anyFitlered  = Object.values(filterCircuits).some((circuit) => circuit == true);
+
+  // Hijack the back button to close the sidebar
+  useEffect(() => {
+    const handlePopState = () => {
+      setSidebarRoute(undefined);
+      // window.onpopstate = undefined;
+    };
+
+    if (sidebarRoute) {
+      window.addEventListener("popstate", handlePopState);
+      window.history.pushState(null, "", window.location.href);
+    }
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [sidebarRoute]);
+
   return (
     <div>
       <RouteSideBar 

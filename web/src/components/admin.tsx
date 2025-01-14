@@ -146,7 +146,7 @@ export function AdminPage() {
 
   return (
     <div className="m-5">
-      <AddRow circuit_id={routeModalOpen.circuit_id} setOpen={setRouteModalOpen} route={routeModalOpen.route} />
+      <AddRow circuit_id={routeModalOpen.circuit_id} setOpen={setRouteModalOpen} route={routeModalOpen.route} routes={routes} circuits={circuits} />
       <AddCircuit open={circuiteModalOpen} setOpen={setCircuitsModalOpen} />
       <DangerDialog title={"Delete route"} 
             body={"Are you sure you want to delete this route? This route will be removed for everybody and cannot be undone."} 
@@ -185,7 +185,7 @@ export function AdminPage() {
           {routes
             .filter((route) => route.circuit_id === circuit.id).length} Routes
           </span>
-          <button className="ml-auto text-gray-400 p-2 hover:text-gray-700 hover:bg-gray-400 rounded-md z-50" onClick={()=>setDeleteCircuitModalOpen(circuit.id)}>
+          <button className="ml-auto text-gray-400 p-2 hover:text-gray-700 hover:bg-gray-400 rounded-md z-10" onClick={()=>setDeleteCircuitModalOpen(circuit.id)}>
           <TrashIcon aria-hidden="true" className="h-5 w-5" />
           </button>
         </button>
@@ -248,6 +248,8 @@ export function AdminPage() {
 }
 
 export default function AddRow(props: {
+  routes: Route[];
+  circuits: Circuit[];
   circuit_id: string;
   route: Route | null;
   setOpen: (value: {circuit_id:string, route:null}) => void;
@@ -260,9 +262,11 @@ export default function AddRow(props: {
   ]);
 
   const open = props.circuit_id !== "";
-   
+  const circuite_name = props.circuits.find((circuit) => circuit.id === props.circuit_id)?.name || "";
+  const num_routes_in_circuit = props.routes.filter((route) => route.circuit_id === props.circuit_id).length;
+
   const [formData, setFormData] = useState<{name:string, location:string, grade:string, style:string, img:File | null}>({
-    name: props.route?props.route.name:"",
+    name: props.route?props.route.name:circuite_name[0]+(num_routes_in_circuit+1),
     location: props.route?props.route.location:"",
     grade: props.route?props.route.name:"",
     style: props.route?props.route.style:"",
@@ -270,8 +274,12 @@ export default function AddRow(props: {
   });
 
   useEffect(() => {
+
+    const circuite_name = props.circuits.find((circuit) => circuit.id === props.circuit_id)?.name || "";
+    const num_routes_in_circuit = props.routes.filter((route) => route.circuit_id === props.circuit_id).length;
+
     setFormData({
-      name: props.route?props.route.name:"",
+      name: props.route?props.route.name:circuite_name[0]+(num_routes_in_circuit+1),
       location: props.route?props.route.location:"",
       grade: props.route?props.route.name:"",
       style: props.route?props.route.style:"",
@@ -403,7 +411,7 @@ export default function AddRow(props: {
                           id="name"
                           name="name"
                           type="text"
-                          defaultValue={props.route?.name}
+                          defaultValue={props.route?props.route?.location:circuite_name[0]+(num_routes_in_circuit+1)}
                           required
                           className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                           onChange={handleChange}
@@ -425,14 +433,36 @@ export default function AddRow(props: {
                           id="location"
                           name="location"
                           required
-                          defaultValue={props.route?.location}
+                          defaultValue={props.route?props.route?.name:""}
+                          list={"locations"}
+                          temp=""
+                          onFocus={(event) => {
+                            event.target.temp = event.target.value;
+                            event.target.value = "";
+                            event.target.value = event.target.temp;
+                          }}
                           className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                           onChange={handleChange}
                         />
+                          <datalist id="locations">
+                            <option value="Smol Slab"/>
+                            <option value="Slab"/>
+                            <option value="Skip"/>
+                            <option value="Cave"/>
+                            <option value="Shutter Right"/>
+                            <option value="Shutter Left"/>
+                            <option value="Comp Wall"/>
+                            <option value="Comp Overhang"/>
+                            <option value="Fire Escape"/>
+                            <option value="Island N"/>
+                            <option value="Island S"/>
+                            <option value="Island E"/>
+                            <option value="Island W"/>
+                        </datalist>
                       </div>
                     </div>
 
-                    <div>
+                    {/* <div>
                       <div className="flex items-center justify-between">
                         <label
                           htmlFor="grade"
@@ -451,7 +481,7 @@ export default function AddRow(props: {
                           onChange={handleChange}
                         />
                       </div>
-                    </div>
+                    </div> */}
 
                     <div>
                       <div className="flex items-center justify-between">
@@ -467,7 +497,6 @@ export default function AddRow(props: {
                           id="style"
                           name="style"
                           defaultValue={props.route?.style}
-                          required
                           className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                           onChange={handleChange}
                         />
@@ -519,8 +548,41 @@ function ImageUpload(props:{imageCallback: (image: File) => void, defaultUrl: st
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result as string);
-        props.imageCallback(file);
+        const img = new Image();
+        img.src = reader.result as string;
+        //scale and compress the image bbefore sending it to the server
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+
+          const maxHeight = 1920;
+          let { width, height } = img;
+
+          if (height > maxHeight) {
+            width = (width * maxHeight) / height;
+            height = maxHeight;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const webpFile = new File([blob], "image.webp", {
+                  type: "image/webp",
+                });
+                console.log(`WebP file size: ${webpFile.size} bytes`);
+                setPreview(URL.createObjectURL(webpFile));
+                props.imageCallback(webpFile);
+              }
+            },
+            "image/webp",
+            0.8 // Compression quality
+          );
+        };
       };
       reader.readAsDataURL(file);
     }
