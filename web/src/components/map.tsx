@@ -348,7 +348,7 @@ const DraggableDotsCanvas = (props: {
       transformRef.current.scale;
 
     const clickedDot = props.dots.filter((dot) => {
-      return Math.hypot(dot.x - x, dot.y - y) < 5;
+      return Math.hypot(dot.x - x, dot.y - y) < dot.radius+1;
     });
 
     if (clickedDot.length > 0) {
@@ -359,7 +359,7 @@ const DraggableDotsCanvas = (props: {
 
   function dotClicked(x:number, y: number) {
     return props.dots.some((dot) => {
-      if (dot.draggable && Math.hypot(dot.x - x, dot.y - y) < 5) {
+      if (dot.draggable && Math.hypot(dot.x - x, dot.y - y) < dot.radius+1) {
         props.updateDots(
           props.dots.map((d) =>
             d.x === dot.x && d.y === dot.y ? { ...d, isDragging: true } : d

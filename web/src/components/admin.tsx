@@ -191,6 +191,14 @@ export function AdminPage() {
         </button>
         {circuit.open && (
           <div className="ml-4 mt-2">
+          <div className="flex">
+          <button
+            className="ml-auto justify-center rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-500 sm:w-auto mb-1"
+            onClick={() => setRouteModalOpen({circuit_id:circuit.id,route:null})}
+          >
+            Add Route
+          </button>
+          </div>
           {routes
             .filter((route) => route.circuit_id === circuit.id)
             .map((route) => (
@@ -208,12 +216,7 @@ export function AdminPage() {
               </button>
             </div>
             ))}
-          <button
-            className="inline-flex w-full justify-center rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-500 sm:w-auto mt-3 ml-auto"
-            onClick={() => setRouteModalOpen({circuit_id:circuit.id,route:null})}
-          >
-            Add Route
-          </button>
+       
           </div>
         )}
         </div>
@@ -258,7 +261,7 @@ export default function AddRow(props: {
 
   
   const [dots, setDots] = useState<Dot[]>([
-    { x: (props.route?props.route.x:0), y: (props.route?props.route.y:0), isDragging: false, complete: true, radius:4, draggable:true, color: '#ff0000',id:''},
+    { x: (props.route?props.route.x:0), y: (props.route?props.route.y:0), isDragging: false, complete: true, radius:6, draggable:true, color: '#ff0000',id:''},
   ]);
 
   const open = props.circuit_id !== "";
@@ -286,7 +289,7 @@ export default function AddRow(props: {
       img: null, 
     });
     setDots([
-      { x: (props.route?props.route.x:0), y: (props.route?props.route.y:0), isDragging: false, complete: true, radius:4, draggable:true, color: '#ff0000',id:''},
+      { x: (props.route?props.route.x:0), y: (props.route?props.route.y:0), isDragging: false, complete: true, radius:6, draggable:true, color: '#ff0000',id:''},
     ])
   }, [props.route]);
 
