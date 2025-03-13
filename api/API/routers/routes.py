@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, UploadFile, File,Form,HTTPException
 from fastapi.responses import Response, FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..db import get_db
-from ..models import Circuits, Routes
+from ..models import Circuits, Climbs, Routes
 from ..users import current_active_user, User
 from sqlalchemy.future import select
 from typing import Annotated, List, Optional
@@ -20,6 +20,28 @@ async def get_all_routes(
     result = await db.execute(select(Routes))
     routes = result.scalars().all()
     return routes
+
+@router.get("/routes/sent_by/{route_id}", response_model=schemas.SentBy, tags=["routes"])
+async def get_route(
+    route_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+):
+
+
+    sent_by = []
+    result = await db.execute(select(Climbs).where(Climbs.sent == True, Climbs.route == route_id))
+    climbs = result.scalars().all()
+
+    user_ids = set()
+    for climb in climbs:
+        if climb.user not in user_ids:
+            result = await db.execute(select(User).filter(User.id == climb.user))
+            user = result.scalars().first()
+            user_ids.add(climb.user)
+            if user.send_visible:
+                sent_by.append({"id": user.id, "username": user.username})
+
+    return {"users": sent_by, "num_users": len(user_ids)}
 
 @router.post("/routes/create_with_image", response_model=schemas.Route, tags=["routes"])
 async def create_route_with_image(

@@ -41,3 +41,11 @@ class Climb(BaseModel):
     time: datetime.datetime
     route: uuid.UUID
     user: uuid.UUID
+
+class UserNamePair(BaseModel):
+    username: str
+    id: uuid.UUID
+
+class SentBy(BaseModel):
+    users: list[UserNamePair]
+    num_users: int

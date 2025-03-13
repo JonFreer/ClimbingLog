@@ -35,3 +35,8 @@ export interface Climb{
     route: string;
     user: string;
 }
+
+export interface SentBy{
+    users: {id:string,username:string}[];
+    num_users:number;
+}

@@ -9,7 +9,7 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import { XMarkIcon, HeartIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Circuit, Climb, Route } from "../types/routes";
+import { Circuit, Climb, Route, SentBy } from "../types/routes";
 import { colors, colorsBold, colorsPastel } from "../types/colors";
 
 export default function RouteSideBar(props: {
@@ -19,6 +19,17 @@ export default function RouteSideBar(props: {
   updateData: () => void;
   closeCallback: () => void;
 }) {
+
+  const [sentBy, setSentBy] = useState<SentBy>({users:[],num_users:0});
+
+  function updateSentBy(){
+    if (props.route) {
+      fetch("api/routes/sent_by/"+props.route.id)
+      .then((response) => response.json())
+      .then((data) => setSentBy(data))
+      .catch((error) => console.error("Error fetching sent_by:", error));
+    }
+  }
 
   const [route, setRoute] = useState<Route>({
     id: "",
@@ -40,6 +51,7 @@ export default function RouteSideBar(props: {
   useEffect(() => {
     if (props.route != undefined) {
       setRoute(props.route);
+      updateSentBy();
     }
   }, [props.route]);
 
@@ -152,7 +164,21 @@ export default function RouteSideBar(props: {
                     </button>
                   </div>
 
-                  <DialogTitle className="px-10 pt-4 text-base font-semibold text-gray-600">
+
+                  {sentBy.num_users!=0 ?  <>
+                    <div className="px-10 pt-5 text-m mx-1 text-gray-400 flex">
+                    Sent by
+                    {sentBy.users.length > 0 ?  <a key={sentBy.users[0].id} className="font-bold ml-1">{sentBy.users[0].username}</a>:null}
+                    {sentBy.users.length > 1 ?  <a key={sentBy.users[1].id} className="font-bold">, {sentBy.users[1].username}</a>:null}
+                    {sentBy.num_users - (sentBy.users.length - 2) > 2 && (
+                      <span className="ml-1">
+                       and <span className="font-bold">{sentBy.num_users - 2} {sentBy.num_users - 2==1? "other":"others"}</span>
+                      </span>
+                    )}
+                    </div>
+                  </>:<></>}
+
+                  <DialogTitle className="px-10 pt-5 text-base font-semibold text-gray-600">
                     History
                   </DialogTitle>
                   {attempts.length + sends.length > 0 && (

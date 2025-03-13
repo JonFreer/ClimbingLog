@@ -1,9 +1,10 @@
 import { NavLink } from "react-router";
 import { colors } from "../types/colors";
-import { Circuit, Route } from "../types/routes";
+import { Circuit, Route, SentBy } from "../types/routes";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 
 export function RouteCard(props:{route:Route,climbs:any[],circuits:Circuit[], updateData : () => void, setSidebarRoute: (route: string) => void}) {
+
 
     var sent_ids:string[] = [];
     if(props.climbs != undefined){
