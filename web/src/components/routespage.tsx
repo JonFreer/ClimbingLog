@@ -62,7 +62,7 @@ useEffect(() => {
           y: route.y,
           isDragging: false,
           complete: props.climbs.filter((climb) => climb.route === route.id && climb.sent ).length == 0,
-          radius: 3,
+          radius: 4,
           draggable: false,
           color: colorsHex[props.circuits.find(circuit => circuit.id === route.circuit_id)?.color || 'black']
         
@@ -72,17 +72,17 @@ useEffect(() => {
         setSelected={setSelectedRoute}
       />
 
-      <div className="mx-8 mt-4 flex flex-wrap gap-2 justify-center">
-        <div className="text-sm font-medium text-gray-600">
+      <div className="mx-4 mt-4 flex flex-wrap gap-2 justify-center">
+        <div className="text-md font-medium text-gray-600">
         Filters:
         </div>
-        {props.circuits.filter((circuit)=>filterCircuits[circuit.id]).map((circuit) => <button className={"rounded-full px-2 py-1 text-xs font-medium text-white " + (colors[circuit.color] || "") + " hover:"+ (colorsBold[circuit.color] || "")}
+        {props.circuits.filter((circuit)=>filterCircuits[circuit.id]).map((circuit) => <button className={"rounded-full px-3 py-1 text-sm font-medium text-white " + (colors[circuit.color] || "") + " hover:"+ (colorsBold[circuit.color] || "")}
          onClick={() => setFilterCircuits((prev) => ({...prev, [circuit.id]: false}))}>
           <XMarkIcon className="h-3 w-3 inline-block mr-1"/>
           {circuit.name}
         </button>)}
 
-        {props.circuits.filter((circuit)=>!filterCircuits[circuit.id]).map((circuit) => <button className={"rounded-full px-2 py-[2px] text-xs font-medium text-gray-600 border-2 "+ (colorsBorder[circuit.color] || "") }
+        {props.circuits.filter((circuit)=>!filterCircuits[circuit.id]).map((circuit) => <button className={"rounded-full px-3 py-[2px] text-sm font-medium text-gray-600 border-2 "+ (colorsBorder[circuit.color] || "") }
         onClick={() => setFilterCircuits((prev) => ({...prev, [circuit.id]: true}))}>
           + {circuit.name}
         </button>)}
