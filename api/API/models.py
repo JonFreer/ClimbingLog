@@ -11,6 +11,7 @@ class Base(DeclarativeBase):
 class User(SQLAlchemyBaseUserTableUUID, Base):
     username = Column(String, index=True, nullable=False, unique=True)
     profile_visible = Column(Boolean, index=True, nullable=False, default=True)
+    route_setter = Column(Boolean, index=True, nullable=False, default=False)
     send_visible = Column(Boolean, index=True, nullable=False, default=True)
     about = Column(String, index=False, nullable=False, default="")
 

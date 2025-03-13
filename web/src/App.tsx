@@ -17,6 +17,7 @@ import { RoutePage } from "./components/routepage";
 import { API } from "./types/api";
 import Settings from "./components/settings";
 import DraggableDotsCanvas from "./components/map";
+import { RouteSettingPage } from "./components/route-setting";
 
 const ProtectedRoute = ({ authed, children }) => {
   if (!authed) {
@@ -137,6 +138,14 @@ function App() {
           element={
             <ProtectedRoute authed={user && user.is_superuser}>
               <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+           <Route
+          path="/route_setting"
+          element={
+            <ProtectedRoute authed={user && user.route_setter}>
+              <RouteSettingPage />
             </ProtectedRoute>
           }
         />

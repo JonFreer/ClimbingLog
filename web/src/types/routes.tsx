@@ -26,6 +26,7 @@ export interface User{
     is_superuser:boolean;
     profile_visible:boolean;
     send_visible:boolean;
+    route_setter:boolean;
 }
 
 export interface Climb{

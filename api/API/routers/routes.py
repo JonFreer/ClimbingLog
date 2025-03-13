@@ -56,7 +56,7 @@ async def create_route_with_image(
         db: AsyncSession = Depends(get_db),
         user: User = Depends(current_active_user),
     ):
-        if not user.is_superuser:
+        if not user.is_superuser and not user.route_setter:
             raise HTTPException(status_code=403, detail="Not enough permissions")
         if "image" not in file.content_type:
             raise HTTPException(status_code=500, detail="File type must be an image")
@@ -92,7 +92,7 @@ async def update_route(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(current_active_user),
     ):
-    if not user.is_superuser:
+    if not user.is_superuser and not user.route_setter:
         raise HTTPException(status_code=403, detail="Not enough permissions")
     
  
@@ -133,7 +133,7 @@ async def remove_route(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(current_active_user),
 ):
-    if not user.is_superuser:
+    if not user.is_superuser and not user.route_setter:
         raise HTTPException(status_code=403, detail="Not enough permissions")
     
     result = await db.execute(select(Routes).filter(Routes.id == route_id))
@@ -160,7 +160,7 @@ async def create_circuit(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(current_active_user),
 ):
-    if not user.is_superuser:
+    if not user.is_superuser and not user.route_setter:
         raise HTTPException(status_code=403, detail="Not enough permissions")
     new_circuit = Circuits(name=name, color=color)
     db.add(new_circuit)
@@ -174,7 +174,7 @@ async def remove_circuit(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(current_active_user),
 ):
-    if not user.is_superuser:
+    if not user.is_superuser and user.route_setter:
         raise HTTPException(status_code=403, detail="Not enough permissions")
     result = await db.execute(select(Circuits).filter(Circuits.id == circuit_id))
     circuit = result.scalars().first()

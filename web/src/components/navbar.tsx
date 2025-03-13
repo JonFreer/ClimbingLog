@@ -34,6 +34,10 @@ export function NavBar(props: { user: User | false }) {
   if(props.user && props.user.is_superuser){
     navigation.push({ name: "Admin", href: "/admin", current: false });
   }
+
+  if(props.user && props.user.route_setter){
+    navigation.push({ name: "Route Setting", href: "/route_setting", current: false });
+  }
   // }, []);
 
   return (
@@ -163,10 +167,9 @@ export function NavBar(props: { user: User | false }) {
       <DisclosurePanel className="sm:hidden">
         <div className="space-y-1 px-2 pb-3 pt-2">
           {navigation.map((item) => (
-            <DisclosureButton
+            <NavLink
               key={item.name}
-              as="a"
-              href={item.href}
+              to={item.href}
               aria-current={item.current ? "page" : undefined}
               className={classNames(
                 item.current
@@ -176,7 +179,7 @@ export function NavBar(props: { user: User | false }) {
               )}
             >
               {item.name}
-            </DisclosureButton>
+            </NavLink>
           ))}
         </div>
       </DisclosurePanel>

@@ -9,6 +9,7 @@ class UserRead(schemas.BaseUser[uuid.UUID]):
     about:str
     profile_visible: bool
     send_visible: bool
+    route_setter: bool
 
 
 class UserCreate(schemas.BaseUserCreate):

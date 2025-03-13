@@ -56,6 +56,61 @@ async def promote_user(
     await db.refresh(user_to_promote)
     return user_to_promote
 
+@router.post("/admin/users/demote/{user_id}", response_model=schemas.UserRead, tags=["admin"])
+async def demote_user(
+    user_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(current_active_superuser),
+):
+    if not user.is_superuser:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    result = await db.execute(select(User).filter(User.id == user_id))
+    user_to_promote = result.scalars().first()
+    if not user_to_promote:
+        raise HTTPException(status_code=404, detail="User not found")
+    user_to_promote.is_superuser = False
+    db.add(user_to_promote)
+    await db.commit()
+    await db.refresh(user_to_promote)
+    return user_to_promote
+
+
+@router.post("/admin/users/promote/route_setter/{user_id}", response_model=schemas.UserRead, tags=["admin"])
+async def promote_route_setter(
+    user_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(current_active_superuser),
+):
+    if not user.is_superuser:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    result = await db.execute(select(User).filter(User.id == user_id))
+    user_to_promote = result.scalars().first()
+    if not user_to_promote:
+        raise HTTPException(status_code=404, detail="User not found")
+    user_to_promote.route_setter = True
+    db.add(user_to_promote)
+    await db.commit()
+    await db.refresh(user_to_promote)
+    return user_to_promote
+
+@router.post("/admin/users/demote/route_setter/{user_id}", response_model=schemas.UserRead, tags=["admin"])
+async def demote_route_setter(
+    user_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(current_active_superuser),
+):
+    if not user.is_superuser:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    result = await db.execute(select(User).filter(User.id == user_id))
+    user_to_promote = result.scalars().first()
+    if not user_to_promote:
+        raise HTTPException(status_code=404, detail="User not found")
+    user_to_promote.route_setter = False
+    db.add(user_to_promote)
+    await db.commit()
+    await db.refresh(user_to_promote)
+    return user_to_promote
+
 # @router.get("/admin/users/get_all", response_model=List[schemas.UserRead], tags=["admin"])
 # async def list_users(
 #    db: AsyncSession = Depends(get_user_db),
