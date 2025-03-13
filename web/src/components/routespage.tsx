@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Circuit, Climb, Route } from "../types/routes";
+import { Circuit, Climb, Projects, Route } from "../types/routes";
 import { RouteList } from "./route-list";
 import DraggableDotsCanvas from "./map";
 import { colors, colorsBold, colorsBorder, colorsHex } from "../types/colors";
@@ -11,6 +11,7 @@ export function RoutesPage(props: {
   routes: Route[];
   climbs: Climb[];
   circuits: Circuit[];
+  projects: Projects
   updateData: () => void;
 }) {
 
@@ -51,6 +52,7 @@ useEffect(() => {
         route={props.routes.find(route => route.id === sidebarRoute)}
         circuits={props.circuits}
         climbs={props.climbs}
+        projects={props.projects}
         updateData={props.updateData}
         closeCallback={()=>setSidebarRoute(undefined)}></RouteSideBar>
       <DraggableDotsCanvas
@@ -96,13 +98,12 @@ useEffect(() => {
         
 }
         
-      
-
-      <h1 className="mx-8 mt-5 font-bold text-2xl">All Routes</h1>
+   
       <RouteList
         routes={props.routes}
         circuits={props.circuits}
         climbs={props.climbs}
+        projects={props.projects}
         updateData={props.updateData}
         setSidebarRoute={setSidebarRoute}
       />

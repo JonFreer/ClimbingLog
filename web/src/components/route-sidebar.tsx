@@ -8,14 +8,16 @@ import {
   DialogTitle,
   TransitionChild,
 } from "@headlessui/react";
+import {HeartIcon as HeartIconFill} from "@heroicons/react/24/solid";
 import { XMarkIcon, HeartIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Circuit, Climb, Route, SentBy } from "../types/routes";
+import { Circuit, Climb, Projects, Route, SentBy } from "../types/routes";
 import { colors, colorsBold, colorsPastel } from "../types/colors";
 
 export default function RouteSideBar(props: {
   route: Route | undefined;
   climbs: Climb[];
   circuits: Circuit[];
+  projects: Projects;
   updateData: () => void;
   closeCallback: () => void;
 }) {
@@ -121,9 +123,14 @@ export default function RouteSideBar(props: {
                     <DialogTitle className="p-2 text-base font-semibold text-gray-900">
                       {route.name}
                     </DialogTitle>
-                    <button className="ml-auto  hover:bg-gray-100 hover:text-gray-500 text-gray-400 p-2 rounded-full flex items-center">
+
+                    {!props.projects.includes(route.id) ? 
+                    <button onClick={()=>{add_project(route.id,props.updateData)}} className="ml-auto  hover:bg-gray-100 hover:text-gray-500 text-gray-400 p-2 rounded-full flex items-center">
                       <HeartIcon aria-hidden="true" className="size-6" />
-                    </button>
+                    </button>:
+                      <button onClick={()=>{remove_project(route.id,props.updateData)}} className="ml-auto  hover:bg-red-100 hover:text-red-500 text-red-500 p-2 rounded-full flex items-center">
+                      <HeartIconFill aria-hidden="true" className="size-6" />
+                    </button>}
                   </div>
 
                   <div className="px-8 grid grid-cols-2 gap-4">
@@ -231,6 +238,57 @@ export default function RouteSideBar(props: {
     </Dialog>
   );
 }
+
+function add_project(id: string | undefined, sucessCallback: () => void) {
+  const token = localStorage.getItem("token");
+  const formData = new FormData();
+  if (id) {
+    formData.append("route_id", id);
+  } else {
+    console.error("Route ID is undefined");
+    return;
+  }
+
+  fetch("/api/projects/me/add", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Project added:", data);
+      sucessCallback();
+    })
+    .catch((error) => console.error("Error adding project:", error));
+}
+
+function remove_project(id: string | undefined, sucessCallback: () => void) {
+  const token = localStorage.getItem("token");
+  const formData = new FormData();
+  if (id) {
+    formData.append("route_id", id);
+  } else {
+    console.error("Route ID is undefined");
+    return;
+  }
+
+  fetch("/api/projects/me/remove", {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Project removed:", data);
+      sucessCallback();
+    })
+    .catch((error) => console.error("Error removing project:", error));
+}
+
 
 function add_send(id: string | undefined, sucessCallback: () => void) {
   const token = localStorage.getItem("token");

@@ -1,5 +1,5 @@
 import { NavLink } from "react-router";
-import { Circuit, Route } from "../types/routes";
+import { Circuit, Projects, Route } from "../types/routes";
 import { useEffect, useState } from "react";
 import { colors } from "../types/colors";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
@@ -8,11 +8,10 @@ export function RouteList(props: {
   routes: Route[];
   climbs: any[];
   circuits: Circuit[];
+  projects: Projects;
   updateData: () => void;
   setSidebarRoute: (route: string) => void;
 }) {
-  const [routeModalOpen, setRouteModalOpen] = useState<string>("");
-  const [circuiteModalOpen, setCircuitsModalOpen] = useState<boolean>(false);
   // const [openCircuits, setCircuits] = useState<{ [key: string]: boolean }>({});
   const [openCircuits, setCircuits] = useState<{ [key: string]: boolean }>(
     () => {
@@ -38,6 +37,107 @@ export function RouteList(props: {
 
   return (
     <>
+      {props.projects.length > 0 ? 
+      <>
+        <h1 className="mx-8 mt-5 font-bold text-2xl">Your Projects</h1>
+        <div key={"projects"} className="mt-4 mx-8">
+            <button
+              className="bg-white hover:bg-gray-50 text-gray-900 font-medium py-2 px-4 rounded-lg shadow-sm w-full text-left flex justify-between items-center border border-gray-300"
+              onClick={() => {
+                setCircuits((prev) => ({
+                  ...prev,
+                  "projects": !prev["projects"],
+                }));
+              }}
+            >
+              <div className="flex items-center">
+                <span className="text-lg font-medium">Projects</span>
+                <span
+                  className={
+                    "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-white ml-4 bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-40% to-emerald-500 to-100%"
+                  }
+                >
+                  {
+                    props.routes.filter(
+                      (route) =>
+                        props.projects.includes(route.id) &&
+                        sent_ids.includes(route.id)
+                    ).length
+                  }{" "}
+                  /{" "}
+                  {
+                    props.routes.filter(
+                      (route) => props.projects.includes(route.id)
+                    ).length
+                  }{" "}
+                  Routes
+                </span>
+              </div>
+              <ChevronRightIcon
+                className={`h-5 w-5 transform transition-transform ${
+                  openCircuits["projects"] ? "rotate-90" : ""
+                }`}
+              />
+            </button>
+            {openCircuits["projects"] && (
+              <div className="ml mt-2" key={"projects"}> 
+                {props.routes
+                  .filter((route) => props.projects.includes(route.id))
+                  .map((route) => (
+                    <div
+                      key={route.id}
+                      onClick={()=>props.setSidebarRoute(route.id)}
+                      className="bg-white shadow overflow-hidden sm:rounded-lg mt-2 cursor-pointer hover:bg-slate-50"
+                    >
+                      <div className="px-4 py-4 sm:px-6 flex items-center justify-between">
+                        <div className="flex items-center">
+                          <img
+                            className="h-24 rounded"
+                            src={"/api/img_thumb/" + route.id + ".webp"}
+                            alt=""
+                          ></img>
+                          <div className="ml-4">
+                            <h3 className="text-lg leading-6 font-medium text-gray-900">
+                              {route.name}
+                            </h3>
+                            <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                              {route.location}
+                            </p>
+                            <div className="flex gap-2 mt-1">
+                              {route.style.split(",").map((style) => (
+                                <span className="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-gray-600">
+                                  {style}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          {sent_ids.includes(route.id) ? (
+                            <span
+                              className={
+                                "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white " +
+                                (colors[props.circuits.find(circuit => circuit.id === route.circuit_id)?.color || ""] || "")
+                              }
+                            >
+                              Sent
+                            </span>
+                          ) : (
+                            <div className={"w-14"}> </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
+      </>
+      : null
+      }
+
+      <h1 className="mx-8 mt-5 font-bold text-2xl">All Routes</h1>
+
       <div className={"m-8"}>
         {props.circuits.map((circuit) => (
           <div key={circuit.id} className="mt-4">
@@ -126,12 +226,6 @@ export function RouteList(props: {
                           ) : (
                             <div className={"w-14"}> </div>
                           )}
-                          {/* <button
-                            onClick={()=>props.setSidebarRoute(route.id)}
-                            className="ml-auto mt-2 bg-blue-500 hover:bg-blue-600 text-white text-xs p-2 px-4 rounded-full flex items-center"
-                          >
-                            <ChevronRightIcon className="h-5 w-5" />
-                          </button> */}
                         </div>
                       </div>
                     </div>
@@ -143,33 +237,5 @@ export function RouteList(props: {
       </div>
     </>
   );
-  //   return (
-  //     <ul role="list" className="divide-y divide-gray-100 m-5">
-  //       {props.routes.map((route) => (
-  //         <li key={route.id} className="flex justify-between gap-x-6 py-5">
-  //           <div className="flex min-w-0 gap-x-4">
-  //             <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-  //               Red
-  //             </span>
-  //             <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-  //               {route.location}
-  //             </span>
-  //              {route.style.split(',').map((style) =>
-  //                   <span className="inline-flex items-center rounded-md bg-indigo-100 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-  //                     {style}
-  //                 </span>
-  //              )}
 
-  //           </div>
-  //              <div> <NavLink to={"/route/"+route.id} className=" bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded self-center">
-  //                 {"View"}
-  //             </NavLink>
-  //             <a className=" ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded self-center">
-  //                 Sent
-  //             </a></div>
-
-  //         </li>
-  //       ))}
-  //     </ul>
-  //   );
 }

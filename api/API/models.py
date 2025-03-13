@@ -44,3 +44,8 @@ class Climbs(Base):
     time: datetime.datetime = Column(DateTime, index=True, nullable=False)
     route: uuid.UUID = Column(UUID(as_uuid=True), ForeignKey('routes.id'), index=True, nullable=False)
     user: uuid.UUID = Column(UUID(as_uuid=True), ForeignKey('user.id'), index=True, nullable=False)
+
+class Projects(Base):
+    __tablename__ = "projects"
+    route_id = Column(UUID(as_uuid=True), ForeignKey('routes.id'), primary_key=True, index=True, nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey('user.id'), primary_key=True, index=True, nullable=False)

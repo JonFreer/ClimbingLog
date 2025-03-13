@@ -10,7 +10,7 @@ import {
   Route,
   Routes,
 } from "react-router";
-import { Circuit, Route as RouteType, User, Climb } from "./types/routes";
+import { Circuit, Route as RouteType, User, Climb, Projects } from "./types/routes";
 import { AdminPage } from "./components/admin";
 import { RoutesPage } from "./components/routespage";
 import { RoutePage } from "./components/routepage";
@@ -33,6 +33,7 @@ function App() {
   const [routes, setRoutes] = useState<RouteType[]>([]);
   const [climbs, setClimbs] = useState<Climb[]>([]);
   const [circuits, setCircuits] = useState<Circuit[]>([]);
+  const [projects, setProjects] = useState<Projects>([]);
 
   function fetchClimbs() {
     API("GET", "/api/climbs/me/get_all")
@@ -42,6 +43,17 @@ function App() {
       })
       .catch((error) => {
         console.error("Error fetching climbs:", error);
+      });
+  }
+
+  function fetchProjects() {
+    API("GET", "/api/projects/me/get_all")
+      .then((data) => {
+        setProjects(data.data);
+        console.log("projects main", data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching projects:", error);
       });
   }
 
@@ -71,6 +83,7 @@ function App() {
     fetchClimbs();
     fetchRoutes();
     fetchCircuits();
+    fetchProjects();
   }
 
   // On component mount: Check if user logged in, if so load their achievements
@@ -78,6 +91,7 @@ function App() {
     fetchClimbs();
     fetchRoutes();
     fetchCircuits();
+    fetchProjects();
     checkAuth()
       .then((user_) => {
         setLoggedIn(user_);
@@ -144,6 +158,7 @@ function App() {
               routes={routes}
               circuits={circuits}
               climbs={climbs}
+              projects={projects}
               updateData={updateData}
             />
           }

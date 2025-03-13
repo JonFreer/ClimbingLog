@@ -40,3 +40,5 @@ export interface SentBy{
     users: {id:string,username:string}[];
     num_users:number;
 }
+
+export type Projects = string[];
