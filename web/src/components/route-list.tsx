@@ -39,7 +39,7 @@ export function RouteList(props: {
     <>
       {props.projects.length > 0 ? 
       <>
-        <div key={"projects"} className="mt-12 mx-8">
+        <div key={"projects"} className="mt-12 mx-4">
             <button
               className="bg-white hover:bg-gray-50 text-gray-900 font-medium  rounded-lg shadow w-full text-left flex justify-between items-center"
               onClick={() => {
@@ -49,11 +49,11 @@ export function RouteList(props: {
                 }));
               }}
             >
-              <div className="flex items-center">
+              <div className="flex items-center w-full">
                 <span className="text-lg font-bold text-white uppercase px-2 py-2 pr-10 min-w-52 text-center rounded-l-lg bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-40% to-emerald-500 to-100% clip-path">Your Projects</span>
                 <span
                   className={
-                    "font-bold ml-10"
+                    "font-bold ml-auto mr-2"
                   }
                 >
                   {
@@ -136,7 +136,7 @@ export function RouteList(props: {
       }
 
 
-      <div className={"mx-8"}>
+      <div className={"mx-4 mb-8"}>
         {props.circuits.map((circuit) => (
           <div key={circuit.id} className="mt-4">
             <button
@@ -148,12 +148,12 @@ export function RouteList(props: {
                 }));
               }}
             >
-              <div className="flex items-center">
+              <div className="flex items-center w-full">
                 <span className={"text-lg font-bold text-white uppercase px-2 py-2 pr-10 w-52 text-center rounded-l-lg clip-path truncate "+
                     (colors[circuit.color] || "")}>{circuit.name}</span>
-                <span
+                <div
                   className={
-                    "font-bold ml-10"
+                    "font-bold ml-auto mr-2"
                   }
                 >
                   {
@@ -170,7 +170,7 @@ export function RouteList(props: {
                     ).length
                   }{" "}
                   Routes
-                </span>
+                </div>
               </div>
               <ChevronRightIcon
                 className={`h-5 w-5 mr-3 transform transition-transform ${
