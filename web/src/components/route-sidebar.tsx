@@ -170,7 +170,7 @@ export default function RouteSideBar(props: {
                     Sent by
                     {sentBy.users.length > 0 ?  <a key={sentBy.users[0].id} className="font-bold ml-1">{sentBy.users[0].username}</a>:null}
                     {sentBy.users.length > 1 ?  <a key={sentBy.users[1].id} className="font-bold">, {sentBy.users[1].username}</a>:null}
-                    {sentBy.num_users - (sentBy.users.length - 2) > 2 && (
+                    {sentBy.users.length > 1 && sentBy.num_users > 2 && (
                       <span className="ml-1">
                        and <span className="font-bold">{sentBy.num_users - 2} {sentBy.num_users - 2==1? "other":"others"}</span>
                       </span>
