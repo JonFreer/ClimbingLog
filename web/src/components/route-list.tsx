@@ -39,7 +39,6 @@ export function RouteList(props: {
     <>
       {props.projects.length > 0 ? 
       <>
-        <h1 className="mx-8 mt-5 font-bold text-2xl">Your Projects</h1>
         <div key={"projects"} className="mt-4 mx-8">
             <button
               className="bg-white hover:bg-gray-50 text-gray-900 font-medium py-2 px-4 rounded-lg shadow-sm w-full text-left flex justify-between items-center border border-gray-300"
@@ -51,7 +50,7 @@ export function RouteList(props: {
               }}
             >
               <div className="flex items-center">
-                <span className="text-lg font-medium">Projects</span>
+                <span className="text-lg font-medium">Your Projects</span>
                 <span
                   className={
                     "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-white ml-4 bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-40% to-emerald-500 to-100%"
