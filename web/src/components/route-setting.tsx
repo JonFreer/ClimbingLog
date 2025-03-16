@@ -195,7 +195,11 @@ export default function AddRow(props: {
 }
 ) {
 
-  
+  const locations = ["Smol Slab","Slab","Skip","Cave","Shutter Right","Shutter Left","Comp Wall","Comp Overhang","Fire Escape","Island N","Island S","Island E","Island W","Ondra"];
+  const styles_list = ["Slab","Vertical","Overhang","Roof","Cave","Arete","Corner","Crack","Dihedral","Mantle","Dyno","Jump","Compression","Slopey","Pinch","Crimp","Jug","Pocket","Sloper","Undercling","Gaston","Heel Hook","Toe Hook","Knee Bar","Mantel","Match","Cross Through","Drop Knee","Lock Off","Deadpoint","Campus"]
+  const [location,setLocation] = useState<string>("");
+  const [styles, setStyles] = useState<string[]>([]);
+
   const [dots, setDots] = useState<Dot[]>([
     { x: (props.route?props.route.x:0), y: (props.route?props.route.y:0), isDragging: false, complete: true, radius:6, draggable:true, color: '#ff0000',id:''},
   ]);
@@ -204,11 +208,9 @@ export default function AddRow(props: {
   const circuite_name = props.circuits.find((circuit) => circuit.id === props.circuit_id)?.name || "";
   const num_routes_in_circuit = props.routes.filter((route) => route.circuit_id === props.circuit_id).length;
 
-  const [formData, setFormData] = useState<{name:string, location:string, grade:string, style:string, img:File | null}>({
+  const [formData, setFormData] = useState<{name:string,  grade:string,  img:File | null}>({
     name: props.route?props.route.name:circuite_name[0]+(num_routes_in_circuit+1),
-    location: props.route?props.route.location:"",
     grade: props.route?props.route.name:"",
-    style: props.route?props.route.style:"",
     img: null, 
   });
 
@@ -216,12 +218,11 @@ export default function AddRow(props: {
 
     const circuite_name = props.circuits.find((circuit) => circuit.id === props.circuit_id)?.name || "";
     const num_routes_in_circuit = props.routes.filter((route) => route.circuit_id === props.circuit_id).length;
-
+    setLocation(props.route?props.route.location:"");
+    setStyles(props.route?props.route.style.split(","):[]);
     setFormData({
       name: props.route?props.route.name:circuite_name[0]+(num_routes_in_circuit+1),
-      location: props.route?props.route.location:"",
       grade: props.route?props.route.name:"",
-      style: props.route?props.route.style:"",
       img: null, 
     });
     setDots([
@@ -243,9 +244,9 @@ export default function AddRow(props: {
     
     const formDataToSend = new FormData();
     formDataToSend.append("name", formData.name);
-    formDataToSend.append("location", formData.location);
+    formDataToSend.append("location", location);
     formDataToSend.append("grade", formData.grade);
-    formDataToSend.append("style", formData.style);
+    formDataToSend.append("style", styles.join(","));
     formDataToSend.append("circuit_id", props.circuit_id);
     formDataToSend.append("x", dots[0].x.toString());
     formDataToSend.append("y", dots[0].y.toString());
@@ -350,7 +351,7 @@ export default function AddRow(props: {
                           id="name"
                           name="name"
                           type="text"
-                          defaultValue={props.route?props.route?.location:circuite_name[0]+(num_routes_in_circuit+1)}
+                          defaultValue={props.route? props.route?.name:circuite_name[0]+(num_routes_in_circuit+1)}
                           required
                           className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                           onChange={handleChange}
@@ -367,37 +368,12 @@ export default function AddRow(props: {
                           Location
                         </label>
                       </div>
-                      <div className="mt-2">
-                        <input
-                          id="location"
-                          name="location"
-                          required
-                          defaultValue={props.route?props.route?.name:""}
-                          list={"locations"}
-                          temp=""
-                          onFocus={(event) => {
-                            event.target.temp = event.target.value;
-                            event.target.value = "";
-                            event.target.value = event.target.temp;
-                          }}
-                          className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                          onChange={handleChange}
-                        />
-                          <datalist id="locations">
-                            <option value="Smol Slab"/>
-                            <option value="Slab"/>
-                            <option value="Skip"/>
-                            <option value="Cave"/>
-                            <option value="Shutter Right"/>
-                            <option value="Shutter Left"/>
-                            <option value="Comp Wall"/>
-                            <option value="Comp Overhang"/>
-                            <option value="Fire Escape"/>
-                            <option value="Island N"/>
-                            <option value="Island S"/>
-                            <option value="Island E"/>
-                            <option value="Island W"/>
-                        </datalist>
+                      <div className="mt-2 flex gap-2 flex-wrap flex-grow justify-center">
+                        {locations.map((loc) => (
+                          <div onClick={()=>{setLocation(loc)}} className={"justify-center rounded-md  px-3 py-2 text-sm shadow-md sm:w-auto mb-1 cursor-pointer select-none " + (location === loc ? "bg-violet-600 hover:bg-violet-500 text-white ": "bg-white hover:bg-gray-100 text-gray-500")} key={loc} >
+                            {loc}
+                          </div>
+                        ))}
                       </div>
                     </div>
 
@@ -431,14 +407,18 @@ export default function AddRow(props: {
                           Style
                         </label>
                       </div>
-                      <div className="mt-2">
-                        <input
-                          id="style"
-                          name="style"
-                          defaultValue={props.route?.style}
-                          className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                          onChange={handleChange}
-                        />
+                      <div className="mt-2 flex gap-2 flex-wrap flex-grow justify-center">
+                        {styles_list.map((loc) => (
+                            <div onClick={()=>
+                            setStyles((prevStyles) =>
+                                prevStyles.includes(loc)
+                                    ? prevStyles.filter((style) => style !== loc)
+                                    : [...prevStyles, loc]
+                            )}
+                         className={"justify-center rounded-md  px-3 py-2 text-sm shadow-md sm:w-auto mb-1 cursor-pointer select-none " + (styles.includes(loc) ? "bg-violet-600 hover:bg-violet-500 text-white ": "bg-white hover:bg-gray-100 text-gray-500")} key={loc} >
+                            {loc}
+                          </div>
+                        ))}
                       </div>
                     </div>
                     <div>
