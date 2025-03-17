@@ -58,7 +58,7 @@ export const colorsHex: { [key: string]: string } = {
     "red":"#dc2626",
     "green":"#16a34a",
     "blue":"#2563eb",
-    "yellow":"#ca8a040",
+    "yellow":"#ca8a04",
     "orange":"#ea580c",
     "black":"#4b5563",
     "pink":"#db2777",
