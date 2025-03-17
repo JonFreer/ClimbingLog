@@ -23,7 +23,6 @@ export function RouteSettingPage() {
     set_id: string;
     route: null| Route;}>({set_id:"",route:null});
   const [deleteRouteModalOpen, setDeleteRouteModalOpen] = useState<string>("");
-  const [deleteCircuitModalOpen, setDeleteCircuitModalOpen] = useState<string>("");
   const [setModalOpen, setSetModalOpen] = useState<boolean>(false);
   const [openCircuit, setOpenCircuit] = useState<string>("");
   const [selectedSet, setSelectedSet] = useState<string>("");
@@ -124,33 +123,6 @@ export function RouteSettingPage() {
       });
   };
 
-  const removeCircuit = (circuit_id:string) => {
-    fetch(`api/circuits/remove/${circuit_id}`, {
-      method: "DELETE",
-      headers: {
-      "Authorization": `Bearer ${localStorage.getItem("token")}`
-      }
-    })
-      .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else if (response.status === 400) {
-        return response.json().then((errorData) => {
-        throw new Error(errorData.detail);
-        });
-      } else {
-        throw new Error("Network response was not ok");
-      }
-      })
-      .then((data) => {
-        console.log("Success:", data);
-        updateCircuits();
-        setDeleteCircuitModalOpen('');
-      })
-      .catch((error) => {
-      console.error(error);
-      });
-  };
 
   return (
     <div className="m-5">
@@ -161,13 +133,6 @@ export function RouteSettingPage() {
             cancleCallback={()=>setDeleteRouteModalOpen('')}
             open={deleteRouteModalOpen!==""}
             action_text="Delete route"/>
-
-    <DangerDialog title={"Delete circuit"} 
-              body={"Are you sure you want to delete this circuit? This circuit will be removed for everybody and all routes belonging to it."} 
-              actionCallback={()=>removeCircuit(deleteCircuitModalOpen)}
-              cancleCallback={()=>setDeleteCircuitModalOpen('')}
-              open={deleteCircuitModalOpen!==""}
-              action_text="Delete circuit"/>
 
       <AddSet open={setModalOpen} setOpen={setSetModalOpen} circuit_id={openCircuit} />
       <div className="flex gap-4 mt-5">

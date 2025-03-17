@@ -58,7 +58,7 @@ useEffect(() => {
         updateData={props.updateData}
         closeCallback={()=>setSidebarRoute(undefined)}></RouteSideBar>
       <DraggableDotsCanvas
-        dots={props.routes.filter((route)=>filterCircuits[route.set_id] || !anyFitlered).map((route) => ({
+        dots={props.routes.filter((route) => props.sets[route.set_id] && (filterCircuits[props.sets[route.set_id].circuit_id] || !anyFitlered)).map((route) => ({
           id: route.id,
           x: route.x,
           y: route.y,
@@ -66,7 +66,7 @@ useEffect(() => {
           complete: props.climbs.filter((climb) => climb.route === route.id && climb.sent ).length == 0,
           radius: 4,
           draggable: false,
-          color: colorsHex[props.circuits[route.set_id]?.color || 'black']
+          color: colorsHex[props.circuits[props.sets[route.set_id].circuit_id]?.color || 'black']
         
         }))}
         selected_id={selectedRoute}

@@ -24,6 +24,8 @@ export function AdminPage() {
   const [circuits, setCircuits] = useState<Record<string, Circuit>>({});
 
   const [circuiteModalOpen, setCircuitsModalOpen] = useState<boolean>(false);
+  const [deleteCircuitModalOpen, setDeleteCircuitModalOpen] = useState<string>("");
+
   
 
   function updateCircuits() {
@@ -166,9 +168,45 @@ export function AdminPage() {
       });
   };
 
+    const removeCircuit = (circuit_id:string) => {
+      fetch(`api/circuits/remove/${circuit_id}`, {
+        method: "DELETE",
+        headers: {
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+        }
+      })
+        .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else if (response.status === 400) {
+          return response.json().then((errorData) => {
+          throw new Error(errorData.detail);
+          });
+        } else {
+          throw new Error("Network response was not ok");
+        }
+        })
+        .then((data) => {
+          console.log("Success:", data);
+          updateCircuits();
+          setDeleteCircuitModalOpen('');
+        })
+        .catch((error) => {
+        console.error(error);
+        });
+    };
+  
+
   return (
     <div className="m-5">
       <AddCircuit open={circuiteModalOpen} setOpen={setCircuitsModalOpen} />
+      <DangerDialog title={"Delete circuit"} 
+                body={"Are you sure you want to delete this circuit? This circuit will be removed for everybody and all routes belonging to it."} 
+                actionCallback={()=>removeCircuit(deleteCircuitModalOpen)}
+                cancleCallback={()=>setDeleteCircuitModalOpen('')}
+                open={deleteCircuitModalOpen!==""}
+                action_text="Delete circuit"/>
+      
       
       <div className="flex items-center">
         <span className="font-bold text-2xl mt-4">Circuits</span>
