@@ -11,6 +11,39 @@ export default function Profile(props: {
   user: User | false;
   updateData: () => void;
 }){
+
+    const locationCounts = Object.entries(
+        props.climbs
+            .filter(climb => climb.sent)
+            .reduce((acc, climb) => {
+                const location = props.routes.find(route => route.id === climb.route)?.location;
+                if (location) {
+                    acc[location] = (acc[location] || 0) + 1;
+                }
+                return acc;
+            }, {} as Record<string, number>)
+    ).sort((a, b) => b[1] - a[1]).reduce((acc, [location, count]) => {
+        acc[location] = count;
+        return acc;
+    }, {} as Record<string, number>);
+
+    const styleCounts = Object.entries(
+        props.climbs
+            .filter(climb => climb.sent)
+            .reduce((acc, climb) => {
+                const styles = props.routes.find(route => route.id === climb.route)?.style.split(',') || [];
+                styles.forEach(style => {
+                    if (style) {
+                        acc[style.trim()] = (acc[style.trim()] || 0) + 1;
+                    }
+                });
+                return acc;
+            }, {} as Record<string, number>)
+    ).sort((a, b) => b[1] - a[1]).reduce((acc, [style, count]) => {
+        acc[style] = count;
+        return acc;
+    }, {} as Record<string, number>);
+
     return(
         <div className="bg-gray-100 min-h-screen p-4">
         <div className="max-w-3xl mx-auto bg-white rounded-t-xl">
@@ -33,28 +66,61 @@ export default function Profile(props: {
 
             <div className="mt-8 m-8 font-bold">
              Total sends: {props.climbs.filter(climb => climb.sent).length}
-            </div>
+
+             {locationCounts && Object.keys(locationCounts).length > 0 && (
+                <div className="mt-4">      
+                    <div className="font-bold">Location Breakdown</div>
+                    <div className="flex font-normal mt-4 gap-2 overflow-x-scroll ">
+                            {Object.keys(locationCounts).map(location => (
+                                    <div key={location} className="mb-4 items-center text-nowrap rounded-full bg-indigo-100 px-3 py-1 text-sm font-medium text-gray-600">
+                                        <div className="">{location} : {locationCounts[location]}</div>
+                                        
+                                    </div>
+                            ))}
+                    </div>
+                </div>
+             )}
+
+                {locationCounts && Object.keys(styleCounts).length > 0 && (
+                <div className="mt-4">      
+                    <div className="font-bold">Style Breakdown</div>
+                    <div className="flex font-normal mt-4 gap-2 overflow-x-scroll ">
+                            {Object.keys(styleCounts).map(style => (
+                                    <div key={style} className="mb-4 items-center text-nowrap rounded-full bg-indigo-100 px-3 py-1 text-sm font-medium text-gray-600">
+                                        <div className="">{style} : {styleCounts[style]}</div>
+                                        
+                                    </div>
+                            ))}
+                    </div>
+                </div>
+             )}
+
+             </div>
 
             <div className="mt-8 m-8 font-bold">
                 Recent Sends
-                <div className="flex flex-col bg-white m-auto p-auto mt-5">
+            </div>
+            <div className="m-2">
+                <div className="flex flex-col bg-white m-auto p-auto mt-5 relative">
                     <div className="flex overflow-x-scroll pb-10 hide-scroll-bar">
-                    <div className="flex gap-4 flex-nowrap lg:ml-40 md:ml-20 ml-10">
-                    {props.climbs
-                        .filter(climb => climb.sent)
-                        .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
-                        .slice(0, 20)
-                        .map((climb) => (
-                            <RouteCard 
-                                key={climb.route}
-                                route={props.routes.find(route => route.id === climb.route)}
-                                circuits={props.circuits}
-                                sets={props.sets}
-                                climb={climb}
-                            />
-                    ))}
-                </div>
-                </div>
+                        <div className="flex gap-4 flex-nowrap lg:ml-40 md:ml-20 ml-10">
+                            {props.climbs
+                                .filter(climb => climb.sent)
+                                .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+                                .slice(0, 20)
+                                .map((climb) => (
+                                    <RouteCard 
+                                        key={climb.route}
+                                        route={props.routes.find(route => route.id === climb.route)}
+                                        circuits={props.circuits}
+                                        sets={props.sets}
+                                        climb={climb}
+                                    />
+                            ))}
+                        </div>
+                    </div>
+                    <div className="absolute top-0 left-0 h-full w-2 bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
+                    <div className="absolute top-0 right-0 h-full w-2 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
                 </div>
             </div>
            
