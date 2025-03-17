@@ -237,6 +237,7 @@ export default function Profile(props: {
                         <div className="flex gap-4 flex-nowrap lg:ml-40 md:ml-20 ml-10">
                             {climbs
                                 .filter(climb => climb.sent)
+                                .filter(climb => props.routes.find(route => route.id === climb.route))
                                 .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
                                 .slice(0, 20)
                                 .map((climb) => (
