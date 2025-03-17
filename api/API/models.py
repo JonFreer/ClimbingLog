@@ -23,7 +23,7 @@ class Routes(Base):
     grade: str = Column(String, index=True, nullable=False)
     location: str = Column(String, index=True, nullable=False)
     style: str = Column(String, index=True, nullable=False)
-    circuit_id: uuid.UUID = Column( UUID(as_uuid=True), index=True, nullable=False)
+    set_id: uuid.UUID = Column( UUID(as_uuid=True), index=True, nullable=False)
     name: str = Column(String, index=True, nullable=True)
     x: float = Column(Float, index=False, nullable=False)
     y: float = Column(Float, index=False, nullable=False)
@@ -35,6 +35,16 @@ class Circuits(Base):
     )
     name: str = Column(String, index=True, nullable=False)
     color: str = Column(String, index=False, nullable=False)
+
+class Sets(Base):
+    __tablename__ = "sets"
+    id: uuid.UUID = Column(
+        UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4
+    )
+    circuit_id: uuid.UUID = Column(UUID(as_uuid=True), ForeignKey('circuits.id'), index=True, nullable=False)
+    date: datetime.datetime = Column(DateTime, index=True, nullable=False)
+    name: str = Column(String, index=True, nullable=True)
+
 
 class Climbs(Base):
     __tablename__ = "climbs"

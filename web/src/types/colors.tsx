@@ -42,6 +42,17 @@ export const colorsPastel: { [key: string]: string } = {
     "pink":"bg-pink-500",
 }
 
+export const colorsFaint: { [key: string]: string } = {
+    "violet":"bg-violet-400",
+    "red":"bg-red-400",
+    "green":"bg-green-400",
+    "blue":"bg-blue-400",
+    "yellow":"bg-yellow-400",
+    "orange":"bg-orange-400",
+    "black":"bg-gray-400",
+    "pink":"bg-pink-400",
+}
+
 export const colorsHex: { [key: string]: string } = {
     "violet":"#7c3bed",
     "red":"#dc2626",

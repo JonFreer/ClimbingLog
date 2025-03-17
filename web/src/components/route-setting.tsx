@@ -1,5 +1,7 @@
+'use client'
+
 import { useEffect, useRef, useState } from "react";
-import { Circuit, Route, User } from "../types/routes";
+import { Circuit, Route, Set } from "../types/routes";
 import {
   Dialog,
   DialogBackdrop,
@@ -7,20 +9,50 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import { ExclamationTriangleIcon, TrashIcon, ArrowDownCircleIcon, ArrowUpCircleIcon, PencilIcon, WrenchIcon } from "@heroicons/react/24/outline";
-import { colors } from "../types/colors";
+import { colors, colorsBold, colorsBorder, colorsFaint, colorsPastel } from "../types/colors";
 import DraggableDotsCanvas, { Dot } from "./map";
 import DangerDialog from "./modal-dialogs";
+import { AddSet } from "./modals/add_set";
 
 export function RouteSettingPage() {
   const [routes, setRoutes] = useState<Route[]>([]);
-  const [circuits, setCircuits] = useState<Circuit[]>([]);
+  const [circuits, setCircuits] = useState<Record<string, Circuit>>({});
+  const [sets, setSets] = useState<Record<string, Set>>({});
 
   const [routeModalOpen, setRouteModalOpen] = useState<{
-    circuit_id: string;
-    route: null| Route;}>({circuit_id:"",route_id:null});
+    set_id: string;
+    route: null| Route;}>({set_id:"",route:null});
   const [deleteRouteModalOpen, setDeleteRouteModalOpen] = useState<string>("");
   const [deleteCircuitModalOpen, setDeleteCircuitModalOpen] = useState<string>("");
-  const [circuiteModalOpen, setCircuitsModalOpen] = useState<boolean>(false);
+  const [setModalOpen, setSetModalOpen] = useState<boolean>(false);
+  const [openCircuit, setOpenCircuit] = useState<string>("");
+  const [selectedSet, setSelectedSet] = useState<string>("");
+
+  useEffect(() => {
+    const savedCircuit = localStorage.getItem("openCircuit");
+    if (savedCircuit) {
+      setOpenCircuit(savedCircuit);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (openCircuit) {
+      localStorage.setItem("openCircuit", openCircuit);
+    }
+  }, [openCircuit]);
+
+  useEffect(() => {
+    if (openCircuit) {
+      const recentSet = Object.values(sets)
+        .filter((set) => set.circuit_id === openCircuit)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+      if (recentSet) {
+        setSelectedSet(recentSet.id);
+      } else {
+        setSelectedSet("");
+      }
+    }
+  }, [openCircuit, sets]);
 
   function updateRoutes(){
     fetch("api/routes/get_all")
@@ -32,8 +64,27 @@ export function RouteSettingPage() {
   function updateCircuits(){
     fetch("api/circuits/get_all")
     .then((response) => response.json())
-    .then((data) => setCircuits(data))
+    .then((data) => {
+      const circuitsDict = data.reduce((acc: Record<string, Circuit>, circuit: Circuit) => {
+      acc[circuit.id] = circuit;
+      return acc;
+      }, {});
+      setCircuits(circuitsDict);
+    })
     .catch((error) => console.error("Error fetching circuits:", error));
+  }
+
+  function updateSets(){
+    fetch("api/sets/get_all")
+    .then((response) => response.json())
+    .then((data) => {
+      const setsDict = data.reduce((acc: Record<string, Set>, set: Set) => {
+      acc[set.id] = set;
+      return acc;
+      }, {});
+      setSets(setsDict);
+    })
+    .catch((error) => console.error("Error fetching sets:", error));
   }
 
   useEffect(() => {
@@ -42,7 +93,8 @@ export function RouteSettingPage() {
 
   useEffect(() => {
     updateCircuits();
-  }, [circuiteModalOpen]);
+    updateSets();
+  }, [setModalOpen]);
 
   const removeRoute = (route_id:string) => {
     fetch(`api/routes/remove_route/${route_id}`, {
@@ -73,7 +125,7 @@ export function RouteSettingPage() {
   };
 
   const removeCircuit = (circuit_id:string) => {
-    fetch(`api/circuits/remove_circuit/${circuit_id}`, {
+    fetch(`api/circuits/remove/${circuit_id}`, {
       method: "DELETE",
       headers: {
       "Authorization": `Bearer ${localStorage.getItem("token")}`
@@ -100,14 +152,9 @@ export function RouteSettingPage() {
       });
   };
 
-
-
-
-
   return (
     <div className="m-5">
-      <AddRow circuit_id={routeModalOpen.circuit_id} setOpen={setRouteModalOpen} route={routeModalOpen.route} routes={routes} circuits={circuits} />
-      <AddCircuit open={circuiteModalOpen} setOpen={setCircuitsModalOpen} />
+      <AddRow set_id={routeModalOpen.set_id} circuit_id={openCircuit} setOpen={setRouteModalOpen} route={routeModalOpen.route} routes={routes} circuits={circuits} />
       <DangerDialog title={"Delete route"} 
             body={"Are you sure you want to delete this route? This route will be removed for everybody and cannot be undone."} 
             actionCallback={()=>removeRoute(deleteRouteModalOpen)}
@@ -121,77 +168,107 @@ export function RouteSettingPage() {
               cancleCallback={()=>setDeleteCircuitModalOpen('')}
               open={deleteCircuitModalOpen!==""}
               action_text="Delete circuit"/>
+
+      <AddSet open={setModalOpen} setOpen={setSetModalOpen} circuit_id={openCircuit} />
       <div className="flex gap-4 mt-5">
       <h1 className="font-bold text-3xl">Route Setting</h1>
-      <button onClick={()=> setCircuitsModalOpen(true)} className="ml-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-700 hover:to-blue-900 text-white font-bold py-2 px-4 rounded shadow-lg transform transition-transform duration-300 hover:scale-105">
-        Add Circuit
-      </button>
-      </div>
-      <h1 className="font-bold text-1xl mt-4">Circuits</h1>
-      <div>
-      {circuits.map((circuit) => (
-        <div key={circuit.id} className="mt-4">
-        <button
-          className="bg-gray-200 flex hover:bg-gray-300 text-black font-bold p-1 px-4 rounded shadow-lg w-full text-left"
-          onClick={() => {
-          const updatedCircuits = circuits.map((c) =>
-            c.id === circuit.id ? { ...c, open: !c.open } : c
-          );
-          setCircuits(updatedCircuits);
-          }}
-        >
-          <span className="p-2">{circuit.name}</span>
-          <span className={ "inline-flex items-center rounded-md px-2 m-2 text-xs font-medium text-white ml-4 " + (colors[circuit.color] || "")}>
-          {routes
-            .filter((route) => route.circuit_id === circuit.id).length} Routes
-          </span>
-          <button className="ml-auto text-gray-400 p-2 hover:text-gray-700 hover:bg-gray-400 rounded-md z-10" onClick={()=>setDeleteCircuitModalOpen(circuit.id)}>
-          <TrashIcon aria-hidden="true" className="h-5 w-5" />
-          </button>
-        </button>
-        {circuit.open && (
-          <div className="ml-4 mt-2">
-          <div className="flex">
-          <button
-            className="ml-auto justify-center rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-500 sm:w-auto mb-1"
-            onClick={() => setRouteModalOpen({circuit_id:circuit.id,route:null})}
-          >
-            Add Route
-          </button>
-          </div>
-          {routes
-            .filter((route) => route.circuit_id === circuit.id)
-            .map((route) => (
-            <div
-              key={route.id}
-              className="bg-gray-100 p-1 flex rounded mt-1"
-            >
-              <span className="p-2">{route.name}</span>
 
-              <button className="ml-auto text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md" onClick={() => setRouteModalOpen({circuit_id:circuit.id,route:route})}>
-              <PencilIcon aria-hidden="true" className="h-5 w-5" />
-              </button>
-              <button className="ml-2 text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md" onClick={()=>setDeleteRouteModalOpen(route.id)}>
-              <TrashIcon aria-hidden="true" className="h-5 w-5" />
-              </button>
-            </div>
-            ))}
-       
-          </div>
-        )}
-        </div>
-      ))}
       </div>
+
+
+      <div className=" flex justify-center gap-2 flex-wrap text-white my-4"> 
+            {Object.values(circuits).map((circuit, index, array) => (
+                <button
+                key={circuit.id}
+                className={
+                  "p-2 font-bold rounded " +
+                  (openCircuit == circuit.id ? (`${colors[circuit.color]} shadow` || "") : `${colorsFaint[circuit.color]} `)
+                }
+                onClick={() => setOpenCircuit(circuit.id)}
+
+                >
+                {circuit.name}
+                </button>
+            ))}
+      </div>
+      
+      {openCircuit && (
+      <div className="flex m-2" >
+        <span className={`font-bold text-lg rounded-lg text-gray-900`}> {openCircuit && circuits[openCircuit]?.name} </span>
+        <span className="ml-auto flex">
+            <span className="flex items-center mr-2 ">Set: </span>
+            <select 
+            className="block w-full rounded-md bg-white px-3 py-2.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+            value={selectedSet}
+            onChange={(e) => setSelectedSet(e.target.value)}
+            >
+            {Object.values(sets)
+              .filter((set) => set.circuit_id === openCircuit)
+              .map((set) => (
+              <option key={set.id} value={set.id}>
+                {new Date(set.date).toLocaleString('default', { month: 'long', year: 'numeric' })}
+              
+              </option>
+            ))}
+            </select>
+        </span>
+        <span className="ml-2 px-2 bg-violet-600 text-sm py-2 rounded-lg font-bold text-white cursor-pointer" onClick={() => setSetModalOpen(true)}>
+          + Set
+        </span>
+      </div>)}
+
+      {selectedSet != "" && (
+        <div className="m-2 flex items-center justify-between">
+            <span>{new Date(sets[selectedSet].date).toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
+              <span className="ml-2 px-2 bg-violet-600 text-sm py-2 rounded-lg font-bold text-white cursor-pointer"onClick={() => setRouteModalOpen({set_id:selectedSet,route:null})}>
+                + Route
+           </span>
+        </div>
+
+      )}
+
+      {selectedSet != "" && (
+        routes
+          .filter((route) => route.set_id === selectedSet)
+          .map((route) => (
+          <div
+            key={route.id}
+            className="bg-gray-100 p-1 flex rounded mt-1"
+          >
+            <span className="p-2">{route.name}</span>
+
+            <button className="ml-auto text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md" onClick={() => setRouteModalOpen({set_id:route.set_id,route:route})}>
+            <PencilIcon aria-hidden="true" className="h-5 w-5" />
+            </button>
+            <button className="ml-2 text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md" onClick={()=>setDeleteRouteModalOpen(route.id)}>
+            <TrashIcon aria-hidden="true" className="h-5 w-5" />
+            </button>
+          </div>
+          ))
+     
+
+      )}
+
+
+            
+
+    
+
+
+  
+
+      
     </div>
   );
 }
 
 export default function AddRow(props: {
   routes: Route[];
-  circuits: Circuit[];
+  circuits: Record<string, Circuit>;
+  set_id: string;
   circuit_id: string;
   route: Route | null;
-  setOpen: (value: {circuit_id:string, route:null}) => void;
+  setOpen: (value: {set_id:string, route:null}) => void;
 }
 ) {
 
@@ -204,24 +281,24 @@ export default function AddRow(props: {
     { x: (props.route?props.route.x:0), y: (props.route?props.route.y:0), isDragging: false, complete: true, radius:6, draggable:true, color: '#ff0000',id:''},
   ]);
 
-  const open = props.circuit_id !== "";
-  const circuite_name = props.circuits.find((circuit) => circuit.id === props.circuit_id)?.name || "";
-  const num_routes_in_circuit = props.routes.filter((route) => route.circuit_id === props.circuit_id).length;
+  const open = props.set_id !== "";
+  const circuite_name = props.circuits[props.circuit_id]?.name || "";
+  const num_routes_in_set = props.routes.filter((route) => route.set_id === props.set_id).length;
 
   const [formData, setFormData] = useState<{name:string,  grade:string,  img:File | null}>({
-    name: props.route?props.route.name:circuite_name[0]+(num_routes_in_circuit+1),
+    name: props.route?props.route.name:circuite_name[0]+(num_routes_in_set+1),
     grade: props.route?props.route.name:"",
     img: null, 
   });
 
   useEffect(() => {
 
-    const circuite_name = props.circuits.find((circuit) => circuit.id === props.circuit_id)?.name || "";
-    const num_routes_in_circuit = props.routes.filter((route) => route.circuit_id === props.circuit_id).length;
+    const circuite_name = props.circuits[props.circuit_id]?.name || "";
+    const num_routes_in_set = props.routes.filter((route) => route.set_id === props.set_id).length;
     setLocation(props.route?props.route.location:"");
     setStyles(props.route?props.route.style.split(","):[]);
     setFormData({
-      name: props.route?props.route.name:circuite_name[0]+(num_routes_in_circuit+1),
+      name: props.route?props.route.name:circuite_name[0]+(num_routes_in_set+1),
       grade: props.route?props.route.name:"",
       img: null, 
     });
@@ -247,7 +324,7 @@ export default function AddRow(props: {
     formDataToSend.append("location", location);
     formDataToSend.append("grade", formData.grade);
     formDataToSend.append("style", styles.join(","));
-    formDataToSend.append("circuit_id", props.circuit_id);
+    formDataToSend.append("set_id", props.set_id);
     formDataToSend.append("x", dots[0].x.toString());
     formDataToSend.append("y", dots[0].y.toString());
 
@@ -287,7 +364,7 @@ export default function AddRow(props: {
       // localStorage.setItem("token", data.access_token);
       // // props.onSuccess(data.access_token);
       // window.location.href = "/";
-      props.setOpen({circuit_id:"",route:null});
+      props.setOpen({set_id:"",route:null});
       })
       .catch((error) => {
       console.error(error);
@@ -295,7 +372,7 @@ export default function AddRow(props: {
   };
 
   return (
-    <Dialog open={open} onClose={()=>props.setOpen({circuit_id:"",route:null})} className="relative z-10">
+    <Dialog open={open} onClose={()=>props.setOpen({set_id:"",route:null})} className="relative z-10">
       <DialogBackdrop
         transition
         className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
@@ -351,7 +428,7 @@ export default function AddRow(props: {
                           id="name"
                           name="name"
                           type="text"
-                          defaultValue={props.route? props.route?.name:circuite_name[0]+(num_routes_in_circuit+1)}
+                          defaultValue={props.route? props.route?.name:circuite_name[0]+(num_routes_in_set+1)}
                           required
                           className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                           onChange={handleChange}
@@ -439,7 +516,7 @@ export default function AddRow(props: {
                 <button
                   type="button"
                   data-autofocus
-                  onClick={() => props.setOpen({circuit_id:"",route:null})}
+                  onClick={() => props.setOpen({set_id:"",route:null})}
                   className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                 >
                   Cancel
@@ -455,7 +532,6 @@ export default function AddRow(props: {
 
 function ImageUpload(props:{imageCallback: (image: File) => void, defaultUrl: string}) {
 
- 
   const [preview, setPreview] = useState<string | null>(null);
 
   useEffect(() => {
@@ -511,7 +587,7 @@ function ImageUpload(props:{imageCallback: (image: File) => void, defaultUrl: st
     <div className="px-4 pt-6">
       <div
         id="image-preview"
-        className="max-w-sm p-6 mb-4 bg-gray-100 border-dashed border-2 border-gray-400 rounded-lg items-center mx-auto text-center cursor-pointer"
+        className="max-w-sm p-6 mb-4 bg-gray-100 border-dashed border-1 border-gray-300 rounded-lg items-center mx-auto text-center cursor-pointer"
       >
         <input
           id="upload"
@@ -546,10 +622,7 @@ function ImageUpload(props:{imageCallback: (image: File) => void, defaultUrl: st
                 Choose photo size should be less than{" "}
                 <b className="text-gray-600">2mb</b>
               </p>
-              <p className="font-normal text-sm text-gray-400 md:px-6">
-                and should be in{" "}
-                <b className="text-gray-600">JPG, PNG, or GIF</b> format.
-              </p>
+             
               <span
                 id="filename"
                 className="text-gray-500 bg-gray-200 z-50"
@@ -564,160 +637,3 @@ function ImageUpload(props:{imageCallback: (image: File) => void, defaultUrl: st
 
 
 
-export function AddCircuit(props: {
-    open: boolean;
-    setOpen: (value: boolean) => void;
-  }) {
-  
-    const open = props.open
-     
-    const [formData, setFormData] = useState<{name:string, color:string}>({
-      name: "",
-      color: "",
-    });
-  
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target;
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    };
-  
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-
-      const formDataToSend = new FormData();
-      formDataToSend.append("name", formData.name);
-      formDataToSend.append("color", formData.color);
-
-      fetch("api/circuits/create", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
-        },
-        body: formDataToSend
-      })
-        .then((response) => {
-          if (response.ok) {
-        return response.json();
-          } else if (response.status === 400) {
-        return response.json().then((errorData) => {
-          throw new Error(errorData.detail);
-        });
-          } else {
-        throw new Error("Network response was not ok");
-          }
-        })
-        .then((data) => {
-          console.log("Success:", data);
-          props.setOpen(false);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    };
-  
-    return (
-      <Dialog open={open} onClose={()=>props.setOpen(false)} className="relative z-10">
-        <DialogBackdrop
-          transition
-          className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
-        />
-  
-        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <DialogPanel
-              transition
-              className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
-            >
-              <form action="#" method="POST" className="space-y-6 w-full" onSubmit={handleSubmit}>
-                <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                  <div className="sm:flex sm:items-start">
-                    {/* <div className="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10">
-                      <ExclamationTriangleIcon aria-hidden="true" className="size-6 text-red-600" />
-                    </div> */}
-                    <div className="w-full mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                      <DialogTitle
-                        as="h3"
-                        className="text-base font-semibold text-gray-900"
-                      >
-                        Add a new circuit
-                      </DialogTitle>
-                      <div className="mt-2 mb-4">
-                        {/* <p className="text-sm text-gray-500 w-100%">
-                          Add a new route to the circuit
-                        </p> */}
-                      </div>
-                      <div>
-                        <div className="flex items-center justify-between">
-                        <label
-                          htmlFor="name"
-                          className="block text-sm/6 font-medium text-gray-900"
-                        >
-                          Route Name
-                        </label>
-                        </div>
-                        <div className="mt-2">
-                          <input
-                            id="name"
-                            name="name"
-                            type="text"
-                            required
-                            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                            onChange={handleChange}
-                          />
-                        </div>
-                      </div>
-  
-                      <div>
-                        <div className="flex items-center justify-between">
-                          <label
-                            htmlFor="color"
-                            className="block text-sm/6 font-medium text-gray-900"
-                          >
-                            Color
-                          </label>
-                        </div>
-                        <div className="mt-2">
-                          <input
-                            id="color"
-                            name="color"
-                            required
-                            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                            onChange={handleChange}
-                          />
-                        </div>
-                      </div>
-  
-        
-                     
-                  
-                    </div>
-                  </div>
-                </div>
-  
-                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                  <button
-                    type="submit"
-                  //   onClick={() => props.setOpen("")}
-                    className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto"
-                  >
-                    Add
-                  </button>
-                  <button
-                    type="button"
-                    data-autofocus
-                    onClick={() => props.setOpen(false)}
-                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </DialogPanel>
-          </div>
-        </div>
-      </Dialog>
-    );
-  }

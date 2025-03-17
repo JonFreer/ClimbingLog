@@ -1,5 +1,5 @@
 import { NavLink } from "react-router";
-import { Circuit, Projects, Route } from "../types/routes";
+import { Circuit, Projects, Route, Set } from "../types/routes";
 import { useEffect, useState } from "react";
 import { colors } from "../types/colors";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
@@ -7,7 +7,8 @@ import { ChevronRightIcon } from "@heroicons/react/24/solid";
 export function RouteList(props: {
   routes: Route[];
   climbs: any[];
-  circuits: Circuit[];
+  circuits: Record<string, Circuit>;
+  sets: Record<string, Set>;
   projects: Projects;
   updateData: () => void;
   setSidebarRoute: (route: string) => void;
@@ -34,6 +35,15 @@ export function RouteList(props: {
   useEffect(() => {
     localStorage.setItem("openCircuits", JSON.stringify(openCircuits));
   }, [openCircuits]);
+
+  const active_sets = Object.values(props.sets).reduce((acc, set) => {
+    if (!acc[set.circuit_id] || new Date(set.date) > new Date(acc[set.circuit_id].date)) {
+      acc[set.circuit_id] = set;
+    }
+    return acc;
+  }, {} as Record<string, Set>);
+
+  console.log("active_sets",active_sets,props.sets)
 
   return (
     <>
@@ -116,7 +126,7 @@ export function RouteList(props: {
                             <span
                               className={
                                 "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white " +
-                                (colors[props.circuits.find(circuit => circuit.id === route.circuit_id)?.color || ""] || "")
+                                (colors[props.circuits[props.sets[route.set_id]?.circuit_id]?.color || ""] || "")
                               }
                             >
                               Sent
@@ -137,7 +147,9 @@ export function RouteList(props: {
 
 
       <div className={"mx-4 mb-8"}>
-        {props.circuits.map((circuit) => (
+        {Object.values(props.circuits).map((circuit) => (
+          <>
+          {active_sets[circuit.id] ?
           <div key={circuit.id} className="mt-4">
             <button
               className="bg-white hover:bg-gray-50 text-gray-900 font-medium  rounded-lg shadow w-full text-left flex justify-between items-center"
@@ -159,14 +171,14 @@ export function RouteList(props: {
                   {
                     props.routes.filter(
                       (route) =>
-                        route.circuit_id == circuit.id &&
+                        route.set_id == active_sets[circuit.id].id &&
                         sent_ids.includes(route.id)
                     ).length
                   }{" "}
                   /{" "}
                   {
                     props.routes.filter(
-                      (route) => route.circuit_id === circuit.id
+                      (route) => route.set_id === active_sets[circuit.id].id
                     ).length
                   }{" "}
                   Routes
@@ -181,7 +193,7 @@ export function RouteList(props: {
             {openCircuits[circuit.id] && (
               <div className="ml mt-2" key={circuit.id}> 
                 {props.routes
-                  .filter((route) => route.circuit_id === circuit.id)
+                  .filter((route) => route.set_id === active_sets[circuit.id].id)
                   .map((route) => (
                     <div
                       key={route.id}
@@ -230,10 +242,14 @@ export function RouteList(props: {
                   ))}
               </div>
             )}
-          </div>
+          </div>:null}
+
+          </>
+
         ))}
       </div>
     </>
+    
   );
 
 }

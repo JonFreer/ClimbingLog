@@ -10,7 +10,7 @@ import {
   Route,
   Routes,
 } from "react-router";
-import { Circuit, Route as RouteType, User, Climb, Projects } from "./types/routes";
+import { Circuit, Route as RouteType, User, Climb, Projects, Set } from "./types/routes";
 import { AdminPage } from "./components/admin";
 import { RoutesPage } from "./components/routespage";
 import { RoutePage } from "./components/routepage";
@@ -33,8 +33,9 @@ function App() {
   });
   const [routes, setRoutes] = useState<RouteType[]>([]);
   const [climbs, setClimbs] = useState<Climb[]>([]);
-  const [circuits, setCircuits] = useState<Circuit[]>([]);
+  const [circuits, setCircuits] = useState<Record<string, Circuit>>({});
   const [projects, setProjects] = useState<Projects>([]);
+  const [sets, setSets] = useState<Record<string, Set>>({});
 
   function fetchClimbs() {
     API("GET", "/api/climbs/me/get_all")
@@ -72,11 +73,31 @@ function App() {
   function fetchCircuits() {
     API("GET", "/api/circuits/get_all")
       .then((data) => {
-        setCircuits(data.data);
+        const circuits_dict = data.data.reduce((acc: Record<string, Circuit>, circuit: Circuit) => {
+          acc[circuit.id] = circuit;
+          return acc;
+        }, {});
+        console.log("circuits_dict",circuits_dict)
+        setCircuits(circuits_dict);
         console.log("circuit main", data.data);
       })
       .catch((error) => {
         console.error("Error fetching circuit:", error);
+      });
+  }
+
+  function fetchSets() {
+    API("GET", "/api/sets/get_all")
+      .then((data) => {
+        const setsDict = data.data.reduce((acc: Record<string, Set>, set: Set) => {
+          acc[set.id] = set;
+          return acc;
+        }, {});
+        setSets(setsDict);
+        console.log("sets main", data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching set:", error);
       });
   }
 
@@ -85,6 +106,7 @@ function App() {
     fetchRoutes();
     fetchCircuits();
     fetchProjects();
+    fetchSets();
   }
 
   // On component mount: Check if user logged in, if so load their achievements
@@ -93,6 +115,7 @@ function App() {
     fetchRoutes();
     fetchCircuits();
     fetchProjects();
+    fetchSets();
     checkAuth()
       .then((user_) => {
         setLoggedIn(user_);
@@ -166,6 +189,7 @@ function App() {
             <RoutesPage
               routes={routes}
               circuits={circuits}
+              sets = {sets}
               climbs={climbs}
               projects={projects}
               updateData={updateData}

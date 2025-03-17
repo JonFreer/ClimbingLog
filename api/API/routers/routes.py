@@ -49,7 +49,7 @@ async def create_route_with_image(
         grade: Annotated[str, Form(...)],
         location: Annotated[str, Form(...)],
         style: Annotated[str, Form(...)],
-        circuit_id: Annotated[uuid.UUID, Form(...)],
+        set_id: Annotated[uuid.UUID, Form(...)],
         x: Annotated[float, Form(...)],
         y: Annotated[float, Form(...)],
         file: UploadFile = File(...),
@@ -67,7 +67,7 @@ async def create_route_with_image(
         MAX_SIZE_2 = (200, 250) 
         img_thumb = ImageOps.fit(img_thumb, MAX_SIZE_2, Image.LANCZOS)
 
-        new_route = Routes(grade=grade, location=location, style=style, circuit_id=circuit_id,name=name,x=x,y=y)
+        new_route = Routes(grade=grade, location=location, style=style, set_id=set_id,name=name,x=x,y=y)
         db.add(new_route)
         await db.commit()
         await db.refresh(new_route)
@@ -85,7 +85,7 @@ async def update_route(
     grade: Annotated[str, Form(...)],
     location: Annotated[str, Form(...)],
     style: Annotated[str, Form(...)],
-    circuit_id: Annotated[uuid.UUID, Form(...)],
+    set_id: Annotated[uuid.UUID, Form(...)],
     x: Annotated[float, Form(...)],
     y: Annotated[float, Form(...)],
     file: Optional[UploadFile] = File(None),
@@ -115,7 +115,7 @@ async def update_route(
     route.grade = grade
     route.location = location
     route.style = style
-    route.circuit_id = circuit_id
+    route.set_id = set_id
     route.x = x
     route.y = y
 
@@ -141,53 +141,6 @@ async def remove_route(
     if not route:
         raise HTTPException(status_code=404, detail="Route not found")
     await db.delete(route)
-    await db.commit()
-    return None
-
-@router.get("/circuits/get_all", response_model=List[schemas.Circuit], tags=["circuits"])
-async def get_all_circuits(
-    response: Response,
-    db: AsyncSession = Depends(get_db),
-):
-    result = await db.execute(select(Circuits))
-    circuits = result.scalars().all()
-    return circuits
-
-@router.post("/circuits/create", response_model=schemas.Circuit, tags=["circuits"])
-async def create_circuit(
-    name: Annotated[str, Form(...)],
-    color: Annotated[str, Form(...)],
-    db: AsyncSession = Depends(get_db),
-    user: User = Depends(current_active_user),
-):
-    if not user.is_superuser and not user.route_setter:
-        raise HTTPException(status_code=403, detail="Not enough permissions")
-    new_circuit = Circuits(name=name, color=color)
-    db.add(new_circuit)
-    await db.commit()
-    await db.refresh(new_circuit)
-    return new_circuit
-
-@router.delete("/circuits/remove_circuit/{circuit_id}", response_model=None, tags=["circuits"])
-async def remove_circuit(
-    circuit_id: uuid.UUID,
-    db: AsyncSession = Depends(get_db),
-    user: User = Depends(current_active_user),
-):
-    if not user.is_superuser and user.route_setter:
-        raise HTTPException(status_code=403, detail="Not enough permissions")
-    result = await db.execute(select(Circuits).filter(Circuits.id == circuit_id))
-    circuit = result.scalars().first()
-    if not circuit:
-        raise HTTPException(status_code=404, detail="Circuit not found")
-    
-    # Find and delete all routes associated with the circuit
-    routes_result = await db.execute(select(Routes).filter(Routes.circuit_id == circuit_id))
-    routes = routes_result.scalars().all()
-    for route in routes:
-        await db.delete(route)
-    
-    await db.delete(circuit)
     await db.commit()
     return None
 

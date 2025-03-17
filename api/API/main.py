@@ -10,7 +10,7 @@ from .schemas import UserCreate, UserRead, UserUpdate
 from .users import auth_backend, current_active_user, fastapi_users
 from . import config 
 from .models import User
-from .routers import admin, routes, climbs,projects
+from .routers import admin, routes, climbs, projects, circuits, sets
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -57,3 +57,5 @@ app.include_router(routes.router)
 app.include_router(climbs.router)
 app.include_router(admin.router)
 app.include_router(projects.router)
+app.include_router(circuits.router)
+app.include_router(sets.router)

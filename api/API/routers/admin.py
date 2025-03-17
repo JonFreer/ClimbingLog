@@ -11,22 +11,6 @@ from ..users import current_active_user, current_active_superuser
 
 router = APIRouter()
 
-# @router.pacth("/routes/create", response_model=schemas.Route, tags=["users"])
-# async def create_route(
-#     name: str,
-#     grade: str,
-#     location: str,
-#     style:str,
-#     circuit_id: uuid.UUID,
-#     response: Response,
-#     db: AsyncSession = Depends(get_db),
-# ):
-#     new_route = Routes(grade=grade,location=location,style=style,circuit_id=circuit_id,name=name)
-#     db.add(new_route)
-#     await db.commit()
-#     await db.refresh(new_route)
-#     return new_route
-
 @router.get("/admin/users/get_all", response_model=List[schemas.UserRead], tags=["admin"])
 async def list_users(
     db: AsyncSession = Depends(get_db),

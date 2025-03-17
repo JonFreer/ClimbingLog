@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Circuit, Climb, Projects, Route } from "../types/routes";
+import { Circuit, Climb, Projects, Route, Set } from "../types/routes";
 import { RouteList } from "./route-list";
 import DraggableDotsCanvas from "./map";
 import { colors, colorsBold, colorsBorder, colorsHex } from "../types/colors";
@@ -10,7 +10,8 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 export function RoutesPage(props: {
   routes: Route[];
   climbs: Climb[];
-  circuits: Circuit[];
+  circuits: Record<string, Circuit>;
+  sets: Record<string, Set>;
   projects: Projects
   updateData: () => void;
 }) {
@@ -51,12 +52,13 @@ useEffect(() => {
       <RouteSideBar 
         route={props.routes.find(route => route.id === sidebarRoute)}
         circuits={props.circuits}
+        sets={props.sets}
         climbs={props.climbs}
         projects={props.projects}
         updateData={props.updateData}
         closeCallback={()=>setSidebarRoute(undefined)}></RouteSideBar>
       <DraggableDotsCanvas
-        dots={props.routes.filter((route)=>filterCircuits[route.circuit_id] || !anyFitlered).map((route) => ({
+        dots={props.routes.filter((route)=>filterCircuits[route.set_id] || !anyFitlered).map((route) => ({
           id: route.id,
           x: route.x,
           y: route.y,
@@ -64,7 +66,7 @@ useEffect(() => {
           complete: props.climbs.filter((climb) => climb.route === route.id && climb.sent ).length == 0,
           radius: 4,
           draggable: false,
-          color: colorsHex[props.circuits.find(circuit => circuit.id === route.circuit_id)?.color || 'black']
+          color: colorsHex[props.circuits[route.set_id]?.color || 'black']
         
         }))}
         selected_id={selectedRoute}
@@ -76,13 +78,13 @@ useEffect(() => {
         <div className="text-md font-medium text-gray-600">
         Filters:
         </div>
-        {props.circuits.filter((circuit)=>filterCircuits[circuit.id]).map((circuit) => <button className={"rounded-full px-3 py-1 text-sm font-medium text-white " + (colors[circuit.color] || "") + " hover:"+ (colorsBold[circuit.color] || "")}
+        {Object.values(props.circuits).filter((circuit)=>filterCircuits[circuit.id]).map((circuit) => <button className={"rounded-full px-3 py-1 text-sm font-medium text-white " + (colors[circuit.color] || "") + " hover:"+ (colorsBold[circuit.color] || "")}
          onClick={() => setFilterCircuits((prev) => ({...prev, [circuit.id]: false}))}>
           <XMarkIcon className="h-3 w-3 inline-block mr-1"/>
           {circuit.name}
         </button>)}
 
-        {props.circuits.filter((circuit)=>!filterCircuits[circuit.id]).map((circuit) => <button className={"rounded-full px-3 py-[2px] text-sm font-medium text-gray-600 border-2 "+ (colorsBorder[circuit.color] || "") }
+        {Object.values(props.circuits).filter((circuit)=>!filterCircuits[circuit.id]).map((circuit) => <button className={"rounded-full px-3 py-[2px] text-sm font-medium text-gray-600 border-2 "+ (colorsBorder[circuit.color] || "") }
         onClick={() => setFilterCircuits((prev) => ({...prev, [circuit.id]: true}))}>
           + {circuit.name}
         </button>)}
@@ -92,6 +94,7 @@ useEffect(() => {
         {selectedRoute && props.routes.find(route => route.id === selectedRoute) != undefined?
         <RouteCard route={props.routes.find(route => route.id === selectedRoute)}
         circuits={props.circuits}
+        sets={props.sets}
         climbs={props.climbs}
         updateData={props.updateData}
         setSidebarRoute={setSidebarRoute}/>:''
@@ -101,6 +104,7 @@ useEffect(() => {
    
       <RouteList
         routes={props.routes}
+        sets={props.sets}
         circuits={props.circuits}
         climbs={props.climbs}
         projects={props.projects}

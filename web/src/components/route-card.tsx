@@ -1,9 +1,9 @@
 import { NavLink } from "react-router";
 import { colors } from "../types/colors";
-import { Circuit, Route, SentBy } from "../types/routes";
+import { Circuit, Route, SentBy, Set } from "../types/routes";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 
-export function RouteCard(props:{route:Route,climbs:any[],circuits:Circuit[], updateData : () => void, setSidebarRoute: (route: string) => void}) {
+export function RouteCard(props:{route:Route,climbs:any[],sets: Record<string, Set>,circuits:Record<string, Circuit>, updateData : () => void, setSidebarRoute: (route: string) => void}) {
 
 
     var sent_ids:string[] = [];
@@ -13,10 +13,10 @@ export function RouteCard(props:{route:Route,climbs:any[],circuits:Circuit[], up
       .map((climb) => climb.route);
     }
 
-    const circuit = props.circuits.find((circuit) => circuit.id == props.route.circuit_id);
+    const circuit = props.circuits[props.sets[props.route.set_id]?.circuit_id];
   
-  return (
-    <div
+    return (
+                <div
                     key={props.route.id}
                     className="bg-white shadow overflow-hidden sm:rounded-lg mt-2"
                   >

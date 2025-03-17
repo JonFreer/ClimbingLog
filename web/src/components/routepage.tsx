@@ -26,7 +26,7 @@ import { colors } from "../types/colors";
 export function RoutePage(props: {
   routes: Route[];
   climbs: any[];
-  circuits: Circuit[];
+  circuits: Record<string, Circuit>;
   updateData: () => void;
 }) {
   const { id } = useParams();
@@ -46,7 +46,8 @@ export function RoutePage(props: {
 
 
 
-  const circuit = props.circuits.find((circuit) => circuit.id == route?.circuit_id);
+  const circuit = props.circuits[route?.set_id || ""];
+  
   console.log("complete", complete, props.climbs);
   return (
     <div>

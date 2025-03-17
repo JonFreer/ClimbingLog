@@ -2,7 +2,7 @@ export interface Route{
     id:string;
     grade:string;
     location:string;
-    circuit_id:string;
+    set_id:string;
     style:string;
     name:string;
     x:number;
@@ -43,3 +43,10 @@ export interface SentBy{
 }
 
 export type Projects = string[];
+
+export interface Set{
+    id:string;
+    name:string;
+    date:string;
+    circuit_id:string
+}

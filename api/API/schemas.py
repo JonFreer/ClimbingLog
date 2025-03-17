@@ -27,7 +27,7 @@ class Route(BaseModel):
     grade: str
     location: str
     style: str
-    circuit_id: uuid.UUID
+    set_id: uuid.UUID
     x: float
     y: float 
 
@@ -35,6 +35,12 @@ class Circuit(BaseModel):
     id: uuid.UUID
     name: str
     color: str
+
+class Set(BaseModel):
+    id: uuid.UUID
+    circuit_id: uuid.UUID
+    date: datetime.datetime
+    name: Optional[str]
 
 class Climb(BaseModel):
     id: uuid.UUID

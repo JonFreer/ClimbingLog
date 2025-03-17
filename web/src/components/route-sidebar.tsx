@@ -10,13 +10,14 @@ import {
 } from "@headlessui/react";
 import {HeartIcon as HeartIconFill} from "@heroicons/react/24/solid";
 import { XMarkIcon, HeartIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Circuit, Climb, Projects, Route, SentBy } from "../types/routes";
+import { Circuit, Climb, Projects, Route, SentBy, Set } from "../types/routes";
 import { colors, colorsBold, colorsPastel } from "../types/colors";
 
 export default function RouteSideBar(props: {
   route: Route | undefined;
   climbs: Climb[];
-  circuits: Circuit[];
+  circuits: Record<string, Circuit>;
+  sets: Record<string, Set>;
   projects: Projects;
   updateData: () => void;
   closeCallback: () => void;
@@ -38,7 +39,7 @@ export default function RouteSideBar(props: {
     name: "",
     location: "",
     style: "",
-    circuit_id: "",
+    set_id: "",
     x: 0,
     y: 0,
     grade: "",
@@ -67,9 +68,7 @@ export default function RouteSideBar(props: {
     (climb) => climb.route == route.id && climb.sent == true
   );
 
-  const circuit = props.circuits.find(
-    (circuit) => circuit.id == route?.circuit_id
-  );
+  const circuit = props.circuits[props.sets[route.set_id]?.circuit_id]; 
 
   const open = props.route != undefined;
   return (
