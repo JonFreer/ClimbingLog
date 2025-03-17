@@ -10,7 +10,10 @@ import {
     Tooltip,
     Legend,
   } from 'chart.js';
+import { useEffect, useState } from "react";
 import { Bar } from 'react-chartjs-2';
+import { useParams } from "react-router";
+import { API } from "../types/api";
 
 ChartJS.register(
     CategoryScale,
@@ -51,6 +54,46 @@ export default function Profile(props: {
   updateData: () => void;
 }){
 
+    const [user,setUser]= useState<User|false>(false);
+    const [climbs, setClimbs] = useState<Climb[]>([]);
+
+    const { id } = useParams();
+
+
+    function fetchUser() {
+        const username = id || props.user.username;
+        API("GET", "/api/users/get_public/"+username)
+          .then((data) => {
+    
+            setUser(data.data);
+            console.log("User Profile", data.data);
+          })
+          .catch((error) => {
+            console.error("Error fetching user:", error);
+          });
+      }
+    
+      function fetchClimbs() {
+        const username = id || props.user.username;
+        API("GET", "/api/users/get_climbs/"+username)
+          .then((data) => {
+    
+            setClimbs(data.data);
+            console.log("User Climbs", data.data);
+          })
+          .catch((error) => {
+            console.error("Error fetching climbs:", error);
+          });
+      }
+
+    useEffect(() => {
+        fetchUser();
+        fetchClimbs();
+    }, [id]);
+
+
+    console.log(`Profile ID: ${id}`);
+
     const labels = Object.values(props.sets)
         .map(set => new Date(set.date).toLocaleString('default', { month: 'long', year: 'numeric' }))
         .filter((value, index, self) => self.indexOf(value) === index) // Remove duplicates
@@ -60,7 +103,7 @@ export default function Profile(props: {
             return new Date(`${aYear}-${aMonth}-01`).getTime() - new Date(`${bYear}-${bMonth}-01`).getTime();
         }); // Sort by date
 
-    const sent_ids = props.climbs
+    const sent_ids = climbs
     .filter((climb) => climb.sent == true)
     .map((climb) => climb.route);
 
@@ -99,7 +142,7 @@ export default function Profile(props: {
     };
 
     const locationCounts = Object.entries(
-        props.climbs
+        climbs
             .filter(climb => climb.sent)
             .reduce((acc, climb) => {
                 const location = props.routes.find(route => route.id === climb.route)?.location;
@@ -114,7 +157,7 @@ export default function Profile(props: {
     }, {} as Record<string, number>);
 
     const styleCounts = Object.entries(
-        props.climbs
+        climbs
             .filter(climb => climb.sent)
             .reduce((acc, climb) => {
                 const styles = props.routes.find(route => route.id === climb.route)?.style.split(',') || [];
@@ -138,7 +181,7 @@ export default function Profile(props: {
                 <UserCircleIcon className="absolute left-4 -translate-y-2/3 rounded-full border-4 border-white shadow-lg h-36 w-36 bg-white text-gray-700"></UserCircleIcon>
                 {/* <img className="absolute left-4 -translate-y-2/3 rounded-full border-4 border-white shadow-lg" src="https://headshots-inc.com/wp-content/uploads/2023/03/business-headshot-example-2.jpg" alt="User Profile" style={{ width: '150px', height: '150px', top: '50%' }} /> */}
                 <div className="absolute left-48 font-bold text-2xl text-gray-800 top-4">
-                    @{props.user.username}
+                    @{user.username}
                 </div>
 
                 <div className="absolute left-48 top-22 font text-md text-gray-800 top-4">
@@ -147,11 +190,11 @@ export default function Profile(props: {
             </div>
 
             <div className="mt-16 m-8">
-            {props.user.about}
+            {user.about}
             </div>
 
             <div className="mt-8 m-8 font-bold">
-             Total sends: {props.climbs.filter(climb => climb.sent).length}
+             Total sends: {sent_ids.length}
 
              <Bar options={options} data={data} />
 
@@ -192,7 +235,7 @@ export default function Profile(props: {
                 <div className="flex flex-col bg-white m-auto p-auto mt-5 relative">
                     <div className="flex overflow-x-scroll pb-10 hide-scroll-bar">
                         <div className="flex gap-4 flex-nowrap lg:ml-40 md:ml-20 ml-10">
-                            {props.climbs
+                            {climbs
                                 .filter(climb => climb.sent)
                                 .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
                                 .slice(0, 20)

@@ -186,7 +186,21 @@ function App() {
         />
 
       <Route
-          path="/profile"
+          path="/profile/:id"
+          element={
+            <Profile 
+            routes={routes}
+            circuits={circuits}
+            sets = {sets}
+            climbs={climbs}
+            projects={projects}
+            user={user} 
+            updateData={updateData}/>
+          }
+        />
+
+<Route
+          path="/profile/"
           element={
             <Profile 
             routes={routes}

@@ -11,7 +11,6 @@ class UserRead(schemas.BaseUser[uuid.UUID]):
     send_visible: bool
     route_setter: bool
 
-
 class UserCreate(schemas.BaseUserCreate):
     username: str
 
@@ -20,6 +19,13 @@ class UserUpdate(schemas.BaseUserUpdate):
     profile_visible: Optional[bool]
     send_visible: Optional[bool]
     about: Optional[str]
+
+class UserPublic(BaseModel):
+    username: str
+    about:str
+    profile_visible: bool
+    send_visible: bool
+    route_setter: bool
 
 class Route(BaseModel):
     name: str

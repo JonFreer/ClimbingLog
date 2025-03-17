@@ -12,6 +12,7 @@ import {HeartIcon as HeartIconFill} from "@heroicons/react/24/solid";
 import { XMarkIcon, HeartIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Circuit, Climb, Projects, Route, SentBy, Set } from "../types/routes";
 import { colors, colorsBold, colorsPastel } from "../types/colors";
+import { NavLink } from "react-router";
 
 export default function RouteSideBar(props: {
   route: Route | undefined;
@@ -393,14 +394,16 @@ export function SentByModal(props: {
             transition
             className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in my-8 w-[90%] sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
           >
-            <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-              <div className="sm:flex sm:items-start">
+            <div className="w-full bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+              <div className="w-full sm:flex sm:items-start">
              
-                <div className="mt-3 text-left sm:ml-4 sm:mt-0 sm:text-left">
-                  <div className="mt-2 divide-y divide-gray-100">
+                <div className="mt-0 w-full text-left sm:ml-4 sm:mt-0 sm:text-left">
+                  <div className="mt-2 w-full divide-y divide-gray-100">
 
                     {props.sent_by.users.map((user) => (
-                      <div className="m-2" key={user.id}>{user.username}</div>
+                      <div className="p-2" key={user.id}>
+                      <NavLink to={`/profile/${user.username}`} className="rounded cursor-pointer w-full p-2 hover:bg-gray-100 m-auto">{user.username}</NavLink>
+                      </div>
                     ))}
                   </div>
                 </div>
