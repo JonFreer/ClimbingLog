@@ -24,6 +24,7 @@ export default function RouteSideBar(props: {
 }) {
 
   const [sentBy, setSentBy] = useState<SentBy>({users:[],num_users:0});
+  const [sentByOpen, setSentByOpen] = useState(false);
 
   function updateSentBy(){
     if (props.route) {
@@ -77,6 +78,7 @@ export default function RouteSideBar(props: {
       onClose={() => props.closeCallback()}
       className="relative z-10"
     >
+
       <DialogBackdrop
         transition
         className="fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out data-[closed]:opacity-0"
@@ -172,7 +174,7 @@ export default function RouteSideBar(props: {
 
 
                   {sentBy.num_users!=0 ?  <>
-                    <div className="px-10 pt-5 text-m mx-1 text-gray-400 flex">
+                    <div className="px-10 pt-5 text-m mx-1 text-gray-400 hover:text-gray-500 flex cursor-pointer" onClick={()=>{setSentByOpen(true)}}>
                     Sent by
                     {sentBy.users.length > 0 ?  <a key={sentBy.users[0].id} className="font-bold ml-1">{sentBy.users[0].username}</a>:null}
                     {sentBy.users.length > 1 ?  <a key={sentBy.users[1].id} className="font-bold">, {sentBy.users[1].username}</a>:null}
@@ -230,10 +232,14 @@ export default function RouteSideBar(props: {
                   )}
                 </div>
               </div>
+              <SentByModal sent_by={sentBy} open={sentByOpen} cancleCallback={()=>{setSentByOpen(false)}}></SentByModal>
+
             </DialogPanel>
+
           </div>
         </div>
       </div>
+
     </Dialog>
   );
 }
@@ -362,4 +368,48 @@ function remove_climb(id: string | undefined, sucessCallback: () => void) {
       sucessCallback();
     })
     .catch((error) => console.error("Error adding attempt:", error));
+}
+
+
+export function SentByModal(props: {
+  cancleCallback: () => void;
+  open: boolean;
+  sent_by: SentBy;
+}) {
+  return (
+    <Dialog
+      open={props.open}
+      onClose={props.cancleCallback}
+      className="relative z-20"
+    >
+      <DialogBackdrop
+        transition
+        className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+      />
+
+      <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div className="flex min-h-full  justify-center text-center items-center p-0">
+          <DialogPanel
+            transition
+            className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in my-8 w-[90%] sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+          >
+            <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+              <div className="sm:flex sm:items-start">
+             
+                <div className="mt-3 text-left sm:ml-4 sm:mt-0 sm:text-left">
+                  <div className="mt-2 divide-y divide-gray-100">
+
+                    {props.sent_by.users.map((user) => (
+                      <div className="m-2" key={user.id}>{user.username}</div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+       
+          </DialogPanel>
+        </div>
+      </div>
+    </Dialog>
+  );
 }
