@@ -18,6 +18,7 @@ import { API } from "./types/api";
 import Settings from "./components/settings";
 import DraggableDotsCanvas from "./components/map";
 import { RouteSettingPage } from "./components/route-setting";
+import Profile from "./components/profile";
 
 const ProtectedRoute = ({ authed, children }) => {
   if (!authed) {
@@ -183,6 +184,21 @@ function App() {
             />
           }
         />
+
+      <Route
+          path="/profile"
+          element={
+            <Profile 
+            routes={routes}
+            circuits={circuits}
+            sets = {sets}
+            climbs={climbs}
+            projects={projects}
+            user={user} 
+            updateData={updateData}/>
+          }
+        />
+
         <Route
           path="*"
           element={

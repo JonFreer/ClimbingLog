@@ -18,3 +18,11 @@
 .clip-path{
     clip-path: polygon(0 0, 100% 0%, 90% 100%, 0% 100%);
 }
+
+.hide-scroll-bar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scroll-bar::-webkit-scrollbar {
+    display: none;
+  }

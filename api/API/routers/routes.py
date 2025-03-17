@@ -26,8 +26,6 @@ async def get_route(
     route_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
 ):
-
-
     sent_by = []
     result = await db.execute(select(Climbs).where(Climbs.sent == True, Climbs.route == route_id))
     climbs = result.scalars().all()
