@@ -28,7 +28,8 @@ export function AddSet(props: {
       const formDataToSend = new FormData();
       formDataToSend.append("name", formData.name);
       formDataToSend.append("circuit_id", props.circuit_id);
-      formDataToSend.append("date", formData.date.toISOString());
+    const dateObject = new Date(formData.date);
+    formDataToSend.append("date", dateObject.toISOString());
 
       fetch("api/sets/create", {
         method: "POST",
