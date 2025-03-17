@@ -47,6 +47,13 @@ useEffect(() => {
     };
   }, [sidebarRoute]);
 
+   const active_sets = Object.values(props.sets).reduce((acc, set) => {
+      if (!acc[set.circuit_id] || new Date(set.date) > new Date(acc[set.circuit_id].date)) {
+        acc[set.circuit_id] = set;
+      }
+      return acc;
+    }, {} as Record<string, Set>);
+
   return (
     <div>
       <RouteSideBar 
@@ -58,7 +65,7 @@ useEffect(() => {
         updateData={props.updateData}
         closeCallback={()=>setSidebarRoute(undefined)}></RouteSideBar>
       <DraggableDotsCanvas
-        dots={props.routes.filter((route) => props.sets[route.set_id] && (filterCircuits[props.sets[route.set_id].circuit_id] || !anyFitlered)).map((route) => ({
+        dots={props.routes.filter((route) => props.sets[route.set_id] && active_sets[props.sets[route.set_id].circuit_id].id == route.set_id && (filterCircuits[props.sets[route.set_id].circuit_id] || !anyFitlered)).map((route) => ({
           id: route.id,
           x: route.x,
           y: route.y,
