@@ -1,6 +1,45 @@
-import { colors } from "../types/colors";
+import { colors, colorsHex } from "../types/colors";
 import { Circuit, Climb, Projects, Route, Set, User } from "../types/routes";
 import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+  } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+  );
+
+
+export const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: false,
+        text: 'Chart.js Bar Chart',
+      },
+    },
+  };
+  
+//   const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+  
+
+  
+  
 
 export default function Profile(props: {
   routes: Route[];
@@ -11,6 +50,53 @@ export default function Profile(props: {
   user: User | false;
   updateData: () => void;
 }){
+
+    const labels = Object.values(props.sets)
+        .map(set => new Date(set.date).toLocaleString('default', { month: 'long', year: 'numeric' }))
+        .filter((value, index, self) => self.indexOf(value) === index) // Remove duplicates
+        .sort((a, b) => {
+            const [aMonth, aYear] = a.split(' ');
+            const [bMonth, bYear] = b.split(' ');
+            return new Date(`${aYear}-${aMonth}-01`).getTime() - new Date(`${bYear}-${bMonth}-01`).getTime();
+        }); // Sort by date
+
+    const sent_ids = props.climbs
+    .filter((climb) => climb.sent == true)
+    .map((climb) => climb.route);
+
+    const out_data:any = {};
+
+    Object.values(props.sets).forEach((set)=>{
+        const n_complete = props.routes.filter(
+            (route) => route.set_id === set.id && sent_ids.includes(route.id)
+          ).length;
+
+          const date = new Date(set.date).toLocaleString('default', { month: 'long', year: 'numeric' });
+          const color = props.circuits[set.circuit_id]?.color;
+
+          if (color) {
+            out_data[color] = out_data[color] || {};
+            out_data[color][date] = out_data[color][date] || {};
+            out_data[color][date] = n_complete;
+          
+          }
+    })
+
+    const data = {
+        labels: labels,
+        datasets: Object.values(props.circuits).map(circuit => {
+      
+            const data = labels.map(label => {
+                return out_data[circuit.color]?.[label] || 0;
+            });
+
+            return {
+                label: circuit.name,
+                data: data,
+                backgroundColor: colorsHex[circuit.color],
+            };
+        })
+    };
 
     const locationCounts = Object.entries(
         props.climbs
@@ -66,6 +152,8 @@ export default function Profile(props: {
 
             <div className="mt-8 m-8 font-bold">
              Total sends: {props.climbs.filter(climb => climb.sent).length}
+
+             <Bar options={options} data={data} />
 
              {locationCounts && Object.keys(locationCounts).length > 0 && (
                 <div className="mt-4">      
