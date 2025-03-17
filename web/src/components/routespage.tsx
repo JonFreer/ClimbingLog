@@ -65,7 +65,7 @@ useEffect(() => {
         updateData={props.updateData}
         closeCallback={()=>setSidebarRoute(undefined)}></RouteSideBar>
       <DraggableDotsCanvas
-        dots={props.routes.filter((route) => props.sets[route.set_id] && active_sets[props.sets[route.set_id].circuit_id].id == route.set_id && (filterCircuits[props.sets[route.set_id].circuit_id] || !anyFitlered)).map((route) => ({
+        dots={props.routes.filter((route) => props.sets[route.set_id] && (active_sets[props.sets[route.set_id].circuit_id].id == route.set_id && (filterCircuits[props.sets[route.set_id].circuit_id]) || !anyFitlered)).map((route) => ({
           id: route.id,
           x: route.x,
           y: route.y,

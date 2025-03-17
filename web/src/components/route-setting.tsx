@@ -146,7 +146,7 @@ export function RouteSettingPage() {
                 <button
                 key={circuit.id}
                 className={
-                  "p-2 font-bold rounded " +
+                  "p-2 font-bold rounded uppercase " +
                   (openCircuit == circuit.id ? (`${colors[circuit.color]} shadow` || "") : `${colorsFaint[circuit.color]} `)
                 }
                 onClick={() => setOpenCircuit(circuit.id)}
@@ -210,19 +210,7 @@ export function RouteSettingPage() {
             </button>
           </div>
           ))
-     
-
       )}
-
-
-            
-
-    
-
-
-  
-
-      
     </div>
   );
 }
