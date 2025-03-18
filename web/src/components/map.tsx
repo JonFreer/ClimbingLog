@@ -40,7 +40,7 @@ const DraggableDotsCanvas = (props: {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [props]);
 
   useEffect(() => {
     drawCanvas();
@@ -149,7 +149,6 @@ const DraggableDotsCanvas = (props: {
       }
 
       // Draw dots
-
 
       props.dots.forEach((dot) => {
         if(dot.id === props.selected_id){
