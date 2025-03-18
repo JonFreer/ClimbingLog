@@ -21,6 +21,7 @@ class UserUpdate(schemas.BaseUserUpdate):
     about: Optional[str]
 
 class UserPublic(BaseModel):
+    id: uuid.UUID
     username: str
     about:str
     profile_visible: bool

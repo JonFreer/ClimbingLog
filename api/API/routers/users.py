@@ -9,6 +9,9 @@ from ..models import Climbs, Routes
 from ..users import current_active_user, User
 from sqlalchemy.future import select
 import datetime
+from PIL import Image,ImageOps
+import uuid
+import io
 
 router = APIRouter()
 
@@ -46,3 +49,50 @@ async def get_user_climbs(
         return climbs
     
     raise HTTPException(status_code=403, detail="Climbs is not visible")
+
+
+@router.post("/users/me/update_cover_photo", response_model=None, tags=["users"])
+async def update_cover_photo(
+        file: UploadFile = File(...),
+        db: AsyncSession = Depends(get_db),
+        user: User = Depends(current_active_user),
+    ):
+        if "image" not in file.content_type:
+            raise HTTPException(status_code=500, detail="File type must be an image")
+        print("saving photo")
+        request_object_content = await file.read()
+        im = Image.open(io.BytesIO(request_object_content))
+        # Save the image
+        im.save("./imgs/cover_photos/" + str(user.id) + ".webp", "webp", quality=70)
+        
+        return None
+
+@router.get("/cover_photo/{user_id}",response_class=FileResponse, tags=["users"]) #Add resposne model
+def get_img(response: Response,
+            user_id:str):
+    return "./imgs/cover_photos/" + str(user_id) + ".webp"
+
+@router.post("/users/me/update_profile_photo", response_model=None, tags=["users"])
+async def update_profile_photo(
+        file: UploadFile = File(...),
+        db: AsyncSession = Depends(get_db),
+        user: User = Depends(current_active_user),
+    ):
+        if "image" not in file.content_type:
+            raise HTTPException(status_code=500, detail="File type must be an image")
+        print("saving photo")
+        request_object_content = await file.read()
+        im = Image.open(io.BytesIO(request_object_content))
+        MAX_SIZE_2 = (250, 250) 
+        im = ImageOps.fit(im, MAX_SIZE_2, Image.LANCZOS)
+        # Save the image
+        im.save("./imgs/profile_photos/" + str(user.id) + ".webp", "webp", quality=70)
+        
+        return None
+
+@router.get("/profile_photo/{user_id}",response_class=FileResponse, tags=["users"]) #Add resposne model
+def get_img(response: Response,
+            user_id:str):
+    
+    return "./imgs/profile_photos/" + str(user_id) + ".webp"
+

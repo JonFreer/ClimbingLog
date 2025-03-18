@@ -171,10 +171,13 @@ export default function Profile(props: {
 
     return(
         <div className="bg-gray-100 min-h-screen p-4">
-        <div className="max-w-3xl mx-auto bg-white rounded-t-xl">
-            <img className="max-h-56 w-full object-cover shadow-lg rounded-t-xl  border-4 border-white" src="https://www.abcwalls.co.uk/wp-content/uploads/2024/01/DepotClimbingSocialUse-178-USE.jpg" alt="Profile" />
+        <div className="max-w-3xl mx-auto bg-white rounded-t-xl relative">
+        {/* <img className="max-h-56 w-full object-cover shadow-lg rounded-t-xl  border-4 border-white" src={`https://www.abcwalls.co.uk/wp-content/uploads/2024/01/DepotClimbingSocialUse-178-USE.jpg`} alt="Profile" /> */}
+        <img className="h-56 max-h-56 w-full object-cover bg-slate-400 rounded-t-xl border-4 border-white" src={`/api/cover_photo/${user.id}`}  />
             <div className="relative">
+
                 <UserCircleIcon className="absolute left-4 -translate-y-2/3 rounded-full border-4 border-white shadow-lg h-36 w-36 bg-white text-gray-700"></UserCircleIcon>
+                <img className="absolute left-4 -translate-y-2/3 rounded-full border-4 border-white shadow-lg h-36 w-36" src={`/api/profile_photo/${user.id}`}  />
                 {/* <img className="absolute left-4 -translate-y-2/3 rounded-full border-4 border-white shadow-lg" src="https://headshots-inc.com/wp-content/uploads/2023/03/business-headshot-example-2.jpg" alt="User Profile" style={{ width: '150px', height: '150px', top: '50%' }} /> */}
                 <div className="absolute left-48 font-bold text-2xl text-gray-800 top-4">
                     @{user.username}

@@ -111,6 +111,7 @@ export function NavBar(props: { user: User | false }) {
                       className="size-8 rounded-full"
                     /> */}
                      <UserCircleIcon aria-hidden="true" className="size-8 text-gray-300" />
+                     <img className="absolute rounded-full size-8" onError={(e) => (e.currentTarget.style.display = 'none')} src={`/api/profile_photo/${props.user.id}`}  />
                   </MenuButton>
                 </div>
                 <MenuItems

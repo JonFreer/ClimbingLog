@@ -8,6 +8,8 @@ RUN mkdir -p ./imgs
 RUN mkdir -p ./imgs/routes/
 RUN mkdir -p ./imgs/routes/full
 RUN mkdir -p ./imgs/routes/thumb
+RUN mkdir -p ./imgs/cover_photos
+RUN mkdir -p ./imgs/profile_photos
 
 RUN pip install -r requirements.txt
 
