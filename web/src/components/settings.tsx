@@ -103,6 +103,8 @@ export default function Settings(props:{user:User | false}) {
               <label htmlFor="about" className="block text-sm/6 font-medium text-gray-900">
                 About
               </label>
+              <p className="mt-3 text-sm/6 text-gray-600">Write a few sentences about yourself.</p>
+
               <div className="mt-2">
                 <textarea
                   onChange={handleChange}
@@ -113,7 +115,6 @@ export default function Settings(props:{user:User | false}) {
                   defaultValue={props.user.about}
                 />
               </div>
-              <p className="mt-3 text-sm/6 text-gray-600">Write a few sentences about yourself.</p>
             </div>
 
             <div className="col-span-full">

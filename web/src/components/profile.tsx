@@ -40,10 +40,6 @@ export const options = {
   
 //   const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   
-
-  
-  
-
 export default function Profile(props: {
   routes: Route[];
   climbs: Climb[];

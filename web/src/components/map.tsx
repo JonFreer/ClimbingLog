@@ -77,15 +77,18 @@ const DraggableDotsCanvas = (props: {
     const prevWidth = canvas.width;
     const prevHeight = canvas.height;
 
+    const dpr = window.devicePixelRatio || 1;
+
+
     if (width !== prevWidth || height !== prevHeight) {
-      canvas.width = width;
-      canvas.height = height;
+      canvas.width = width*dpr;
+      canvas.height = height*dpr;
 
       // Adjust translation to keep the center point in the same place
       transformRef.current = {
         ...transformRef.current,
-        translateX: transformRef.current.translateX + (width - prevWidth) / 2,
-        translateY: transformRef.current.translateY + (height - prevHeight) / 2,
+        translateX: transformRef.current.translateX + (( (width   - prevWidth/dpr) / 2)),
+        translateY: transformRef.current.translateY + (height  - prevHeight/dpr) / 2,
       };
 
       drawCanvas();
@@ -105,18 +108,22 @@ const DraggableDotsCanvas = (props: {
 
   function drawCanvas() {
     const ctx = canvasRef.current?.getContext("2d");
+    const dpr = window.devicePixelRatio || 1;
+  
     if (ctx) {
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
       const { width, height } = ctx.canvas;
 
       ctx.clearRect(0, 0, width, height);
       ctx.save();
 
       ctx.translate(
-        transformRef.current.translateX,
-        transformRef.current.translateY
+        transformRef.current.translateX * dpr,
+        transformRef.current.translateY * dpr
       );
 
-      ctx.scale(transformRef.current.scale, transformRef.current.scale);
+      ctx.scale(transformRef.current.scale *dpr, transformRef.current.scale * dpr );
 
       // Draw grid
       const gridSize = 10;
@@ -138,7 +145,7 @@ const DraggableDotsCanvas = (props: {
 
       // Draw SVG
       if (svgImageRef.current) {
-        ctx.drawImage(svgImageRef.current, -55, -70);
+        ctx.drawImage(svgImageRef.current, -55 , -70 );
       }
 
       // Draw dots
