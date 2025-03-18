@@ -9,7 +9,7 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import {HeartIcon as HeartIconFill} from "@heroicons/react/24/solid";
-import { XMarkIcon, HeartIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, HeartIcon, TrashIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { Circuit, Climb, Projects, Route, SentBy, Set } from "../types/routes";
 import { colors, colorsBold, colorsPastel } from "../types/colors";
 import { NavLink } from "react-router";
@@ -73,6 +73,9 @@ export default function RouteSideBar(props: {
   const circuit = props.circuits[props.sets[route.set_id]?.circuit_id]; 
 
   const open = props.route != undefined;
+
+  const sent_by_imgs = sentBy.users.filter((user) => user.has_profile_photo).slice(0,3).map((user) => user.id);
+  
   return (
     <Dialog
       open={open}
@@ -175,15 +178,27 @@ export default function RouteSideBar(props: {
 
 
                   {sentBy.num_users!=0 ?  <>
-                    <div className="px-10 pt-5 text-m mx-1 text-gray-400 hover:text-gray-500 flex cursor-pointer" onClick={()=>{setSentByOpen(true)}}>
-                    Sent by
-                    {sentBy.users.length > 0 ?  <a key={sentBy.users[0].id} className="font-bold ml-1">{sentBy.users[0].username}</a>:null}
-                    {sentBy.users.length > 1 ?  <a key={sentBy.users[1].id} className="font-bold">, {sentBy.users[1].username}</a>:null}
-                    {sentBy.users.length > 1 && sentBy.num_users > 2 && (
+                    <DialogTitle className="px-10 pt-5 text-base font-semibold text-gray-600">
+                    Sent By
+                  </DialogTitle>
+                    <div className="px-10 pt-5 text-m mx-1 text-gray-600 hover:text-gray-500 flex cursor-pointer ml-6" onClick={()=>{setSentByOpen(true)}}>
+                    {sent_by_imgs.map((id) => (
+                      <img
+                      key={id}
+                      className="w-10 h-10 rounded-full -ml-5 border-2 border-white shadow"
+                      src={"/api/profile_photo/"+id}
+                      ></img>
+                    ))}
+                    
+                    <div className="ml-2 flex items-center">
+                      {sentBy.users.length > 0 ?  <a key={sentBy.users[0].id} className="font-semibold ml-1">{sentBy.users[0].username}</a>:null}
+                      {sentBy.users.length > 1 ?  <a key={sentBy.users[1].id} className="font-semibold">, {sentBy.users[1].username}</a>:null}
+                      {sentBy.users.length > 1 && sentBy.num_users > 2 && (
                       <span className="ml-1">
-                       and <span className="font-bold">{sentBy.num_users - 2} {sentBy.num_users - 2==1? "other":"others"}</span>
+                        and <span className="font-semibold">{sentBy.num_users - 2} {sentBy.num_users - 2==1? "other":"others"}</span>
                       </span>
-                    )}
+                      )}
+                    </div>
                     </div>
                   </>:<></>}
 
@@ -402,7 +417,15 @@ export function SentByModal(props: {
 
                     {props.sent_by.users.map((user) => (
                       <div className="p-2" key={user.id}>
-                      <NavLink to={`/profile/${user.username}`} className="rounded cursor-pointer w-full p-2 hover:bg-gray-100 m-auto">{user.username}</NavLink>
+                      <NavLink to={`/profile/${user.username}`} className="font-semibold text-slate-700 rounded cursor-pointer w-full p-2 hover:bg-gray-100 m-auto flex">
+                      {user.has_profile_photo ? (
+                        <img
+                          className="w-10 h-10 rounded-full"
+                          src={"/api/profile_photo/" + user.id}
+                        ></img>
+                      ) : (<UserCircleIcon aria-hidden="true" className="size-10 text-gray-300" />)}
+                         <span className="ml-4 flex items-center">{user.username}</span>
+                      </NavLink>
                       </div>
                     ))}
                   </div>

@@ -60,6 +60,12 @@ async def update_cover_photo(
         if "image" not in file.content_type:
             raise HTTPException(status_code=500, detail="File type must be an image")
         print("saving photo")
+
+        user.has_cover_photo = True
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+
         request_object_content = await file.read()
         im = Image.open(io.BytesIO(request_object_content))
         # Save the image
@@ -81,6 +87,12 @@ async def update_profile_photo(
         if "image" not in file.content_type:
             raise HTTPException(status_code=500, detail="File type must be an image")
         print("saving photo")
+
+        user.has_profile_photo = True       
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+
         request_object_content = await file.read()
         im = Image.open(io.BytesIO(request_object_content))
         MAX_SIZE_2 = (250, 250) 

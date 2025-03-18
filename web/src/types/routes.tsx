@@ -27,6 +27,8 @@ export interface User{
     profile_visible:boolean;
     send_visible:boolean;
     route_setter:boolean;
+    has_profile_photo:boolean;
+    has_cover_photo:boolean;
 }
 
 export interface Climb{
@@ -38,7 +40,7 @@ export interface Climb{
 }
 
 export interface SentBy{
-    users: {id:string,username:string}[];
+    users: {id:string,username:string,has_profile_photo:boolean}[];
     num_users:number;
 }
 

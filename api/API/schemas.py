@@ -10,6 +10,8 @@ class UserRead(schemas.BaseUser[uuid.UUID]):
     profile_visible: bool
     send_visible: bool
     route_setter: bool
+    has_profile_photo: bool
+    has_cover_photo: bool
 
 class UserCreate(schemas.BaseUserCreate):
     username: str
@@ -27,6 +29,8 @@ class UserPublic(BaseModel):
     profile_visible: bool
     send_visible: bool
     route_setter: bool
+    has_profile_photo: bool
+    has_cover_photo: bool
 
 class Route(BaseModel):
     name: str
@@ -58,6 +62,7 @@ class Climb(BaseModel):
 
 class UserNamePair(BaseModel):
     username: str
+    has_profile_photo: bool
     id: uuid.UUID
 
 class SentBy(BaseModel):

@@ -14,6 +14,8 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     route_setter = Column(Boolean, index=True, nullable=False, default=False)
     send_visible = Column(Boolean, index=True, nullable=False, default=True)
     about = Column(String, index=False, nullable=False, default="")
+    has_profile_photo = Column(Boolean, index=False, nullable=False, default=False)
+    has_cover_photo = Column(Boolean, index=False, nullable=False, default=False)
 
 class Routes(Base):
     __tablename__ = "routes"

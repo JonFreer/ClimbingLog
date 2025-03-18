@@ -37,7 +37,7 @@ async def get_route(
             user = result.scalars().first()
             user_ids.add(climb.user)
             if user.send_visible:
-                sent_by.append({"id": user.id, "username": user.username})
+                sent_by.append({"id": user.id, "username": user.username, "has_profile_photo": user.has_profile_photo})
 
     return {"users": sent_by, "num_users": len(user_ids)}
 
