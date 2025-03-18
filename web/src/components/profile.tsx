@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { Bar } from 'react-chartjs-2';
 import { useParams } from "react-router";
 import { API } from "../types/api";
+import RouteSideBar from "./route-sidebar";
 
 ChartJS.register(
     CategoryScale,
@@ -30,6 +31,10 @@ export const options = {
     plugins: {
       legend: {
         position: 'top' as const,
+        labels: {
+            usePointStyle: true, // Makes the legend use circular markers
+            pointStyle: 'roundRect', // Use a rounded rectangle
+        }
       },
       title: {
         display: false,
@@ -52,6 +57,7 @@ export default function Profile(props: {
 
     const [user,setUser]= useState<User|false>(false);
     const [climbs, setClimbs] = useState<Climb[]>([]);
+    const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(undefined);
 
     const { id } = useParams();
 
@@ -171,6 +177,16 @@ export default function Profile(props: {
 
     return(
         <div className="bg-gray-100 min-h-screen p-4">
+
+        <RouteSideBar 
+            route={props.routes.find(route => route.id === sidebarRoute)}
+            circuits={props.circuits}
+            sets={props.sets}
+            climbs={props.climbs}
+            projects={props.projects}
+            updateData={props.updateData}
+            closeCallback={()=>setSidebarRoute(undefined)}></RouteSideBar>
+
         <div className="max-w-3xl mx-auto bg-white rounded-t-xl relative">
         {/* <img className="max-h-56 w-full object-cover shadow-lg rounded-t-xl  border-4 border-white" src={`https://www.abcwalls.co.uk/wp-content/uploads/2024/01/DepotClimbingSocialUse-178-USE.jpg`} alt="Profile" /> */}
             {! user.has_cover_photo ?
@@ -250,6 +266,7 @@ export default function Profile(props: {
                                         circuits={props.circuits}
                                         sets={props.sets}
                                         climb={climb}
+                                        setSidebarRoute={setSidebarRoute}
                                     />
                             ))}
                         </div>
@@ -270,6 +287,7 @@ function RouteCard(props: {
   circuits: Record<string, Circuit>;
   sets: Record<string, Set>;
   climb: Climb;
+  setSidebarRoute: (route: string) => void;
 }){
 
     const days = Math.floor((Date.now() - new Date(props.climb.time).getTime()) / (1000 * 60 * 60 * 24));
@@ -277,7 +295,7 @@ function RouteCard(props: {
     var day_text = (days == 0) ? "Today" : (days == 1) ? "Yesterday" : days + " days ago";
 
     return(
-        <div className="cursor-pointer w-36 max-w-xs rounded-lg shadow-md bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out">
+        <div className="cursor-pointer w-36 max-w-xs rounded-lg shadow-md bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out" onClick={() => props.setSidebarRoute(props.route.id)}>
             <div className="bg-white relative">
                 <img
                     className={"rounded-lg"}

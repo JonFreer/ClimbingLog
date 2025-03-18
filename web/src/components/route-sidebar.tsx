@@ -29,7 +29,7 @@ export default function RouteSideBar(props: {
 
   function updateSentBy(){
     if (props.route) {
-      fetch("api/routes/sent_by/"+props.route.id)
+      fetch("/api/routes/sent_by/"+props.route.id)
       .then((response) => response.json())
       .then((data) => setSentBy(data))
       .catch((error) => console.error("Error fetching sent_by:", error));
@@ -417,7 +417,7 @@ export function SentByModal(props: {
 
                     {props.sent_by.users.map((user) => (
                       <div className="p-2" key={user.id}>
-                      <NavLink to={`/profile/${user.username}`} className="font-semibold text-slate-700 rounded cursor-pointer w-full p-2 hover:bg-gray-100 m-auto flex">
+                      <a href={`/profile/${user.username}`} className="font-semibold text-slate-700 rounded cursor-pointer w-full p-2 hover:bg-gray-100 m-auto flex">
                       {user.has_profile_photo ? (
                         <img
                           className="w-10 h-10 rounded-full"
@@ -425,7 +425,7 @@ export function SentByModal(props: {
                         ></img>
                       ) : (<UserCircleIcon aria-hidden="true" className="size-10 text-gray-300" />)}
                          <span className="ml-4 flex items-center">{user.username}</span>
-                      </NavLink>
+                      </a>
                       </div>
                     ))}
                   </div>
