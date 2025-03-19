@@ -68,3 +68,12 @@ class UserNamePair(BaseModel):
 class SentBy(BaseModel):
     users: list[UserNamePair]
     num_users: int
+
+class ClimbFeed(BaseModel):
+    id: uuid.UUID
+    sent: bool
+    time: datetime.datetime
+    route: uuid.UUID
+    user: uuid.UUID
+    username: str
+    has_profile_photo: bool

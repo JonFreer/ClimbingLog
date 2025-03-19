@@ -260,7 +260,7 @@ export default function Profile(props: {
                                 .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
                                 .slice(0, 20)
                                 .map((climb) => (
-                                    <RouteCard 
+                                    <RouteCardProfile 
                                         key={climb.route}
                                         route={props.routes.find(route => route.id === climb.route)}
                                         circuits={props.circuits}
@@ -282,7 +282,7 @@ export default function Profile(props: {
     )
 }
 
-function RouteCard(props: {
+export function RouteCardProfile(props: {
   route: Route;
   circuits: Record<string, Circuit>;
   sets: Record<string, Set>;
@@ -290,6 +290,10 @@ function RouteCard(props: {
   setSidebarRoute: (route: string) => void;
 }){
 
+    if(props.route === undefined){
+        return <div></div>
+    }
+    
     const days = Math.floor((Date.now() - new Date(props.climb.time).getTime()) / (1000 * 60 * 60 * 24));
 
     var day_text = (days == 0) ? "Today" : (days == 1) ? "Yesterday" : days + " days ago";

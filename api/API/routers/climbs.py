@@ -12,6 +12,22 @@ import datetime
 
 router = APIRouter()
 
+
+@router.get("/climbs/get_all", response_model=List[schemas.ClimbFeed], tags=["climbs"])
+async def get_all_climbs(
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(
+        select(Climbs.user,Climbs.id,Climbs.route,Climbs.sent,Climbs.time, User.username, User.has_profile_photo)
+        .join(User, Climbs.user == User.id)
+        .where(Climbs.sent == True)
+    )
+    routes = result.all()  # Changed from scalars().all() to all()
+
+    
+    print(routes)
+    return routes
+
 @router.get("/climbs/me/get_all", response_model=List[schemas.Climb], tags=["climbs"])
 async def get_all_climbs(
     db: AsyncSession = Depends(get_db),

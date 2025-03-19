@@ -19,6 +19,7 @@ import Settings from "./components/settings";
 import DraggableDotsCanvas from "./components/map";
 import { RouteSettingPage } from "./components/route-setting";
 import Profile from "./components/profile";
+import Feed from "./components/feedpage";
 
 const ProtectedRoute = ({ authed, children }) => {
   if (!authed) {
@@ -199,10 +200,24 @@ function App() {
           }
         />
 
-<Route
+      <Route
           path="/profile/"
           element={
             <Profile 
+            routes={routes}
+            circuits={circuits}
+            sets = {sets}
+            climbs={climbs}
+            projects={projects}
+            user={user} 
+            updateData={updateData}/>
+          }
+        />
+
+        <Route
+          path="/feed/"
+          element={
+            <Feed 
             routes={routes}
             circuits={circuits}
             sets = {sets}
