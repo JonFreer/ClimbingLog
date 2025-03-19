@@ -4,6 +4,7 @@ import { Circuit, Climb, Projects, Route, Set, User } from "../types/routes";
 import { useEffect, useState } from "react";
 import { RouteCard } from "./route-card";
 import { RouteCardProfile } from "./profile";
+import RouteSideBar from "./route-sidebar";
 
 export default function Feed(props: {
     routes: Route[];
@@ -61,6 +62,15 @@ export default function Feed(props: {
     }
     return (
         <div className="bg-gray-100 p-4">
+            <RouteSideBar 
+                    route={props.routes.find(route => route.id === sidebarRoute)}
+                    circuits={props.circuits}
+                    sets={props.sets}
+                    climbs={props.climbs}
+                    projects={props.projects}
+                    updateData={props.updateData}
+                    closeCallback={()=>setSidebarRoute(undefined)}></RouteSideBar>
+            
             <div className="bg-white p-8 py-4 rounded-lg ">
                 <div className="font-bold text-xl">Send Feed</div>
             </div>
@@ -71,9 +81,9 @@ export default function Feed(props: {
                             <div className="bg-white p-4 rounded-lg mt-4 pb-2" key={user}>
                                 <div className="font-bold flex items-center text-slate-800">
                                     {clumped_climbs[date][user][0].has_profile_photo ? (
-                                    <img src={`/api/profile_photo/${clumped_climbs[date][user][0].user}`} className="rounded-full h-10 w-10" />
+                                    <img src={`/api/profile_photo/${clumped_climbs[date][user][0].user}`} className="rounded-full h-9 w-9" />
                                     ) : null}
-                                    <div className="ml-4">{user}</div> <div className="ml-auto font-normal">{date}</div></div>
+                                    <a href={`/profile/${user}`} className="ml-3">{user}</a> <div className="ml-auto font-normal text-sm">{date}</div></div>
 
                                 <div className="m-2">
                                 <div className="flex flex-col bg-white m-auto p-auto mt-5 relative">
