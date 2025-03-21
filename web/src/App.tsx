@@ -20,6 +20,7 @@ import DraggableDotsCanvas from "./components/map";
 import { RouteSettingPage } from "./components/route-setting";
 import Profile from "./components/profile";
 import Feed from "./components/feedpage";
+import StorePage from "./components/store";
 
 const ProtectedRoute = ({ authed, children }) => {
   if (!authed) {
@@ -197,6 +198,13 @@ function App() {
             projects={projects}
             user={user} 
             updateData={updateData}/>
+          }
+        />
+
+<Route
+          path="/store"
+          element={
+            <StorePage/>
           }
         />
 
