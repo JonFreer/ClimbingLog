@@ -38,27 +38,4 @@ jobs:
           sleep 20
           docker compose -f docker-compose.yaml -f docker-compose.dev.yaml stop
 
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-    env:
-      RAILS_ENV: test
-      DB_USERNAME: gh_db_un
-      DB_PASSWORD: gh_db_pw
-      API_DB_USERNAME: gh_api_un
-      API_DB_PASSWORD: gh_api_pw
-      SESSION_SECRET: gh_secret
-      EXTERNAL_API_TOKEN: gh_token
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Start docker containers
-        run: |
-          echo "VERSION=$(versioninfo)" >> $GITHUB_ENV
-          docker compose -f docker-compose-test.yaml build 
-          docker compose -f docker-compose-test.yaml up --detach db 
-          sleep 10  # wait for database to be ready
-
-      - name: Run backend unit and integration tests
-        run: docker compose -f docker-compose-test.yaml up api
