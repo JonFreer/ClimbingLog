@@ -2,9 +2,9 @@
 import { API } from "../types/api";
 import { Circuit, Climb, Projects, Route, Set, User } from "../types/routes";
 import { useEffect, useState } from "react";
-import { RouteCard } from "./route-card";
 import { RouteCardProfile } from "./profile";
 import RouteSideBar from "./route-sidebar";
+import { colorsPastel } from "../types/colors";
 
 export default function Feed(props: {
     routes: Route[];
@@ -86,6 +86,23 @@ export default function Feed(props: {
                                     <a href={`/profile/${user}`} className="ml-3">{user}</a> <div className="ml-auto font-normal text-sm">{date}</div></div>
 
                                 <div className="m-2">
+                                <div className="m-1 my-4 flex gap-2 ">
+                                    {Object.keys(props.circuits).map((circuitId) => {
+                                        const circuitClimbCount = Object.values(clumped_climbs[date][user])
+                                            .flat()
+                                            .filter((climb: Climb) => {
+                                                const setId = props.routes.find(route => route.id === climb.route)?.set_id ?? '';
+                                                return props.sets[setId]?.circuit_id === circuitId;
+                                            }).length;
+
+                                        return (
+                                            circuitClimbCount > 0 &&
+                                            <div key={circuitId} className={"p-1 px-3 rounded-full text-white " + colorsPastel[props.circuits[circuitId].color]}>
+                                               {circuitClimbCount} {circuitClimbCount > 1?"sends":"send"}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                                 <div className="flex flex-col bg-white m-auto p-auto mt-5 relative">
                                     <div className="flex overflow-x-scroll pb-10 hide-scroll-bar">
                                         <div className="flex gap-4 flex-nowrap">

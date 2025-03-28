@@ -9,7 +9,7 @@ import {
 } from "@headlessui/react";
 import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router";
 import { User } from "../types/routes";
 
@@ -27,10 +27,10 @@ function classNames(...classes: any) {
 export function NavBar(props: { user: User | false }) {
 
   const navigation = [
-    { name: "Dashboard", href: "/", current: true },
+    { name: "Dashboard", href: "/", current: false },
+    { name: "Feed", href: "/feed", current: false },
   ];
 
-  // useEffect(() => {
   if(props.user && props.user.is_superuser){
     navigation.push({ name: "Admin", href: "/admin", current: false });
   }
@@ -38,7 +38,8 @@ export function NavBar(props: { user: User | false }) {
   if(props.user && props.user.route_setter){
     navigation.push({ name: "Route Setting", href: "/route_setting", current: false });
   }
-  // }, []);
+
+  const [path, setPath] = useState<string | undefined>(undefined);
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -73,9 +74,10 @@ export function NavBar(props: { user: User | false }) {
                   <NavLink
                     key={item.name}
                     to={item.href}
-                    aria-current={item.current ? "page" : undefined}
+                    aria-current={item.href === window.location.pathname ? "page" : undefined}
+                    onClick={() => setPath(item.href)}
                     className={classNames(
-                      item.current
+                      item.href === window.location.pathname
                         ? "bg-gray-900 text-white"
                         : "text-gray-300 hover:bg-gray-700 hover:text-white",
                       "rounded-md px-3 py-2 text-sm font-medium"
@@ -121,6 +123,7 @@ export function NavBar(props: { user: User | false }) {
                 >
                   <MenuItem>
                     <NavLink
+                      onClick={() => setPath("/profile")}
                       to="/profile"
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                     >
@@ -129,6 +132,8 @@ export function NavBar(props: { user: User | false }) {
                   </MenuItem>
                   <MenuItem>
                     <NavLink
+                      onClick={() => setPath("/settings")}
+
                       to="/settings"
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                     >
@@ -139,6 +144,7 @@ export function NavBar(props: { user: User | false }) {
                     <NavLink
                       onClick={() => {
                         localStorage.removeItem("token");
+                        setPath("/");
                         // window.location.href = "/";
                       }}
                       to="/"
@@ -153,6 +159,7 @@ export function NavBar(props: { user: User | false }) {
           ) : (
             <div className="absolute inset-y-0 top-3 right-0">
               <NavLink
+                onClick={() => setPath("/login")}
                 to={"/login"}
                 // aria-current={item.current ? 'page' : undefined}
                 className={classNames("inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 sm:ml-3 sm:w-auto",
@@ -170,11 +177,12 @@ export function NavBar(props: { user: User | false }) {
         <div className="space-y-1 px-2 pb-3 pt-2">
           {navigation.map((item) => (
             <NavLink
+              onClick={() => setPath(item.href)}
               key={item.name}
               to={item.href}
-              aria-current={item.current ? "page" : undefined}
+              aria-current={item.href === window.location.pathname ? "page" : undefined}
               className={classNames(
-                item.current
+                item.href === window.location.pathname
                   ? "bg-gray-900 text-white"
                   : "text-gray-300 hover:bg-gray-700 hover:text-white",
                 "block rounded-md px-3 py-2 text-base font-medium"
