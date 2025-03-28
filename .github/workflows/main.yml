@@ -1,0 +1,41 @@
+name: Run tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+      DB_USERNAME: gh_db_un
+      DB_PASSWORD: gh_db_pw
+      API_DB_USERNAME: gh_api_un
+      API_DB_PASSWORD: gh_api_pw
+      SESSION_SECRET: gh_secret
+      EXTERNAL_API_TOKEN: gh_token
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup env
+        run: |
+          echo "PROJECT_ROOT=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
+          echo "PROJECT_NAME=combine" >> $GITHUB_ENV
+          echo "${GITHUB_WORKSPACE}/bin" >> $GITHUB_PATH
+
+      - name: Build docker containers
+        run: docker compose -f docker-compose.yaml -f docker-compose.dev.yaml build
+
+      - name: Run docker containers
+        run: |
+          docker compose -f docker-compose.yaml -f docker-compose.dev.yaml up -d
+          sleep 20
+          docker compose -f docker-compose.yaml -f docker-compose.dev.yaml stop
+
+
