@@ -57,7 +57,7 @@ export default function NavBarBottom(props: { user: User | false }) {
         <img
           alt="Your Company"
           src="/logo.svg"
-          className="h-6 w-auto" 
+          className="h-6 pl-2 w-auto" 
         />
       </NavLink>
       <NavLink

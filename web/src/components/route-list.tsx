@@ -60,7 +60,7 @@ export function RouteList(props: {
               }}
             >
               <div className="flex items-center w-full">
-                <span className="text-lg font-bold text-white uppercase px-2 py-2 pr-10 min-w-52 text-center rounded-l-lg bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-40% to-emerald-500 to-100% clip-path">Your Projects</span>
+                <span className="text-lg font-bold text-white uppercase px-4 py-2 pr-10 min-w-52 rounded-l-lg bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-40% to-emerald-500 to-100% clip-path">Your Projects</span>
                 <span
                   className={
                     "font-bold ml-auto mr-2"
@@ -161,7 +161,7 @@ export function RouteList(props: {
               }}
             >
               <div className="flex items-center w-full">
-                <span className={"text-lg font-bold text-white uppercase px-2 py-2 pr-10 w-52 text-center rounded-l-lg clip-path truncate "+
+                <span className={"text-lg font-bold text-white uppercase px-4 py-2 pr-10 w-52 rounded-l-lg clip-path truncate "+
                     (colors[circuit.color] || "")}>{circuit.name}</span>
                 <div
                   className={

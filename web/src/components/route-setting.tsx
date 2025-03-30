@@ -177,7 +177,7 @@ export function RouteSettingPage() {
             ))}
             </select>
         </span>
-        <span className={"ml-2 px-2 text-sm py-2 rounded-lg font-bold text-white cursor-pointer "+colors[circuits[openCircuit].color]} onClick={() => setSetModalOpen(true)}>
+        <span className={"ml-2 px-2 text-sm py-2 rounded-lg font-bold text-white cursor-pointer "+(circuits[openCircuit] ? colors[circuits[openCircuit].color] : "")} onClick={() => setSetModalOpen(true)}>
           + Set
         </span>
       </div>)}
@@ -185,7 +185,7 @@ export function RouteSettingPage() {
       {selectedSet != "" && (
         <div className="m-2 flex items-center justify-between">
             <span>{new Date(sets[selectedSet].date).toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
-              <span className={"ml-2 px-2 text-sm py-2 rounded-lg font-bold text-white cursor-pointer "+colors[circuits[openCircuit].color]} onClick={() => setRouteModalOpen({set_id:selectedSet,route:null})}>
+              <span className={"ml-2 px-2 text-sm py-2 rounded-lg font-bold text-white cursor-pointer "+(circuits[openCircuit] ? colors[circuits[openCircuit].color] : "")} onClick={() => setRouteModalOpen({set_id:selectedSet,route:null})}>
                 + Route
            </span>
         </div>
