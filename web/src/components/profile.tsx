@@ -176,7 +176,7 @@ export default function Profile(props: {
     }, {} as Record<string, number>);
 
     return(
-        <div className="bg-gray-100 min-h-screen p-4">
+        <div className="bg-gray-100 min-h-screen p-4 sm:mb-8 mb-14">
 
         <RouteSideBar 
             route={props.routes.find(route => route.id === sidebarRoute)}

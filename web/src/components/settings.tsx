@@ -65,7 +65,7 @@ export default function Settings(props:{user:User | false}) {
   
 
   return (
-    <form className='m-8' onSubmit={handleSubmit}>
+    <form className='m-8 sm:mb-8 mb-16' onSubmit={handleSubmit}>
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base/7 font-semibold text-gray-900">Profile</h2>

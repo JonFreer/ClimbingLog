@@ -61,7 +61,7 @@ export default function Feed(props: {
         return (<div></div>)
     }
     return (
-        <div className="bg-gray-100 p-4">
+        <div className="bg-gray-100 p-4 sm:mb-8 mb-14">
             <RouteSideBar 
                     route={props.routes.find(route => route.id === sidebarRoute)}
                     circuits={props.circuits}

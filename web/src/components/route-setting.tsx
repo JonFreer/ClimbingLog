@@ -125,7 +125,7 @@ export function RouteSettingPage() {
 
 
   return (
-    <div className="m-5">
+    <div className="m-5 sm:mb-8 mb-14">
       <AddRow set_id={routeModalOpen.set_id} circuit_id={openCircuit} setOpen={setRouteModalOpen} route={routeModalOpen.route} routes={routes} circuits={circuits} />
       <DangerDialog title={"Delete route"} 
             body={"Are you sure you want to delete this route? This route will be removed for everybody and cannot be undone."} 
@@ -177,7 +177,7 @@ export function RouteSettingPage() {
             ))}
             </select>
         </span>
-        <span className="ml-2 px-2 bg-violet-600 text-sm py-2 rounded-lg font-bold text-white cursor-pointer" onClick={() => setSetModalOpen(true)}>
+        <span className={"ml-2 px-2 text-sm py-2 rounded-lg font-bold text-white cursor-pointer "+colors[circuits[openCircuit].color]} onClick={() => setSetModalOpen(true)}>
           + Set
         </span>
       </div>)}
@@ -185,7 +185,7 @@ export function RouteSettingPage() {
       {selectedSet != "" && (
         <div className="m-2 flex items-center justify-between">
             <span>{new Date(sets[selectedSet].date).toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
-              <span className="ml-2 px-2 bg-violet-600 text-sm py-2 rounded-lg font-bold text-white cursor-pointer"onClick={() => setRouteModalOpen({set_id:selectedSet,route:null})}>
+              <span className={"ml-2 px-2 text-sm py-2 rounded-lg font-bold text-white cursor-pointer "+colors[circuits[openCircuit].color]} onClick={() => setRouteModalOpen({set_id:selectedSet,route:null})}>
                 + Route
            </span>
         </div>

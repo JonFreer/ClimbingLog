@@ -55,7 +55,7 @@ useEffect(() => {
     }, {} as Record<string, Set>);
 
   return (
-    <div className="">
+    <div className="sm:mb-8 mb-16">
       <RouteSideBar 
         route={props.routes.find(route => route.id === sidebarRoute)}
         circuits={props.circuits}

@@ -199,7 +199,7 @@ export function AdminPage() {
   
 
   return (
-    <div className="m-5">
+    <div className="m-5 sm:mb-8 mb-14">
       <AddCircuit open={circuiteModalOpen} setOpen={setCircuitsModalOpen} />
       <DangerDialog title={"Delete circuit"} 
                 body={"Are you sure you want to delete this circuit? This circuit will be removed for everybody and all routes belonging to it."} 

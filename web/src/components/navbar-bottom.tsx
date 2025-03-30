@@ -13,11 +13,12 @@ import {
 import { NavLink } from "react-router";
 import { useState } from "react";
 export default function NavBarBottom(props: { user: User | false }) {
-    
+
   const [path, setPath] = useState<string | undefined>(undefined);
 
   return (
-    <div className="sm:hidden px-4 w-full fixed bottom-0 h-12 shadow-[0_5px_10px_rgba(0,0,0,0.25)] flex justify-between items-center bg-white z-20">
+    <>
+    <div className="sm:hidden px-4 w-full fixed bottom-0 h-14 shadow-[0_5px_10px_rgba(0,0,0,0.25)] flex justify-between items-center bg-white z-20">
       <NavLink
         to="/"
         onClick={() => setPath("/")}
@@ -27,9 +28,9 @@ export default function NavBarBottom(props: { user: User | false }) {
         }
       >
         {"/" === window.location.pathname ? (
-          <HomeIcon className="h-5 w-5" />
+          <HomeIcon className="h-6 w-6" />
         ) : (
-          <HomeIcon_Outline className="h-5 w-5" />
+          <HomeIcon_Outline className="h-6 w-6" />
         )}
       </NavLink>
       <NavLink
@@ -43,9 +44,9 @@ export default function NavBarBottom(props: { user: User | false }) {
         }
       >
         {"/feed" === window.location.pathname ? (
-          <Square3Stack3DIcon className="h-5 w-5" />
+          <Square3Stack3DIcon className="h-6 w-6" />
         ) : (
-          <Square3Stack3DIcon_Outine className="h-5 w-5" />
+          <Square3Stack3DIcon_Outine className="h-6 w-6" />
         )}
       </NavLink>
       <NavLink
@@ -56,7 +57,7 @@ export default function NavBarBottom(props: { user: User | false }) {
         <img
           alt="Your Company"
           src="/logo.svg"
-          className="h-5 w-auto" 
+          className="h-6 w-auto" 
         />
       </NavLink>
       <NavLink
@@ -70,9 +71,9 @@ export default function NavBarBottom(props: { user: User | false }) {
         }
       >
         {"/settings" === window.location.pathname ? (
-          <Cog6ToothIcon className="h-5 w-5" />
+          <Cog6ToothIcon className="h-6 w-6" />
         ) : (
-          <Cog6ToothIcon_Outline className="h-5 w-5" />
+          <Cog6ToothIcon_Outline className="h-6 w-6" />
         )}
       </NavLink>
       <NavLink
@@ -87,14 +88,15 @@ export default function NavBarBottom(props: { user: User | false }) {
       >
         {props.user && props.user.has_profile_photo ? (
           <img
-            className="rounded-full size-5"
+            className="rounded-full size-7"
             onError={(e) => (e.currentTarget.style.display = "none")}
             src={`/api/profile_photo/${props.user.id}`}
           />
         ) : (
-          <UserCircleIcon aria-hidden="true" className="size-5 text-gray-400" />
+          <UserCircleIcon aria-hidden="true" className="size-6 text-gray-400" />
         )}
       </NavLink>
     </div>
+    </>
   );
 }

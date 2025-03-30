@@ -51,7 +51,7 @@ export function RouteList(props: {
       <>
         <div key={"projects"} className="mt-8 mx-4">
             <button
-              className="bg-white hover:bg-gray-50 text-gray-900 font-medium  rounded-lg shadow w-full text-left flex justify-between items-center"
+              className="bg-white hover:bg-gray-50 text-gray-900 font-medium  rounded-lg shadow-sm w-full text-left flex justify-between items-center"
               onClick={() => {
                 setCircuits((prev) => ({
                   ...prev,
