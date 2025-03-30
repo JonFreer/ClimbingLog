@@ -21,6 +21,7 @@ import { RouteSettingPage } from "./components/route-setting";
 import Profile from "./components/profile";
 import Feed from "./components/feedpage";
 import StorePage from "./components/store";
+import NavBarBottom from "./components/navbar-bottom";
 
 const ProtectedRoute = ({ authed, children }) => {
   if (!authed) {
@@ -134,6 +135,7 @@ function App() {
   return (
     <BrowserRouter>
       <NavBar user={user} />
+      <NavBarBottom user={user} />
       <Routes>
         <Route
           path="/register"

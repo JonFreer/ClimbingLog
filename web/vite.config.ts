@@ -10,7 +10,8 @@ export default defineConfig({
       name: 'VolumeDB',
       short_name: 'VolumeDB',
       description: 'Track your climbs at Depot',
-      theme_color: '#ffffff',
+      theme_color: '#1f2937',
+      background_color: '#1f2937',
       icons: [
         {
           src: 'icon-192.png',

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Circuit, Climb, Projects, Route, Set } from "../types/routes";
 import { RouteList } from "./route-list";
 import DraggableDotsCanvas from "./map";
-import { colors, colorsBold, colorsBorder, colorsHex } from "../types/colors";
+import { colors, colorsBold, colorsBorder, colorsFaint, colorsHex } from "../types/colors";
 import { RouteCard } from "./route-card";
 import RouteSideBar from "./route-sidebar";
 import { XMarkIcon } from "@heroicons/react/24/solid";
@@ -55,7 +55,7 @@ useEffect(() => {
     }, {} as Record<string, Set>);
 
   return (
-    <div>
+    <div className="">
       <RouteSideBar 
         route={props.routes.find(route => route.id === sidebarRoute)}
         circuits={props.circuits}
@@ -64,6 +64,7 @@ useEffect(() => {
         projects={props.projects}
         updateData={props.updateData}
         closeCallback={()=>setSidebarRoute(undefined)}></RouteSideBar>
+      <div className="">
       <DraggableDotsCanvas
         dots={props.routes.filter((route) => props.sets[route.set_id] && (active_sets[props.sets[route.set_id].circuit_id].id == route.set_id && (filterCircuits[props.sets[route.set_id].circuit_id]) || !anyFitlered)).map((route) => ({
           id: route.id,
@@ -80,20 +81,19 @@ useEffect(() => {
         updateDots={(_dots) => {}}
         setSelected={setSelectedRoute}
       />
-
-      <div className="mx-4 mt-4 flex flex-wrap gap-2 justify-center">
-        <div className="text-md font-medium text-gray-600">
-        Filters:
-        </div>
-        {Object.values(props.circuits).filter((circuit)=>filterCircuits[circuit.id]).map((circuit) => <button className={"rounded-full px-3 py-1 text-sm font-medium text-white " + (colors[circuit.color] || "") + " hover:"+ (colorsBold[circuit.color] || "")}
+      </div>
+      <div className="mx-4 mt-4 flex flex-wrap gap-1 justify-center h-full">
+        {/* <div className="text-md font-medium text-gray-600 mt-1 mr-1">
+        FILTERS
+        </div> */}
+        {Object.values(props.circuits).filter((circuit)=>filterCircuits[circuit.id]).map((circuit) => <button className={"rounded-full px-3 py-1 font-semibold text-sm  text-white " + (colors[circuit.color] || "") + " hover:"+ (colorsBold[circuit.color] || "")}
          onClick={() => setFilterCircuits((prev) => ({...prev, [circuit.id]: false}))}>
-          <XMarkIcon className="h-3 w-3 inline-block mr-1"/>
           {circuit.name}
         </button>)}
 
-        {Object.values(props.circuits).filter((circuit)=>!filterCircuits[circuit.id]).map((circuit) => <button className={"rounded-full px-3 py-[2px] text-sm font-medium text-gray-600 border-2 "+ (colorsBorder[circuit.color] || "") }
+        {Object.values(props.circuits).filter((circuit)=>!filterCircuits[circuit.id]).map((circuit) => <button className={"rounded-full px-3 py-1 text-sm font-semibold text-gray-700  "+ (colorsFaint[circuit.color] || "") }
         onClick={() => setFilterCircuits((prev) => ({...prev, [circuit.id]: true}))}>
-          + {circuit.name}
+          {circuit.name}
         </button>)}
 
       </div>

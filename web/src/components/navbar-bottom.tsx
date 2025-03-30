@@ -1,0 +1,100 @@
+import { User } from "../types/routes";
+import {
+  HomeIcon,
+  Square3Stack3DIcon,
+  Cog6ToothIcon,
+} from "@heroicons/react/24/solid";
+import {
+  Cog6ToothIcon as Cog6ToothIcon_Outline,
+  HomeIcon as HomeIcon_Outline,
+  Square3Stack3DIcon as Square3Stack3DIcon_Outine,
+  UserCircleIcon,
+} from "@heroicons/react/24/outline";
+import { NavLink } from "react-router";
+import { useState } from "react";
+export default function NavBarBottom(props: { user: User | false }) {
+    
+  const [path, setPath] = useState<string | undefined>(undefined);
+
+  return (
+    <div className="sm:hidden px-4 w-full fixed bottom-0 h-12 shadow-[0_5px_10px_rgba(0,0,0,0.25)] flex justify-between items-center bg-white z-20">
+      <NavLink
+        to="/"
+        onClick={() => setPath("/")}
+        className={
+          "hover:bg-gray-100 rounded-full px-4 py-2 cursor-pointer " +
+          ("/" === window.location.pathname ? "text-gray-800" : "text-gray-400")
+        }
+      >
+        {"/" === window.location.pathname ? (
+          <HomeIcon className="h-5 w-5" />
+        ) : (
+          <HomeIcon_Outline className="h-5 w-5" />
+        )}
+      </NavLink>
+      <NavLink
+        to="/feed"
+        onClick={() => setPath("/feed")}
+        className={
+          "hover:bg-gray-100 rounded-full px-4 py-2 cursor-pointer " +
+          ("/feed" === window.location.pathname
+            ? "text-gray-800"
+            : "text-gray-400")
+        }
+      >
+        {"/feed" === window.location.pathname ? (
+          <Square3Stack3DIcon className="h-5 w-5" />
+        ) : (
+          <Square3Stack3DIcon_Outine className="h-5 w-5" />
+        )}
+      </NavLink>
+      <NavLink
+        onClick={() => setPath("/route_setting")}
+        to="/route_setting"
+        className="flex shrink-0 items-center m-2"
+      >
+        <img
+          alt="Your Company"
+          src="/logo.svg"
+          className="h-5 w-auto" 
+        />
+      </NavLink>
+      <NavLink
+        onClick={() => setPath("/settings")}
+        to="/settings"
+        className={
+          "hover:bg-gray-100 rounded-full px-4 py-2 cursor-pointer " +
+          ("/settings" === window.location.pathname
+            ? "text-gray-800"
+            : "text-gray-400")
+        }
+      >
+        {"/settings" === window.location.pathname ? (
+          <Cog6ToothIcon className="h-5 w-5" />
+        ) : (
+          <Cog6ToothIcon_Outline className="h-5 w-5" />
+        )}
+      </NavLink>
+      <NavLink
+        onClick={() => setPath("/profile")}
+        to={props.user ? "/profile" : "/login"}
+        className={
+          "hover:bg-gray-100 rounded-full px-4 py-2 cursor-pointer " +
+          ("/profile" === window.location.pathname
+            ? "text-gray-800"
+            : "text-gray-400")
+        }
+      >
+        {props.user && props.user.has_profile_photo ? (
+          <img
+            className="rounded-full size-5"
+            onError={(e) => (e.currentTarget.style.display = "none")}
+            src={`/api/profile_photo/${props.user.id}`}
+          />
+        ) : (
+          <UserCircleIcon aria-hidden="true" className="size-5 text-gray-400" />
+        )}
+      </NavLink>
+    </div>
+  );
+}
