@@ -25,9 +25,8 @@ export function AdminPage() {
   const [circuits, setCircuits] = useState<Record<string, Circuit>>({});
 
   const [circuiteModalOpen, setCircuitsModalOpen] = useState<boolean>(false);
-  const [deleteCircuitModalOpen, setDeleteCircuitModalOpen] = useState<string>("");
-
-  
+  const [deleteCircuitModalOpen, setDeleteCircuitModalOpen] =
+    useState<string>("");
 
   function updateCircuits() {
     fetch("api/circuits/get_all")
@@ -169,46 +168,48 @@ export function AdminPage() {
       });
   };
 
-    const removeCircuit = (circuit_id:string) => {
-      fetch(`api/circuits/remove/${circuit_id}`, {
-        method: "DELETE",
-        headers: {
-        "Authorization": `Bearer ${localStorage.getItem("token")}`
-        }
-      })
-        .then((response) => {
+  const removeCircuit = (circuit_id: string) => {
+    fetch(`api/circuits/remove/${circuit_id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((response) => {
         if (response.ok) {
           return response.json();
         } else if (response.status === 400) {
           return response.json().then((errorData) => {
-          throw new Error(errorData.detail);
+            throw new Error(errorData.detail);
           });
         } else {
           throw new Error("Network response was not ok");
         }
-        })
-        .then((data) => {
-          console.log("Success:", data);
-          updateCircuits();
-          setDeleteCircuitModalOpen('');
-        })
-        .catch((error) => {
+      })
+      .then((data) => {
+        console.log("Success:", data);
+        updateCircuits();
+        setDeleteCircuitModalOpen("");
+      })
+      .catch((error) => {
         console.error(error);
-        });
-    };
-  
+      });
+  };
 
   return (
     <div className="m-5 sm:mb-8 mb-14">
       <AddCircuit open={circuiteModalOpen} setOpen={setCircuitsModalOpen} />
-      <DangerDialog title={"Delete circuit"} 
-                body={"Are you sure you want to delete this circuit? This circuit will be removed for everybody and all routes belonging to it."} 
-                actionCallback={()=>removeCircuit(deleteCircuitModalOpen)}
-                cancleCallback={()=>setDeleteCircuitModalOpen('')}
-                open={deleteCircuitModalOpen!==""}
-                action_text="Delete circuit"/>
-      
-      
+      <DangerDialog
+        title={"Delete circuit"}
+        body={
+          "Are you sure you want to delete this circuit? This circuit will be removed for everybody and all routes belonging to it."
+        }
+        actionCallback={() => removeCircuit(deleteCircuitModalOpen)}
+        cancleCallback={() => setDeleteCircuitModalOpen("")}
+        open={deleteCircuitModalOpen !== ""}
+        action_text="Delete circuit"
+      />
+
       <div className="flex items-center">
         <span className="font-bold text-2xl mt-4">Circuits</span>
         <button
@@ -248,12 +249,12 @@ export function AdminPage() {
 
       <div className="grid grid-cols-auto gap-4">
         {users.map((user) => (
-          <a 
+          <a
             href={`/profile/${user.username}`}
             key={user.username}
             className="bg-white p-4 rounded-lg shadow-md flex "
           >
-              <div className="mr-4">
+            <div className="mr-4">
               {user.has_profile_photo ? (
                 <img
                   className="h-10 w-10 rounded-full"
@@ -264,9 +265,8 @@ export function AdminPage() {
                 <UserCircleIcon className="h-10 w-10 text-gray-400" />
               )}
             </div>
-          
+
             <div>
-              
               <p className="font-semibold">
                 <span
                   className={`mr-4 px-2 py-1 rounded-full text-xs font-medium ${
@@ -290,14 +290,20 @@ export function AdminPage() {
             <div className="ml-auto">
               {user.route_setter ? (
                 <button
-                  onClick={(e) => {demoteRouteSetter(user.id); e.preventDefault();}}
+                  onClick={(e) => {
+                    demoteRouteSetter(user.id);
+                    e.preventDefault();
+                  }}
                   className="p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-200 rounded-md z-50"
                 >
                   <WrenchIcon className="h-5 w-5 text-red-500" />
                 </button>
               ) : (
                 <button
-                  onClick={(e) => {promoteRouteSetter(user.id); e.preventDefault();}}
+                  onClick={(e) => {
+                    promoteRouteSetter(user.id);
+                    e.preventDefault();
+                  }}
                   className="p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-200 rounded-md z-50"
                 >
                   <WrenchIcon className="h-5 w-5 text-purple-500" />
@@ -307,8 +313,8 @@ export function AdminPage() {
               {user.is_superuser ? (
                 <button
                   onClick={(e) => {
-                  e.preventDefault(); // Prevent the default anchor behavior
-                  demoteUser(user.id);
+                    e.preventDefault(); // Prevent the default anchor behavior
+                    demoteUser(user.id);
                   }}
                   className="p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-200 rounded-md z-50"
                 >
@@ -316,12 +322,10 @@ export function AdminPage() {
                 </button>
               ) : (
                 <button
-                  onClick={(e) => 
-                    {promoteUser(user.id);
+                  onClick={(e) => {
+                    promoteUser(user.id);
                     e.preventDefault();
-                    }
-
-                  }
+                  }}
                   className="p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-200 rounded-md z-50"
                 >
                   <ArrowUpCircleIcon className="h-5 w-5 text-green-500" />

@@ -15,83 +15,89 @@
   }
   ```
 */
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { StarIcon } from '@heroicons/react/20/solid'
-import { Radio, RadioGroup } from '@headlessui/react'
+import { useState } from "react";
+import { StarIcon } from "@heroicons/react/20/solid";
+import { Radio, RadioGroup } from "@headlessui/react";
 
 const product = {
-    name: 'I Hate Mondays At Depot Tee',
-    price: '£20',
-    href: '#',
-    breadcrumbs: [
-        { id: 1, name: 'Men', href: '#' },
-        { id: 2, name: 'Clothing', href: '#' },
-    ],
-    images: [
-        {
-            src: '/shirt.png',
-            alt: 'Two each of gray, white, and black shirts laying flat.',
-        },
-        {
-            src: '/shirt2.png',
-            alt: 'Model wearing plain black basic tee.',
-        },
-        {
-            src: '/shirt3.png',
-            alt: 'Model wearing plain gray basic tee.',
-        },
-        {
-            src: '/shirt4.png',
-            alt: 'Model wearing plain white basic tee.',
-        },
-    ],
-    colors: [
-        { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
-        { name: 'Gray', class: 'bg-gray-200', selectedClass: 'ring-gray-400' },
-        { name: 'Black', class: 'bg-gray-900', selectedClass: 'ring-gray-900' },
-    ],
-    sizes: [
-        { name: 'XXS', inStock: false },
-        { name: 'XS', inStock: false },
-        { name: 'S', inStock: false },
-        { name: 'M', inStock: false },
-        { name: 'L', inStock: false },
-        { name: 'XL', inStock: false },
-        { name: '2XL', inStock: false },
-        { name: '3XL', inStock: true },
-    ],
-    description:
-        'Mondays at Depot got you climbing the walls—literally and figuratively? This tee is your badge of honor for surviving the chaos. Perfect for those who prefer their holds chalky, not crowded, and their Mondays far from the madding crowd.',
-    highlights: [
-        'Hand designed locally',
-        'Dyed with our proprietary colors',
-        'Pre-washed & pre-shrunk',
-        'Ultra-soft 100% cotton',
-    ],
-    details:
-        'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.',
-}
-const reviews = { href: '#', average: 4, totalCount: 117 }
+  name: "I Hate Mondays At Depot Tee",
+  price: "£20",
+  href: "#",
+  breadcrumbs: [
+    { id: 1, name: "Men", href: "#" },
+    { id: 2, name: "Clothing", href: "#" },
+  ],
+  images: [
+    {
+      src: "/shirt.png",
+      alt: "Two each of gray, white, and black shirts laying flat.",
+    },
+    {
+      src: "/shirt2.png",
+      alt: "Model wearing plain black basic tee.",
+    },
+    {
+      src: "/shirt3.png",
+      alt: "Model wearing plain gray basic tee.",
+    },
+    {
+      src: "/shirt4.png",
+      alt: "Model wearing plain white basic tee.",
+    },
+  ],
+  colors: [
+    { name: "White", class: "bg-white", selectedClass: "ring-gray-400" },
+    { name: "Gray", class: "bg-gray-200", selectedClass: "ring-gray-400" },
+    { name: "Black", class: "bg-gray-900", selectedClass: "ring-gray-900" },
+  ],
+  sizes: [
+    { name: "XXS", inStock: false },
+    { name: "XS", inStock: false },
+    { name: "S", inStock: false },
+    { name: "M", inStock: false },
+    { name: "L", inStock: false },
+    { name: "XL", inStock: false },
+    { name: "2XL", inStock: false },
+    { name: "3XL", inStock: true },
+  ],
+  description:
+    "Mondays at Depot got you climbing the walls—literally and figuratively? This tee is your badge of honor for surviving the chaos. Perfect for those who prefer their holds chalky, not crowded, and their Mondays far from the madding crowd.",
+  highlights: [
+    "Hand designed locally",
+    "Dyed with our proprietary colors",
+    "Pre-washed & pre-shrunk",
+    "Ultra-soft 100% cotton",
+  ],
+  details:
+    'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.',
+};
+const reviews = { href: "#", average: 4, totalCount: 117 };
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function StorePage() {
-  const [selectedColor, setSelectedColor] = useState(product.colors[0])
-  const [selectedSize, setSelectedSize] = useState(product.sizes[2])
+  const [selectedColor, setSelectedColor] = useState(product.colors[0]);
+  const [selectedSize, setSelectedSize] = useState(product.sizes[2]);
 
   return (
     <div className="bg-white">
       <div className="pt-6">
         <nav aria-label="Breadcrumb">
-          <ol role="list" className="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+          <ol
+            role="list"
+            className="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8"
+          >
             {product.breadcrumbs.map((breadcrumb) => (
               <li key={breadcrumb.id}>
                 <div className="flex items-center">
-                  <a href={breadcrumb.href} className="mr-2 text-sm font-medium text-gray-900">
+                  <a
+                    href={breadcrumb.href}
+                    className="mr-2 text-sm font-medium text-gray-900"
+                  >
                     {breadcrumb.name}
                   </a>
                   <svg
@@ -108,7 +114,11 @@ export default function StorePage() {
               </li>
             ))}
             <li className="text-sm">
-              <a href={product.href} aria-current="page" className="font-medium text-gray-500 hover:text-gray-600">
+              <a
+                href={product.href}
+                aria-current="page"
+                className="font-medium text-gray-500 hover:text-gray-600"
+              >
                 {product.name}
               </a>
             </li>
@@ -144,13 +154,17 @@ export default function StorePage() {
         {/* Product info */}
         <div className="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto_auto_1fr] lg:gap-x-8 lg:px-8 lg:pt-16 lg:pb-24">
           <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{product.name}</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+              {product.name}
+            </h1>
           </div>
 
           {/* Options */}
           <div className="mt-4 lg:row-span-3 lg:mt-0">
             <h2 className="sr-only">Product information</h2>
-            <p className="text-3xl tracking-tight text-gray-900">{product.price}</p>
+            <p className="text-3xl tracking-tight text-gray-900">
+              {product.price}
+            </p>
 
             {/* Reviews */}
             <div className="mt-6">
@@ -162,14 +176,19 @@ export default function StorePage() {
                       key={rating}
                       aria-hidden="true"
                       className={classNames(
-                        reviews.average > rating ? 'text-gray-900' : 'text-gray-200',
-                        'size-5 shrink-0',
+                        reviews.average > rating
+                          ? "text-gray-900"
+                          : "text-gray-200",
+                        "size-5 shrink-0"
                       )}
                     />
                   ))}
                 </div>
                 <p className="sr-only">{reviews.average} out of 5 stars</p>
-                <a href={reviews.href} className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                <a
+                  href={reviews.href}
+                  className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                >
                   {reviews.totalCount} reviews
                 </a>
               </div>
@@ -181,7 +200,11 @@ export default function StorePage() {
                 <h3 className="text-sm font-medium text-gray-900">Color</h3>
 
                 <fieldset aria-label="Choose a color" className="mt-4">
-                  <RadioGroup value={selectedColor} onChange={setSelectedColor} className="flex items-center gap-x-3">
+                  <RadioGroup
+                    value={selectedColor}
+                    onChange={setSelectedColor}
+                    className="flex items-center gap-x-3"
+                  >
                     {product.colors.map((color) => (
                       <Radio
                         key={color.name}
@@ -189,12 +212,15 @@ export default function StorePage() {
                         aria-label={color.name}
                         className={classNames(
                           color.selectedClass,
-                          'relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-hidden data-checked:ring-2 data-focus:data-checked:ring-3 data-focus:data-checked:ring-offset-1',
+                          "relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-hidden data-checked:ring-2 data-focus:data-checked:ring-3 data-focus:data-checked:ring-offset-1"
                         )}
                       >
                         <span
                           aria-hidden="true"
-                          className={classNames(color.class, 'size-8 rounded-full border border-black/10')}
+                          className={classNames(
+                            color.class,
+                            "size-8 rounded-full border border-black/10"
+                          )}
                         />
                       </Radio>
                     ))}
@@ -206,7 +232,10 @@ export default function StorePage() {
               <div className="mt-10">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-medium text-gray-900">Size</h3>
-                  <a href="#" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                  <a
+                    href="#"
+                    className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                  >
                     Size guide
                   </a>
                 </div>
@@ -224,9 +253,9 @@ export default function StorePage() {
                         disabled={!size.inStock}
                         className={classNames(
                           size.inStock
-                            ? 'cursor-pointer bg-white text-gray-900 shadow-2xs'
-                            : 'cursor-not-allowed bg-gray-50 text-gray-200',
-                          'group relative flex items-center justify-center rounded-md border px-4 py-3 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-hidden data-focus:ring-2 data-focus:ring-indigo-500 sm:flex-1 sm:py-6',
+                            ? "cursor-pointer bg-white text-gray-900 shadow-2xs"
+                            : "cursor-not-allowed bg-gray-50 text-gray-200",
+                          "group relative flex items-center justify-center rounded-md border px-4 py-3 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-hidden data-focus:ring-2 data-focus:ring-indigo-500 sm:flex-1 sm:py-6"
                         )}
                       >
                         <span>{size.name}</span>
@@ -246,7 +275,13 @@ export default function StorePage() {
                               preserveAspectRatio="none"
                               className="absolute inset-0 size-full stroke-2 text-gray-200"
                             >
-                              <line x1={0} x2={100} y1={100} y2={0} vectorEffect="non-scaling-stroke" />
+                              <line
+                                x1={0}
+                                x2={100}
+                                y1={100}
+                                y2={0}
+                                vectorEffect="non-scaling-stroke"
+                              />
                             </svg>
                           </span>
                         )}
@@ -300,5 +335,5 @@ export default function StorePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

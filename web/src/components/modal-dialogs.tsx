@@ -13,7 +13,7 @@ export default function DangerDialog(props: {
   actionCallback: () => void;
   cancleCallback: () => void;
   open: boolean;
-  action_text:string;
+  action_text: string;
 }) {
   return (
     <Dialog

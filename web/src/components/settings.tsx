@@ -1,86 +1,91 @@
-import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
-import { ChevronDownIcon } from '@heroicons/react/16/solid'
-import { User } from '../types/routes'
-import { useEffect, useState } from 'react';
-import { Toast } from './toast';
+import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+import { ChevronDownIcon } from "@heroicons/react/16/solid";
+import { User } from "../types/routes";
+import { useEffect, useState } from "react";
+import { Toast } from "./toast";
 
-export default function Settings(props:{user:User | false}) {
-
-  if(props.user == false){
+export default function Settings(props: { user: User | false }) {
+  if (props.user == false) {
     return;
   }
-    const [toastOpen, setToastOpen] = useState(false);
-    const [usernameError, setUserNameError] = useState(false);
-    const [formData, setFormData] = useState({
-          username: props.user.username,
-          about:props.user.about,
-          profile_visible: props.user.profile_visible,
-          send_visible: props.user.send_visible,
-      });
-  
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement>|React.ChangeEvent<HTMLTextAreaElement>) => {
-          const { name, value } = e.target;
-          const newValue = e.target.type === 'checkbox' ? e.target.checked : value;
-          setFormData({
-              ...formData,
-              [name]: newValue
-          });
-      };
+  const [toastOpen, setToastOpen] = useState(false);
+  const [usernameError, setUserNameError] = useState(false);
+  const [formData, setFormData] = useState({
+    username: props.user.username,
+    about: props.user.about,
+    profile_visible: props.user.profile_visible,
+    send_visible: props.user.send_visible,
+  });
 
-      const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        setUserNameError(false);
-        e.preventDefault();
-        console.log(formData);
-        fetch('api/users/me', {
-            method: 'PATCH',
-            headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response =>{
-            if (response.ok) {
-                setToastOpen(true);
-            return response.json();
-            } else if (response.status === 400) {
-            return response.json().then(errorData => {
-                if(errorData.detail ==='UPDATE_USERNAME_ALREADY_EXISTS'){
-                  setUserNameError(true);
-                }
-                throw new Error(errorData.detail);
-            });
-            } else {
-            throw new Error('Network response was not ok');
-            }  
-        }      
-        )
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
-      };
-  
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    const newValue = e.target.type === "checkbox" ? e.target.checked : value;
+    setFormData({
+      ...formData,
+      [name]: newValue,
+    });
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    setUserNameError(false);
+    e.preventDefault();
+    console.log(formData);
+    fetch("api/users/me", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => {
+        if (response.ok) {
+          setToastOpen(true);
+          return response.json();
+        } else if (response.status === 400) {
+          return response.json().then((errorData) => {
+            if (errorData.detail === "UPDATE_USERNAME_ALREADY_EXISTS") {
+              setUserNameError(true);
+            }
+            throw new Error(errorData.detail);
+          });
+        } else {
+          throw new Error("Network response was not ok");
+        }
+      })
+      .then((data) => {
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   return (
-    <form className='m-8 sm:mb-8 mb-16' onSubmit={handleSubmit}>
+    <form className="m-8 sm:mb-8 mb-16" onSubmit={handleSubmit}>
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base/7 font-semibold text-gray-900">Profile</h2>
           <p className="mt-1 text-sm/6 text-gray-600">
-            This information will be displayed publicly so be careful what you share.
+            This information will be displayed publicly so be careful what you
+            share.
           </p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-4">
-              <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900">
+              <label
+                htmlFor="username"
+                className="block text-sm/6 font-medium text-gray-900"
+              >
                 Username
               </label>
               <div className="mt-2">
                 <div className="flex items-center rounded-md bg-white pl-3 outline outline-1 -outline-offset-1 outline-gray-300 focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                @
+                  @
                   <div className="shrink-0 select-none text-base text-gray-500 sm:text-sm/6"></div>
                   <input
                     onChange={handleChange}
@@ -93,17 +98,27 @@ export default function Settings(props:{user:User | false}) {
                   />
                 </div>
               </div>
-              {usernameError?
-              <div className="flex bg-red-50 p-3 m-2 rounded-md">
-                <div className="text-red-800 text-sm p-2">A user with this username already exists.</div>
-              </div>:<></>}
+              {usernameError ? (
+                <div className="flex bg-red-50 p-3 m-2 rounded-md">
+                  <div className="text-red-800 text-sm p-2">
+                    A user with this username already exists.
+                  </div>
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
 
             <div className="col-span-full">
-              <label htmlFor="about" className="block text-sm/6 font-medium text-gray-900">
+              <label
+                htmlFor="about"
+                className="block text-sm/6 font-medium text-gray-900"
+              >
                 About
               </label>
-              <p className="mt-3 text-sm/6 text-gray-600">Write a few sentences about yourself.</p>
+              <p className="mt-3 text-sm/6 text-gray-600">
+                Write a few sentences about yourself.
+              </p>
 
               <div className="mt-2">
                 <textarea
@@ -118,30 +133,46 @@ export default function Settings(props:{user:User | false}) {
             </div>
 
             <div className="col-span-full">
-              <label htmlFor="photo" className="block text-sm/6 font-medium text-gray-900">
+              <label
+                htmlFor="photo"
+                className="block text-sm/6 font-medium text-gray-900"
+              >
                 Photo
               </label>
-              <ImageUploadProfilePic imageCallback={(image)=>console.log(image)} defaultUrl={""}/>
+              <ImageUploadProfilePic
+                imageCallback={(image) => console.log(image)}
+                defaultUrl={""}
+              />
             </div>
 
             <div className="col-span-full">
-              <label htmlFor="cover-photo" className="block text-sm/6 font-medium text-gray-900">
+              <label
+                htmlFor="cover-photo"
+                className="block text-sm/6 font-medium text-gray-900"
+              >
                 Cover photo
               </label>
-              <ImageUpload imageCallback={(image)=>console.log(image)} defaultUrl={""}/>
+              <ImageUpload
+                imageCallback={(image) => console.log(image)}
+                defaultUrl={""}
+              />
             </div>
           </div>
         </div>
 
         <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base/7 font-semibold text-gray-900">Visibility</h2>
+          <h2 className="text-base/7 font-semibold text-gray-900">
+            Visibility
+          </h2>
           <p className="mt-1 text-sm/6 text-gray-600">
             Control what information is shared with others.
           </p>
 
           <div className="mt-10 space-y-10">
             <fieldset>
-              <legend className="text-sm/6 font-semibold text-gray-900">Share</legend>
+              <legend className="text-sm/6 font-semibold text-gray-900">
+                Share
+              </legend>
               <div className="mt-6 space-y-6">
                 <div className="flex gap-3">
                   <div className="flex h-6 shrink-0 items-center">
@@ -178,7 +209,10 @@ export default function Settings(props:{user:User | false}) {
                     </div>
                   </div>
                   <div className="text-sm/6">
-                    <label htmlFor="comments" className="font-medium text-gray-900">
+                    <label
+                      htmlFor="comments"
+                      className="font-medium text-gray-900"
+                    >
                       Profile
                     </label>
                     <p id="comments-description" className="text-gray-500">
@@ -221,22 +255,24 @@ export default function Settings(props:{user:User | false}) {
                     </div>
                   </div>
                   <div className="text-sm/6">
-                    <label htmlFor="candidates" className="font-medium text-gray-900">
+                    <label
+                      htmlFor="candidates"
+                      className="font-medium text-gray-900"
+                    >
                       Sends
                     </label>
                     <p id="candidates-description" className="text-gray-500">
-                      Your username will appear on the route page when you send a route.
+                      Your username will appear on the route page when you send
+                      a route.
                     </p>
                   </div>
                 </div>
-               
               </div>
             </fieldset>
-
           </div>
         </div>
       </div>
-      <Toast open={toastOpen} setToastOpen={(bool)=>setToastOpen(bool)}/>
+      <Toast open={toastOpen} setToastOpen={(bool) => setToastOpen(bool)} />
 
       <div className="mt-6 flex items-center justify-end gap-x-6">
         {/* <button type="button" className="text-sm/6 font-semibold text-gray-900">
@@ -250,17 +286,18 @@ export default function Settings(props:{user:User | false}) {
         </button>
       </div>
     </form>
-  )
+  );
 }
 
-
-function ImageUpload(props:{imageCallback: (image: File) => void, defaultUrl: string}) {
-
+function ImageUpload(props: {
+  imageCallback: (image: File) => void;
+  defaultUrl: string;
+}) {
   const [preview, setPreview] = useState<string | null>(null);
 
   useEffect(() => {
     setPreview(props.defaultUrl);
-  },[props.defaultUrl])
+  }, [props.defaultUrl]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -296,27 +333,26 @@ function ImageUpload(props:{imageCallback: (image: File) => void, defaultUrl: st
                 console.log(`WebP file size: ${webpFile.size} bytes`);
                 setPreview(URL.createObjectURL(webpFile));
                 props.imageCallback(webpFile);
-                
-                //send the request 
-                
-                const formData = new FormData();
-                formData.append('file', webpFile);
 
-                fetch('/api/users/me/update_cover_photo', {
-                  method: 'POST',
+                //send the request
+
+                const formData = new FormData();
+                formData.append("file", webpFile);
+
+                fetch("/api/users/me/update_cover_photo", {
+                  method: "POST",
                   body: formData,
                   headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`
-                    },
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
                 })
-                .then(response => response.json())
-                .then(data => {
-                  console.log('Success cover photo:', data);
-                })
-                .catch((error) => {
-                  console.error('Error cover photo:', error);
-                });
-                
+                  .then((response) => response.json())
+                  .then((data) => {
+                    console.log("Success cover photo:", data);
+                  })
+                  .catch((error) => {
+                    console.error("Error cover photo:", error);
+                  });
               }
             },
             "image/webp",
@@ -346,21 +382,31 @@ function ImageUpload(props:{imageCallback: (image: File) => void, defaultUrl: st
             <img src={preview} alt="Preview" className="mx-auto mb-4" />
           ) : (
             <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-            <div className="text-center">
-              <PhotoIcon aria-hidden="true" className="mx-auto size-12 text-gray-300" />
-              <div className="mt-4 flex text-sm/6 text-gray-600">
-                <label
-                  htmlFor="file-upload"
-                  className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-hidden focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                >
-                  <span>Upload a file</span>
-                  <input id="file-upload" name="file-upload" type="file" className="sr-only" />
-                </label>
-                <p className="pl-1">or drag and drop</p>
+              <div className="text-center">
+                <PhotoIcon
+                  aria-hidden="true"
+                  className="mx-auto size-12 text-gray-300"
+                />
+                <div className="mt-4 flex text-sm/6 text-gray-600">
+                  <label
+                    htmlFor="file-upload"
+                    className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-hidden focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                  >
+                    <span>Upload a file</span>
+                    <input
+                      id="file-upload"
+                      name="file-upload"
+                      type="file"
+                      className="sr-only"
+                    />
+                  </label>
+                  <p className="pl-1">or drag and drop</p>
+                </div>
+                <p className="text-xs/5 text-gray-600">
+                  PNG, JPG, GIF up to 10MB
+                </p>
               </div>
-              <p className="text-xs/5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
             </div>
-          </div>
           )}
         </label>
       </div>
@@ -368,14 +414,15 @@ function ImageUpload(props:{imageCallback: (image: File) => void, defaultUrl: st
   );
 }
 
-
-function ImageUploadProfilePic(props:{imageCallback: (image: File) => void, defaultUrl: string}) {
-
+function ImageUploadProfilePic(props: {
+  imageCallback: (image: File) => void;
+  defaultUrl: string;
+}) {
   const [preview, setPreview] = useState<string | null>(null);
 
   useEffect(() => {
     setPreview(props.defaultUrl);
-  },[props.defaultUrl])
+  }, [props.defaultUrl]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -411,27 +458,26 @@ function ImageUploadProfilePic(props:{imageCallback: (image: File) => void, defa
                 console.log(`WebP file size: ${webpFile.size} bytes`);
                 setPreview(URL.createObjectURL(webpFile));
                 props.imageCallback(webpFile);
-                
-                //send the request 
-                
-                const formData = new FormData();
-                formData.append('file', webpFile);
 
-                fetch('/api/users/me/update_profile_photo', {
-                  method: 'POST',
+                //send the request
+
+                const formData = new FormData();
+                formData.append("file", webpFile);
+
+                fetch("/api/users/me/update_profile_photo", {
+                  method: "POST",
                   body: formData,
                   headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`
-                    },
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
                 })
-                .then(response => response.json())
-                .then(data => {
-                  console.log('Success profile photo:', data);
-                })
-                .catch((error) => {
-                  console.error('Error profile photo:', error);
-                });
-                
+                  .then((response) => response.json())
+                  .then((data) => {
+                    console.log("Success profile photo:", data);
+                  })
+                  .catch((error) => {
+                    console.error("Error profile photo:", error);
+                  });
               }
             },
             "image/webp",
@@ -444,7 +490,9 @@ function ImageUploadProfilePic(props:{imageCallback: (image: File) => void, defa
   };
 
   const triggerFileInput = () => {
-    const fileInput = document.getElementById("upload-profile-pic") as HTMLInputElement;
+    const fileInput = document.getElementById(
+      "upload-profile-pic"
+    ) as HTMLInputElement;
     if (fileInput) {
       fileInput.click();
     }
@@ -468,21 +516,21 @@ function ImageUploadProfilePic(props:{imageCallback: (image: File) => void, defa
             <img src={preview} alt="Preview" className="mx-auto mb-4" />
           ) : (
             <div className="mt-2 flex items-center gap-x-3">
-            <UserCircleIcon aria-hidden="true" className="size-12 text-gray-300" />
-            <button
-              type="button"
-              onClick={triggerFileInput}
-              className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-            >
-              Change
-            </button>
-          </div>
+              <UserCircleIcon
+                aria-hidden="true"
+                className="size-12 text-gray-300"
+              />
+              <button
+                type="button"
+                onClick={triggerFileInput}
+                className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              >
+                Change
+              </button>
+            </div>
           )}
         </label>
       </div>
     </div>
   );
 }
-
-
-

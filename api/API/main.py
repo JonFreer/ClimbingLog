@@ -1,16 +1,15 @@
-from starlette.middleware.sessions import SessionMiddleware
-from fastapi.openapi.utils import get_openapi
-
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
+from starlette.middleware.sessions import SessionMiddleware
 
-from .db import  create_db_and_tables, engine
+from . import config
+from .db import create_db_and_tables
+from .models import User
+from .routers import admin, circuits, climbs, projects, routes, sets, users
 from .schemas import UserCreate, UserRead, UserUpdate
 from .users import auth_backend, current_active_user, fastapi_users
-from . import config 
-from .models import User
-from .routers import admin, routes, climbs, projects, circuits, sets, users
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -18,9 +17,10 @@ async def lifespan(app: FastAPI):
     await create_db_and_tables()
     yield
 
+
 # models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(root_path="/api",title="Climbing Trackers",lifespan=lifespan)
+app = FastAPI(root_path="/api", title="Climbing Trackers", lifespan=lifespan)
 app.add_middleware(SessionMiddleware, secret_key=config.SessionSecret)
 
 app.include_router(

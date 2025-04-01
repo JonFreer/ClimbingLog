@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 import { Circuit, Route } from "../types/routes";
-import { CheckCircleIcon } from '@heroicons/react/16/solid'
+import { CheckCircleIcon } from "@heroicons/react/16/solid";
 // export function RoutePage(){
 
 //     const { id } = useParams();
@@ -42,12 +42,8 @@ export function RoutePage(props: {
     (climb) => climb.route == id && climb.sent == true
   );
 
-
-
-
-
   const circuit = props.circuits[route?.set_id || ""];
-  
+
   console.log("complete", complete, props.climbs);
   return (
     <div>
@@ -91,13 +87,15 @@ export function RoutePage(props: {
               </span>
             </div>
             <div className="mt-2 flex items-center text-sm text-gray-500">
-              Circuit 
-              <span className={
-                                "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ml-4 " +
-                                (circuit ? colors[circuit.color] || "" : "")
-                              }>
+              Circuit
+              <span
+                className={
+                  "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ml-4 " +
+                  (circuit ? colors[circuit.color] || "" : "")
+                }
+              >
                 {circuit?.name}
-                </span>
+              </span>
             </div>
             <div className="mt-2 flex items-center text-sm text-gray-500">
               Style
@@ -116,66 +114,72 @@ export function RoutePage(props: {
             </div>
           </div>
         </div>
-      
       </div>
       <div className="m-8 flex lg:ml-4 lg:mt-0">
-          <span className="sm:block">
-            <button
-              onClick={() => {
-                add_attempt(id, props.updateData);
-              }}
-              type="button"
-              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-            >
-              {/* <PencilIcon aria-hidden="true" className="-ml-0.5 mr-1.5 size-5 text-gray-400" /> */}
-              Add attempt
-            </button>
-          </span>
+        <span className="sm:block">
+          <button
+            onClick={() => {
+              add_attempt(id, props.updateData);
+            }}
+            type="button"
+            className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          >
+            {/* <PencilIcon aria-hidden="true" className="-ml-0.5 mr-1.5 size-5 text-gray-400" /> */}
+            Add attempt
+          </button>
+        </span>
 
-          <span className="ml-3 sm:block">
-            <button
-              type="button"
-              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-              onClick={() => {
-                add_send(id, props.updateData);
-              }}
-            >
-              {/* <LinkIcon aria-hidden="true" className="-ml-0.5 mr-1.5 size-5 text-gray-400" /> */}
-              Add Send
-            </button>
-          </span>
-        </div>
-      {attempts.length + sends.length > 0 ? 
-      <div className="m-8 gap-4 lg:ml-4 lg:mt-0 rounded-md bg-gray-100 p-4 max-h-36 overflow-y-scroll">
-        {props.climbs
-          .filter((climb) => climb.route == id).reverse()
-          .map((climb) => (
-            <div
-              key={climb.id}
-              className="flex mb-2 items-center justify-between p-2 bg-white rounded-md shadow-xs"
-            >
-              <div className="text-sm text-gray-600">
-                {new Date(climb.time).toLocaleString("en-GB", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "2-digit",
-                })}
-              </div>
+        <span className="ml-3 sm:block">
+          <button
+            type="button"
+            className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            onClick={() => {
+              add_send(id, props.updateData);
+            }}
+          >
+            {/* <LinkIcon aria-hidden="true" className="-ml-0.5 mr-1.5 size-5 text-gray-400" /> */}
+            Add Send
+          </button>
+        </span>
+      </div>
+      {attempts.length + sends.length > 0 ? (
+        <div className="m-8 gap-4 lg:ml-4 lg:mt-0 rounded-md bg-gray-100 p-4 max-h-36 overflow-y-scroll">
+          {props.climbs
+            .filter((climb) => climb.route == id)
+            .reverse()
+            .map((climb) => (
               <div
-                className={`text-sm font-semibold ${
-                  climb.sent ? "text-green-600" : "text-gray-600"
-                }`}
+                key={climb.id}
+                className="flex mb-2 items-center justify-between p-2 bg-white rounded-md shadow-xs"
               >
-                {climb.sent ? "Send" : "Attempt"}
+                <div className="text-sm text-gray-600">
+                  {new Date(climb.time).toLocaleString("en-GB", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "2-digit",
+                  })}
+                </div>
+                <div
+                  className={`text-sm font-semibold ${
+                    climb.sent ? "text-green-600" : "text-gray-600"
+                  }`}
+                >
+                  {climb.sent ? "Send" : "Attempt"}
+                </div>
+                <button
+                  className="text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md"
+                  onClick={() => remove_climb(climb.id, props.updateData)}
+                >
+                  <TrashIcon aria-hidden="true" className="h-5 w-5" />
+                </button>
               </div>
-              <button className="text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md" onClick={()=>remove_climb(climb.id,props.updateData)}>
-                <TrashIcon aria-hidden="true" className="h-5 w-5" />
-              </button>
-            </div>
-          ))}
-      </div>:''}
+            ))}
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 }
@@ -254,5 +258,3 @@ function remove_climb(id: string | undefined, sucessCallback: () => void) {
     })
     .catch((error) => console.error("Error adding attempt:", error));
 }
-
-

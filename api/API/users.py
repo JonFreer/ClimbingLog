@@ -1,9 +1,7 @@
 import uuid
-from typing import Optional, cast
-from .schemas import UserCreate, UserUpdate
+from typing import Optional
 
-from .models import User
-from fastapi import Depends, Request, status, HTTPException
+from fastapi import Depends, HTTPException, Request, status
 from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin, models
 from fastapi_users.authentication import (
     AuthenticationBackend,
@@ -14,6 +12,8 @@ from fastapi_users.db import SQLAlchemyUserDatabase
 from sqlalchemy.future import select
 
 from .db import get_user_db
+from .models import User
+from .schemas import UserCreate, UserUpdate
 
 SECRET = "SECRET"
 
@@ -35,37 +35,42 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     ):
         print(f"Verification requested for user {user.id}. Verification token: {token}")
 
-     # Override create, injecting some check logic and then call Parent function via super()
+    # Override create, injecting some check logic and then call Parent function via super()
     async def create(
         self,
         user_create: UserCreate,  # ancestor of the Base schema so it's ok
         safe: bool = False,
         request: Optional[Request] = None,
     ) -> models.UP:
-        existing_user = await self.user_db._get_user(select(User).filter(User.username == user_create.username))
+        existing_user = await self.user_db._get_user(
+            select(User).filter(User.username == user_create.username)
+        )
         if existing_user:
             raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="REGISTER_USERNAME_ALREADY_EXISTS",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="REGISTER_USERNAME_ALREADY_EXISTS",
             )
         return await super().create(user_create, safe, request)
-    
+
     async def update(
-            self,
-            user_update: UserUpdate, 
-            user: models.UP,
-            safe: bool = False,
-            request: Optional[Request] = None,
-        ) -> models.UP:
-        #Check if the username is already taken
-        existing_user = await self.user_db._get_user(select(User).filter((User.username == user_update.username)).filter(User.id != user.id))
+        self,
+        user_update: UserUpdate,
+        user: models.UP,
+        safe: bool = False,
+        request: Optional[Request] = None,
+    ) -> models.UP:
+        # Check if the username is already taken
+        existing_user = await self.user_db._get_user(
+            select(User)
+            .filter((User.username == user_update.username))
+            .filter(User.id != user.id)
+        )
         if existing_user:
             raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="UPDATE_USERNAME_ALREADY_EXISTS",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="UPDATE_USERNAME_ALREADY_EXISTS",
             )
-        return await super().update(user_update,user , safe, request)
-        
+        return await super().update(user_update, user, safe, request)
 
 
 async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db)):
@@ -77,8 +82,6 @@ bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
 
 def get_jwt_strategy() -> JWTStrategy[models.UP, models.ID]:
     return JWTStrategy(secret=SECRET, lifetime_seconds=2592000)
-
-
 
 
 auth_backend = AuthenticationBackend(

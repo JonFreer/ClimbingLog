@@ -1,18 +1,21 @@
 import datetime
-from .. import schemas
-from fastapi import APIRouter, Depends, UploadFile, File,Form,HTTPException 
-from fastapi.responses import Response, FileResponse
-from sqlalchemy.ext.asyncio import AsyncSession
-from ..db import get_db
-from ..models import Circuits, Climbs, Routes, Sets
-from ..users import current_active_user, User
-from sqlalchemy.future import select
-from typing import Annotated, List, Optional
-from PIL import Image,ImageOps
 import uuid
+from typing import Annotated, List
+
+from fastapi import APIRouter, Depends, Form, HTTPException
+from fastapi.responses import Response
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
+from .. import schemas
+from ..db import get_db
+from ..models import Routes, Sets
+from ..users import User, current_active_user
+
 router = APIRouter()
 
-#update circuit_id to set_id
+# update circuit_id to set_id
+
 
 @router.get("/sets/get_all", response_model=List[schemas.Set], tags=["sets"])
 async def get_all_sets(
@@ -22,6 +25,7 @@ async def get_all_sets(
     result = await db.execute(select(Sets))
     sets = result.scalars().all()
     return sets
+
 
 @router.post("/sets/create", response_model=schemas.Set, tags=["sets"])
 async def create_set(
@@ -39,7 +43,7 @@ async def create_set(
     await db.commit()
     await db.refresh(new_set)
     return new_set
-    
+
 
 @router.delete("/sets/remove/{set_id}", response_model=None, tags=["sets"])
 async def remove_set(
@@ -49,21 +53,18 @@ async def remove_set(
 ):
     if not user.is_superuser and user.route_setter:
         raise HTTPException(status_code=403, detail="Not enough permissions")
-    
+
     result = await db.execute(select(Sets).filter(Sets.id == set_id))
     circuit = result.scalars().first()
     if not circuit:
         raise HTTPException(status_code=404, detail="Set not found")
-    
+
     # Find and delete all routes associated with the circuit
     routes_result = await db.execute(select(Routes).filter(Routes.set_id == set_id))
     routes = routes_result.scalars().all()
     for route in routes:
         await db.delete(route)
-    
+
     await db.delete(circuit)
     await db.commit()
     return None
-
-
-

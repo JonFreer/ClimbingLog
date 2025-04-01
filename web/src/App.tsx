@@ -4,13 +4,15 @@ import { Register } from "./components/register";
 import { Login } from "./components/login";
 import { checkAuth } from "./providers/AuthProvider";
 import { NavBar } from "./components/navbar";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import {
-  BrowserRouter,
-  Navigate,
-  Route,
-  Routes,
-} from "react-router";
-import { Circuit, Route as RouteType, User, Climb, Projects, Set } from "./types/routes";
+  Circuit,
+  Route as RouteType,
+  User,
+  Climb,
+  Projects,
+  Set,
+} from "./types/routes";
 import { AdminPage } from "./components/admin";
 import { RoutesPage } from "./components/routespage";
 import { RoutePage } from "./components/routepage";
@@ -77,11 +79,14 @@ function App() {
   function fetchCircuits() {
     API("GET", "/api/circuits/get_all")
       .then((data) => {
-        const circuits_dict = data.data.reduce((acc: Record<string, Circuit>, circuit: Circuit) => {
-          acc[circuit.id] = circuit;
-          return acc;
-        }, {});
-        console.log("circuits_dict",circuits_dict)
+        const circuits_dict = data.data.reduce(
+          (acc: Record<string, Circuit>, circuit: Circuit) => {
+            acc[circuit.id] = circuit;
+            return acc;
+          },
+          {}
+        );
+        console.log("circuits_dict", circuits_dict);
         setCircuits(circuits_dict);
         console.log("circuit main", data.data);
       })
@@ -93,10 +98,13 @@ function App() {
   function fetchSets() {
     API("GET", "/api/sets/get_all")
       .then((data) => {
-        const setsDict = data.data.reduce((acc: Record<string, Set>, set: Set) => {
-          acc[set.id] = set;
-          return acc;
-        }, {});
+        const setsDict = data.data.reduce(
+          (acc: Record<string, Set>, set: Set) => {
+            acc[set.id] = set;
+            return acc;
+          },
+          {}
+        );
         setSets(setsDict);
         console.log("sets main", data.data);
       })
@@ -169,7 +177,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-           <Route
+        <Route
           path="/route_setting"
           element={
             <ProtectedRoute authed={user && user.route_setter}>
@@ -189,52 +197,50 @@ function App() {
           }
         />
 
-      <Route
+        <Route
           path="/profile/:id"
           element={
-            <Profile 
-            routes={routes}
-            circuits={circuits}
-            sets = {sets}
-            climbs={climbs}
-            projects={projects}
-            user={user} 
-            updateData={updateData}/>
+            <Profile
+              routes={routes}
+              circuits={circuits}
+              sets={sets}
+              climbs={climbs}
+              projects={projects}
+              user={user}
+              updateData={updateData}
+            />
           }
         />
 
-<Route
-          path="/store"
-          element={
-            <StorePage/>
-          }
-        />
+        <Route path="/store" element={<StorePage />} />
 
-      <Route
+        <Route
           path="/profile/"
           element={
-            <Profile 
-            routes={routes}
-            circuits={circuits}
-            sets = {sets}
-            climbs={climbs}
-            projects={projects}
-            user={user} 
-            updateData={updateData}/>
+            <Profile
+              routes={routes}
+              circuits={circuits}
+              sets={sets}
+              climbs={climbs}
+              projects={projects}
+              user={user}
+              updateData={updateData}
+            />
           }
         />
 
         <Route
           path="/feed/"
           element={
-            <Feed 
-            routes={routes}
-            circuits={circuits}
-            sets = {sets}
-            climbs={climbs}
-            projects={projects}
-            user={user} 
-            updateData={updateData}/>
+            <Feed
+              routes={routes}
+              circuits={circuits}
+              sets={sets}
+              climbs={climbs}
+              projects={projects}
+              user={user}
+              updateData={updateData}
+            />
           }
         />
 
@@ -244,7 +250,7 @@ function App() {
             <RoutesPage
               routes={routes}
               circuits={circuits}
-              sets = {sets}
+              sets={sets}
               climbs={climbs}
               projects={projects}
               updateData={updateData}

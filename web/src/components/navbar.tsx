@@ -7,7 +7,7 @@ import {
   MenuItem,
   MenuItems,
 } from "@headlessui/react";
-import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
+import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router";
@@ -25,18 +25,21 @@ function classNames(...classes: any) {
 
 //todo: add user type
 export function NavBar(props: { user: User | false }) {
-
   const navigation = [
     { name: "Dashboard", href: "/", current: false },
     { name: "Feed", href: "/feed", current: false },
   ];
 
-  if(props.user && props.user.is_superuser){
+  if (props.user && props.user.is_superuser) {
     navigation.push({ name: "Admin", href: "/admin", current: false });
   }
 
-  if(props.user && props.user.route_setter){
-    navigation.push({ name: "Route Setting", href: "/route_setting", current: false });
+  if (props.user && props.user.route_setter) {
+    navigation.push({
+      name: "Route Setting",
+      href: "/route_setting",
+      current: false,
+    });
   }
 
   const [path, setPath] = useState<string | undefined>(undefined);
@@ -63,9 +66,9 @@ export function NavBar(props: { user: User | false }) {
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex shrink-0 items-center">
               <img
-              alt="Your Company"
-              src="/logo.svg"
-              className="h-8 w-auto"// This will invert the colors and apply a hue shift to the SVG
+                alt="Your Company"
+                src="/logo.svg"
+                className="h-8 w-auto" // This will invert the colors and apply a hue shift to the SVG
               />
             </div>
             <div className="hidden sm:ml-6 sm:block">
@@ -74,7 +77,11 @@ export function NavBar(props: { user: User | false }) {
                   <NavLink
                     key={item.name}
                     to={item.href}
-                    aria-current={item.href === window.location.pathname ? "page" : undefined}
+                    aria-current={
+                      item.href === window.location.pathname
+                        ? "page"
+                        : undefined
+                    }
                     onClick={() => setPath(item.href)}
                     className={classNames(
                       item.href === window.location.pathname
@@ -107,9 +114,20 @@ export function NavBar(props: { user: User | false }) {
                   <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
-                    {props.user.has_profile_photo ? 
-                     <img className="rounded-full size-8" onError={(e) => (e.currentTarget.style.display = 'none')} src={`/api/profile_photo/${props.user.id}`}  />:
-                     <UserCircleIcon aria-hidden="true" className="size-8 text-gray-300" />}
+                    {props.user.has_profile_photo ? (
+                      <img
+                        className="rounded-full size-8"
+                        onError={(e) =>
+                          (e.currentTarget.style.display = "none")
+                        }
+                        src={`/api/profile_photo/${props.user.id}`}
+                      />
+                    ) : (
+                      <UserCircleIcon
+                        aria-hidden="true"
+                        className="size-8 text-gray-300"
+                      />
+                    )}
                   </MenuButton>
                 </div>
                 <MenuItems
@@ -128,7 +146,6 @@ export function NavBar(props: { user: User | false }) {
                   <MenuItem>
                     <NavLink
                       onClick={() => setPath("/settings")}
-
                       to="/settings"
                       className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                     >
@@ -157,8 +174,8 @@ export function NavBar(props: { user: User | false }) {
                 onClick={() => setPath("/login")}
                 to={"/login"}
                 // aria-current={item.current ? 'page' : undefined}
-                className={classNames("inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-700 sm:ml-3 sm:w-auto",
-         
+                className={classNames(
+                  "inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-700 sm:ml-3 sm:w-auto"
                 )}
               >
                 + Login
@@ -175,7 +192,9 @@ export function NavBar(props: { user: User | false }) {
               onClick={() => setPath(item.href)}
               key={item.name}
               to={item.href}
-              aria-current={item.href === window.location.pathname ? "page" : undefined}
+              aria-current={
+                item.href === window.location.pathname ? "page" : undefined
+              }
               className={classNames(
                 item.href === window.location.pathname
                   ? "bg-gray-900 text-white"

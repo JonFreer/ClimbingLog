@@ -1,4 +1,3 @@
-
 export class APIError extends Error {
   status: number;
 
@@ -9,14 +8,13 @@ export class APIError extends Error {
   }
 }
 
-export async function API(method:string, url:string, data = undefined) {
-
-  const token = localStorage.getItem('token');
+export async function API(method: string, url: string, data = undefined) {
+  const token = localStorage.getItem("token");
   const resp = await fetch(`${url}`, {
     method,
     credentials: "include",
     headers: Object.assign(
-      { 'Authorization': `Bearer ${token}`},
+      { Authorization: `Bearer ${token}` },
       data ? { "Content-Type": "application/json" } : null
     ),
     body: data ? JSON.stringify(data) : undefined,

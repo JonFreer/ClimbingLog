@@ -13,11 +13,10 @@ export interface Dot {
 
 const DraggableDotsCanvas = (props: {
   dots: Dot[];
-  selected_id: string|null;
+  selected_id: string | null;
   updateDots: (dots: Dot[]) => void;
   setSelected: (id: string) => void;
 }) => {
-
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isPinching, setIsPinching] = useState(false);
@@ -79,16 +78,17 @@ const DraggableDotsCanvas = (props: {
 
     const dpr = window.devicePixelRatio || 1;
 
-
     if (width !== prevWidth || height !== prevHeight) {
-      canvas.width = width*dpr;
-      canvas.height = height*dpr;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
 
       // Adjust translation to keep the center point in the same place
       transformRef.current = {
         ...transformRef.current,
-        translateX: transformRef.current.translateX + (( (width   - prevWidth/dpr) / 2)),
-        translateY: transformRef.current.translateY + (height  - prevHeight/dpr) / 2,
+        translateX:
+          transformRef.current.translateX + (width - prevWidth / dpr) / 2,
+        translateY:
+          transformRef.current.translateY + (height - prevHeight / dpr) / 2,
       };
 
       drawCanvas();
@@ -100,7 +100,7 @@ const DraggableDotsCanvas = (props: {
     const img = new Image();
     img.src = "depot.svg";
     img.onload = () => {
-      console.log("svg loaded", img.width,img.height);
+      console.log("svg loaded", img.width, img.height);
       svgImageRef.current = img;
       drawCanvas();
     };
@@ -109,7 +109,7 @@ const DraggableDotsCanvas = (props: {
   function drawCanvas() {
     const ctx = canvasRef.current?.getContext("2d");
     const dpr = window.devicePixelRatio || 1;
-  
+
     if (ctx) {
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
@@ -123,7 +123,10 @@ const DraggableDotsCanvas = (props: {
         transformRef.current.translateY * dpr
       );
 
-      ctx.scale(transformRef.current.scale *dpr, transformRef.current.scale * dpr );
+      ctx.scale(
+        transformRef.current.scale * dpr,
+        transformRef.current.scale * dpr
+      );
 
       // Draw grid
       const gridSize = 10;
@@ -145,15 +148,15 @@ const DraggableDotsCanvas = (props: {
 
       // Draw SVG
       if (svgImageRef.current) {
-        ctx.drawImage(svgImageRef.current, -55 , -70 );
+        ctx.drawImage(svgImageRef.current, -55, -70);
       }
 
       // Draw dots
 
       props.dots.forEach((dot) => {
-        if(dot.id === props.selected_id){
+        if (dot.id === props.selected_id) {
           ctx.beginPath();
-          ctx.arc(dot.x, dot.y, dot.radius+2, 0, 2 * Math.PI);
+          ctx.arc(dot.x, dot.y, dot.radius + 2, 0, 2 * Math.PI);
           ctx.fillStyle = dot.complete ? dot.color + "5e" : dot.color + "5e";
           ctx.fill();
           ctx.closePath();
@@ -169,7 +172,6 @@ const DraggableDotsCanvas = (props: {
       ctx.restore();
     }
   }
-
 
   const handleMouseMove = (e) => {
     setIsDragging(true);
@@ -198,7 +200,6 @@ const DraggableDotsCanvas = (props: {
     drawCanvas();
   };
 
-
   const handleWheel = (e) => {
     e.preventDefault();
     const scaleAmount = e.deltaY < 0 ? 1.05 : 0.95;
@@ -223,7 +224,6 @@ const DraggableDotsCanvas = (props: {
     drawCanvas();
   };
 
-
   /////////////////////////// MOVE EVENTS ///////////////////////////
 
   const handleMouseDown = (e) => {
@@ -238,7 +238,7 @@ const DraggableDotsCanvas = (props: {
       initialPinchDistanceRef.current = getPinchDistance(e.touches);
       initialScaleRef.current = transformRef.current.scale;
     }
-    move(e.touches[0])
+    move(e.touches[0]);
   };
 
   function move(event: Touch | MouseEvent) {
@@ -250,7 +250,7 @@ const DraggableDotsCanvas = (props: {
       (event.clientY - rect.top - transformRef.current.translateY) /
       transformRef.current.scale;
 
-    if (!dotClicked(x,y)) {
+    if (!dotClicked(x, y)) {
       setIsDraggingCanvas(true);
       lastMousePosRef.current = { x: event.clientX, y: event.clientY };
     }
@@ -324,7 +324,7 @@ const DraggableDotsCanvas = (props: {
     endMove();
   };
 
-  function endMove(){
+  function endMove() {
     setIsDraggingCanvas(false);
     props.updateDots(
       props.dots.map((dot) => ({
@@ -354,18 +354,17 @@ const DraggableDotsCanvas = (props: {
       transformRef.current.scale;
 
     const clickedDot = props.dots.filter((dot) => {
-      return Math.hypot(dot.x - x, dot.y - y) < dot.radius+1;
+      return Math.hypot(dot.x - x, dot.y - y) < dot.radius + 1;
     });
 
     if (clickedDot.length > 0) {
       props.setSelected(clickedDot[0].id);
     }
-
   };
 
-  function dotClicked(x:number, y: number) {
+  function dotClicked(x: number, y: number) {
     return props.dots.some((dot) => {
-      if (dot.draggable && Math.hypot(dot.x - x, dot.y - y) < dot.radius+1) {
+      if (dot.draggable && Math.hypot(dot.x - x, dot.y - y) < dot.radius + 1) {
         props.updateDots(
           props.dots.map((d) =>
             d.x === dot.x && d.y === dot.y ? { ...d, isDragging: true } : d
@@ -376,8 +375,6 @@ const DraggableDotsCanvas = (props: {
       return false;
     });
   }
-
-
 
   return (
     <div className="max-h-96 touch-none">

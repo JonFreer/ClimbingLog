@@ -8,8 +8,13 @@ import {
   DialogTitle,
   TransitionChild,
 } from "@headlessui/react";
-import {HeartIcon as HeartIconFill} from "@heroicons/react/24/solid";
-import { XMarkIcon, HeartIcon, TrashIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { HeartIcon as HeartIconFill } from "@heroicons/react/24/solid";
+import {
+  XMarkIcon,
+  HeartIcon,
+  TrashIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/outline";
 import { Circuit, Climb, Projects, Route, SentBy, Set } from "../types/routes";
 import { colors, colorsBold, colorsPastel } from "../types/colors";
 import { NavLink } from "react-router";
@@ -23,16 +28,15 @@ export default function RouteSideBar(props: {
   updateData: () => void;
   closeCallback: () => void;
 }) {
-
-  const [sentBy, setSentBy] = useState<SentBy>({users:[],num_users:0});
+  const [sentBy, setSentBy] = useState<SentBy>({ users: [], num_users: 0 });
   const [sentByOpen, setSentByOpen] = useState(false);
 
-  function updateSentBy(){
+  function updateSentBy() {
     if (props.route) {
-      fetch("/api/routes/sent_by/"+props.route.id)
-      .then((response) => response.json())
-      .then((data) => setSentBy(data))
-      .catch((error) => console.error("Error fetching sent_by:", error));
+      fetch("/api/routes/sent_by/" + props.route.id)
+        .then((response) => response.json())
+        .then((data) => setSentBy(data))
+        .catch((error) => console.error("Error fetching sent_by:", error));
     }
   }
 
@@ -51,7 +55,7 @@ export default function RouteSideBar(props: {
 
   useEffect(() => {
     setJustCompleted(false);
-  },[props.route?.id]);
+  }, [props.route?.id]);
 
   useEffect(() => {
     if (props.route != undefined) {
@@ -70,19 +74,21 @@ export default function RouteSideBar(props: {
     (climb) => climb.route == route.id && climb.sent == true
   );
 
-  const circuit = props.circuits[props.sets[route.set_id]?.circuit_id]; 
+  const circuit = props.circuits[props.sets[route.set_id]?.circuit_id];
 
   const open = props.route != undefined;
 
-  const sent_by_imgs = sentBy.users.filter((user) => user.has_profile_photo).slice(0,3).map((user) => user.id);
-  
+  const sent_by_imgs = sentBy.users
+    .filter((user) => user.has_profile_photo)
+    .slice(0, 3)
+    .map((user) => user.id);
+
   return (
     <Dialog
       open={open}
       onClose={() => props.closeCallback()}
       className="relative z-10"
     >
-
       <DialogBackdrop
         transition
         className="fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out data-closed:opacity-0"
@@ -110,32 +116,55 @@ export default function RouteSideBar(props: {
               </TransitionChild>
 
               <div className="flex h-full flex-col overflow-y-scroll bg-white  shadow-xl">
-               
                 <div className="relative flex-1 ">
-                <div className={"relative p-4 flex justify-center items-center " + (circuit ? colorsPastel[circuit.color] || "" : "")}>
+                  <div
+                    className={
+                      "relative p-4 flex justify-center items-center " +
+                      (circuit ? colorsPastel[circuit.color] || "" : "")
+                    }
+                  >
                     <div className="relative inline-block m-auto rounded-xl bg-white">
-                        {complete? <div className="absolute bg-green-600 text-white right-[-13px] top-[-13px] z-50 rounded-lg px-3 py-2 font-bold text-xl drop-shadow-lg m-2">
-                        Sent
-                        </div> : ""}
-                          
-                        <img
-                        className={"max-h-96 rounded-xl " + (justCompleted ? "shimmer" : "")}
+                      {complete ? (
+                        <div className="absolute bg-green-600 text-white right-[-13px] top-[-13px] z-50 rounded-lg px-3 py-2 font-bold text-xl drop-shadow-lg m-2">
+                          Sent
+                        </div>
+                      ) : (
+                        ""
+                      )}
+
+                      <img
+                        className={
+                          "max-h-96 rounded-xl " +
+                          (justCompleted ? "shimmer" : "")
+                        }
                         src={"/api/img/" + route.id + ".webp"}
-                        ></img>
+                      ></img>
                     </div>
-                    </div>
+                  </div>
                   <div className="p-8 pb-2 flex">
                     <DialogTitle className="p-2 text-base font-semibold text-gray-900">
                       {route.name}
                     </DialogTitle>
 
-                    {!props.projects.includes(route.id) ? 
-                    <button onClick={()=>{add_project(route.id,props.updateData)}} className="ml-auto  hover:bg-gray-100 hover:text-gray-500 text-gray-400 p-2 rounded-full flex items-center">
-                      <HeartIcon aria-hidden="true" className="size-6" />
-                    </button>:
-                      <button onClick={()=>{remove_project(route.id,props.updateData)}} className="ml-auto  hover:bg-red-100 hover:text-red-500 text-red-500 p-2 rounded-full flex items-center">
-                      <HeartIconFill aria-hidden="true" className="size-6" />
-                    </button>}
+                    {!props.projects.includes(route.id) ? (
+                      <button
+                        onClick={() => {
+                          add_project(route.id, props.updateData);
+                        }}
+                        className="ml-auto  hover:bg-gray-100 hover:text-gray-500 text-gray-400 p-2 rounded-full flex items-center"
+                      >
+                        <HeartIcon aria-hidden="true" className="size-6" />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          remove_project(route.id, props.updateData);
+                        }}
+                        className="ml-auto  hover:bg-red-100 hover:text-red-500 text-red-500 p-2 rounded-full flex items-center"
+                      >
+                        <HeartIconFill aria-hidden="true" className="size-6" />
+                      </button>
+                    )}
                   </div>
 
                   <div className="px-8 grid grid-cols-2 gap-4">
@@ -170,37 +199,70 @@ export default function RouteSideBar(props: {
                         add_send(route.id, props.updateData);
                         setJustCompleted(true);
                       }}
-                      className={"rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-xs  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  " +  (circuit ? colors[circuit.color] || "" : "") +" "+  (circuit ? "hover:"+colorsBold[circuit.color] || "" : "") }
+                      className={
+                        "rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-xs  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  " +
+                        (circuit ? colors[circuit.color] || "" : "") +
+                        " " +
+                        (circuit
+                          ? "hover:" + colorsBold[circuit.color] || ""
+                          : "")
+                      }
                     >
                       Add Send
                     </button>
                   </div>
 
+                  {sentBy.num_users != 0 ? (
+                    <>
+                      <DialogTitle className="px-10 pt-5 text-base font-semibold text-gray-600">
+                        Sent By
+                      </DialogTitle>
+                      <div
+                        className="px-10 pt-5 text-m mx-1 text-gray-600 hover:text-gray-500 flex cursor-pointer ml-6"
+                        onClick={() => {
+                          setSentByOpen(true);
+                        }}
+                      >
+                        {sent_by_imgs.map((id) => (
+                          <img
+                            key={id}
+                            className="w-10 h-10 rounded-full -ml-5 border-2 border-white shadow-sm"
+                            src={"/api/profile_photo/" + id}
+                          ></img>
+                        ))}
 
-                  {sentBy.num_users!=0 ?  <>
-                    <DialogTitle className="px-10 pt-5 text-base font-semibold text-gray-600">
-                    Sent By
-                  </DialogTitle>
-                    <div className="px-10 pt-5 text-m mx-1 text-gray-600 hover:text-gray-500 flex cursor-pointer ml-6" onClick={()=>{setSentByOpen(true)}}>
-                    {sent_by_imgs.map((id) => (
-                      <img
-                      key={id}
-                      className="w-10 h-10 rounded-full -ml-5 border-2 border-white shadow-sm"
-                      src={"/api/profile_photo/"+id}
-                      ></img>
-                    ))}
-                    
-                    <div className="ml-2 flex items-center">
-                      {sentBy.users.length > 0 ?  <a key={sentBy.users[0].id} className="font-semibold ml-1">{sentBy.users[0].username}</a>:null}
-                      {sentBy.users.length > 1 ?  <a key={sentBy.users[1].id} className="font-semibold">, {sentBy.users[1].username}</a>:null}
-                      {sentBy.users.length > 1 && sentBy.num_users > 2 && (
-                      <span className="ml-1">
-                        and <span className="font-semibold">{sentBy.num_users - 2} {sentBy.num_users - 2==1? "other":"others"}</span>
-                      </span>
-                      )}
-                    </div>
-                    </div>
-                  </>:<></>}
+                        <div className="ml-2 flex items-center">
+                          {sentBy.users.length > 0 ? (
+                            <a
+                              key={sentBy.users[0].id}
+                              className="font-semibold ml-1"
+                            >
+                              {sentBy.users[0].username}
+                            </a>
+                          ) : null}
+                          {sentBy.users.length > 1 ? (
+                            <a
+                              key={sentBy.users[1].id}
+                              className="font-semibold"
+                            >
+                              , {sentBy.users[1].username}
+                            </a>
+                          ) : null}
+                          {sentBy.users.length > 1 && sentBy.num_users > 2 && (
+                            <span className="ml-1">
+                              and{" "}
+                              <span className="font-semibold">
+                                {sentBy.num_users - 2}{" "}
+                                {sentBy.num_users - 2 == 1 ? "other" : "others"}
+                              </span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <></>
+                  )}
 
                   <DialogTitle className="px-10 pt-5 text-base font-semibold text-gray-600">
                     History
@@ -248,14 +310,17 @@ export default function RouteSideBar(props: {
                   )}
                 </div>
               </div>
-              <SentByModal sent_by={sentBy} open={sentByOpen} cancleCallback={()=>{setSentByOpen(false)}}></SentByModal>
-
+              <SentByModal
+                sent_by={sentBy}
+                open={sentByOpen}
+                cancleCallback={() => {
+                  setSentByOpen(false);
+                }}
+              ></SentByModal>
             </DialogPanel>
-
           </div>
         </div>
       </div>
-
     </Dialog>
   );
 }
@@ -309,7 +374,6 @@ function remove_project(id: string | undefined, sucessCallback: () => void) {
     })
     .catch((error) => console.error("Error removing project:", error));
 }
-
 
 function add_send(id: string | undefined, sucessCallback: () => void) {
   const token = localStorage.getItem("token");
@@ -386,7 +450,6 @@ function remove_climb(id: string | undefined, sucessCallback: () => void) {
     .catch((error) => console.error("Error adding attempt:", error));
 }
 
-
 export function SentByModal(props: {
   cancleCallback: () => void;
   open: boolean;
@@ -411,28 +474,35 @@ export function SentByModal(props: {
           >
             <div className="w-full bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
               <div className="w-full sm:flex sm:items-start">
-             
                 <div className="mt-0 w-full text-left sm:ml-4 sm:mt-0 sm:text-left">
                   <div className="mt-2 w-full divide-y divide-gray-100">
-
                     {props.sent_by.users.map((user) => (
                       <div className="p-2" key={user.id}>
-                      <a href={`/profile/${user.username}`} className="font-semibold text-slate-700 rounded-sm cursor-pointer w-full p-2 hover:bg-gray-100 m-auto flex">
-                      {user.has_profile_photo ? (
-                        <img
-                          className="w-10 h-10 rounded-full"
-                          src={"/api/profile_photo/" + user.id}
-                        ></img>
-                      ) : (<UserCircleIcon aria-hidden="true" className="size-10 text-gray-300" />)}
-                         <span className="ml-4 flex items-center">{user.username}</span>
-                      </a>
+                        <a
+                          href={`/profile/${user.username}`}
+                          className="font-semibold text-slate-700 rounded-sm cursor-pointer w-full p-2 hover:bg-gray-100 m-auto flex"
+                        >
+                          {user.has_profile_photo ? (
+                            <img
+                              className="w-10 h-10 rounded-full"
+                              src={"/api/profile_photo/" + user.id}
+                            ></img>
+                          ) : (
+                            <UserCircleIcon
+                              aria-hidden="true"
+                              className="size-10 text-gray-300"
+                            />
+                          )}
+                          <span className="ml-4 flex items-center">
+                            {user.username}
+                          </span>
+                        </a>
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
             </div>
-       
           </DialogPanel>
         </div>
       </div>

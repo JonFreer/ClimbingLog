@@ -1,20 +1,24 @@
-import uuid
-from pydantic import BaseModel
-from fastapi_users import schemas
 import datetime
+import uuid
 from typing import Optional
+
+from fastapi_users import schemas
+from pydantic import BaseModel
+
 
 class UserRead(schemas.BaseUser[uuid.UUID]):
     username: str
-    about:str
+    about: str
     profile_visible: bool
     send_visible: bool
     route_setter: bool
     has_profile_photo: bool
     has_cover_photo: bool
 
+
 class UserCreate(schemas.BaseUserCreate):
     username: str
+
 
 class UserUpdate(schemas.BaseUserUpdate):
     username: Optional[str]
@@ -22,15 +26,17 @@ class UserUpdate(schemas.BaseUserUpdate):
     send_visible: Optional[bool]
     about: Optional[str]
 
+
 class UserPublic(BaseModel):
     id: uuid.UUID
     username: str
-    about:str
+    about: str
     profile_visible: bool
     send_visible: bool
     route_setter: bool
     has_profile_photo: bool
     has_cover_photo: bool
+
 
 class Route(BaseModel):
     name: str
@@ -40,18 +46,21 @@ class Route(BaseModel):
     style: str
     set_id: uuid.UUID
     x: float
-    y: float 
+    y: float
+
 
 class Circuit(BaseModel):
     id: uuid.UUID
     name: str
     color: str
 
+
 class Set(BaseModel):
     id: uuid.UUID
     circuit_id: uuid.UUID
     date: datetime.datetime
     name: Optional[str]
+
 
 class Climb(BaseModel):
     id: uuid.UUID
@@ -60,14 +69,17 @@ class Climb(BaseModel):
     route: uuid.UUID
     user: uuid.UUID
 
+
 class UserNamePair(BaseModel):
     username: str
     has_profile_photo: bool
     id: uuid.UUID
 
+
 class SentBy(BaseModel):
     users: list[UserNamePair]
     num_users: int
+
 
 class ClimbFeed(BaseModel):
     id: uuid.UUID
