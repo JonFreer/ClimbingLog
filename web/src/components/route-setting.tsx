@@ -146,8 +146,8 @@ export function RouteSettingPage() {
                 <button
                 key={circuit.id}
                 className={
-                  "p-2 font-bold rounded uppercase " +
-                  (openCircuit == circuit.id ? (`${colors[circuit.color]} shadow` || "") : `${colorsFaint[circuit.color]} `)
+                  "p-2 font-bold rounded-sm uppercase " +
+                  (openCircuit == circuit.id ? (`${colors[circuit.color]} shadow-sm` || "") : `${colorsFaint[circuit.color]} `)
                 }
                 onClick={() => setOpenCircuit(circuit.id)}
 
@@ -198,7 +198,7 @@ export function RouteSettingPage() {
           .map((route) => (
           <div
             key={route.id}
-            className="bg-gray-100 p-1 flex rounded mt-1"
+            className="bg-gray-100 p-1 flex rounded-sm mt-1"
           >
             <span className="p-2">{route.name}</span>
 
@@ -328,14 +328,14 @@ export default function AddRow(props: {
     <Dialog open={open} onClose={()=>props.setOpen({set_id:"",route:null})} className="relative z-10">
       <DialogBackdrop
         transition
-        className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+        className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-leave:duration-200 data-enter:ease-out data-leave:ease-in"
       />
 
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
           <DialogPanel
             transition
-            className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+            className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-leave:duration-200 data-enter:ease-out data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:data-closed:translate-y-0 sm:data-closed:scale-95"
           >
             <form action="#" method="POST" className="space-y-6" onSubmit={handleSubmit}>
               <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
@@ -398,7 +398,7 @@ export default function AddRow(props: {
                           Location
                         </label>
                       </div>
-                      <div className="mt-2 flex gap-2 flex-wrap flex-grow justify-center">
+                      <div className="mt-2 flex gap-2 flex-wrap grow justify-center">
                         {locations.map((loc) => (
                           <div onClick={()=>{setLocation(loc)}} className={"justify-center rounded-md  px-3 py-2 text-sm shadow-md sm:w-auto mb-1 cursor-pointer select-none " + (location === loc ? "bg-violet-600 hover:bg-violet-500 text-white ": "bg-white hover:bg-gray-100 text-gray-500")} key={loc} >
                             {loc}
@@ -437,7 +437,7 @@ export default function AddRow(props: {
                           Style
                         </label>
                       </div>
-                      <div className="mt-2 flex gap-2 flex-wrap flex-grow justify-center">
+                      <div className="mt-2 flex gap-2 flex-wrap grow justify-center">
                         {styles_list.map((loc) => (
                             <div onClick={()=>
                             setStyles((prevStyles) =>
@@ -462,7 +462,7 @@ export default function AddRow(props: {
                 <button
                   type="submit"
                 //   onClick={() => props.setOpen("")}
-                  className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto"
+                  className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500 sm:ml-3 sm:w-auto"
                 >
                   {props.route? "Update Route":"Add Route"}
                 </button>
@@ -470,7 +470,7 @@ export default function AddRow(props: {
                   type="button"
                   data-autofocus
                   onClick={() => props.setOpen({set_id:"",route:null})}
-                  className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                  className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                 >
                   Cancel
                 </button>

@@ -271,8 +271,8 @@ export default function Profile(props: {
                             ))}
                         </div>
                     </div>
-                    <div className="absolute top-0 left-0 h-full w-2 bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
-                    <div className="absolute top-0 right-0 h-full w-2 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
+                    <div className="absolute top-0 left-0 h-full w-2 bg-linear-to-r from-white to-transparent pointer-events-none"></div>
+                    <div className="absolute top-0 right-0 h-full w-2 bg-linear-to-l from-white to-transparent pointer-events-none"></div>
                 </div>
             </div>
            
@@ -305,8 +305,8 @@ export function RouteCardProfile(props: {
                     className={"rounded-lg"}
                     src={"/api/img_thumb/" + props.route.id + ".webp"}
                 ></img>
-                <div className={"absolute bottom-1 m-1 p-1 px-3 rounded text-white " + (props.sets[props.route.set_id] ? colors[props.circuits[props.sets[props.route.set_id].circuit_id].color] : "bg-gray-500")}>{props.route.name} </div>
-                <div className="absolute text-center -bottom-7 w-full font-normal text-sm  p-1 px-2 rounded text-gray-600">{day_text}</div>
+                <div className={"absolute bottom-1 m-1 p-1 px-3 rounded-sm text-white " + (props.sets[props.route.set_id] ? colors[props.circuits[props.sets[props.route.set_id].circuit_id].color] : "bg-gray-500")}>{props.route.name} </div>
+                <div className="absolute text-center -bottom-7 w-full font-normal text-sm  p-1 px-2 rounded-sm text-gray-600">{day_text}</div>
                  
             </div>
         

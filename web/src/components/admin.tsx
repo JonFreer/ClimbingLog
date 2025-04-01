@@ -213,7 +213,7 @@ export function AdminPage() {
         <span className="font-bold text-2xl mt-4">Circuits</span>
         <button
           onClick={() => setCircuitsModalOpen(true)}
-          className="ml-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-700 hover:to-blue-900 text-white font-bold py-2 px-4 rounded shadow-lg transform transition-transform duration-300 hover:scale-105"
+          className="ml-auto bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-700 hover:to-blue-900 text-white font-bold py-2 px-4 rounded-sm shadow-lg transform transition-transform duration-300 hover:scale-105"
         >
           Add Circuit
         </button>
@@ -223,7 +223,7 @@ export function AdminPage() {
         {Object.values(circuits).map((circuit) => (
           <div
             key={circuit.id}
-            className="flex items-center w-full shadow rounded-lg mt-2"
+            className="flex items-center w-full shadow-sm rounded-lg mt-2"
           >
             <span
               className={

@@ -51,7 +51,7 @@ export function RouteList(props: {
       <>
         <div key={"projects"} className="mt-8 mx-4">
             <button
-              className="bg-white hover:bg-gray-50 text-gray-900 font-medium  rounded-lg shadow-sm w-full text-left flex justify-between items-center"
+              className="bg-white hover:bg-gray-50 text-gray-900 font-medium  rounded-lg shadow-xs w-full text-left flex justify-between items-center"
               onClick={() => {
                 setCircuits((prev) => ({
                   ...prev,
@@ -60,7 +60,7 @@ export function RouteList(props: {
               }}
             >
               <div className="flex items-center w-full">
-                <span className="text-lg font-bold text-white uppercase px-4 py-2 pr-10 min-w-52 rounded-l-lg bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-40% to-emerald-500 to-100% clip-path">Your Projects</span>
+                <span className="text-lg font-bold text-white uppercase px-4 py-2 pr-10 min-w-52 rounded-l-lg bg-linear-to-r from-indigo-500 from-10% via-sky-500 via-40% to-emerald-500 to-100% clip-path">Your Projects</span>
                 <span
                   className={
                     "font-bold ml-auto mr-2"
@@ -96,12 +96,12 @@ export function RouteList(props: {
                     <div
                       key={route.id}
                       onClick={()=>props.setSidebarRoute(route.id)}
-                      className="bg-white shadow overflow-hidden sm:rounded-lg mt-2 cursor-pointer hover:bg-slate-50"
+                      className="bg-white shadow-sm overflow-hidden sm:rounded-lg mt-2 cursor-pointer hover:bg-slate-50"
                     >
                       <div className="px-4 py-4 sm:px-6 flex items-center justify-between">
                         <div className="flex items-center">
                           <img
-                            className="h-24 rounded"
+                            className="h-24 rounded-sm"
                             src={"/api/img_thumb/" + route.id + ".webp"}
                             alt=""
                           ></img>
@@ -152,7 +152,7 @@ export function RouteList(props: {
           {active_sets[circuit.id] ?
           <div key={circuit.id} className="mt-4">
             <button
-              className="bg-white hover:bg-gray-50 text-gray-900 font-medium  rounded-lg shadow w-full text-left flex justify-between items-center"
+              className="bg-white hover:bg-gray-50 text-gray-900 font-medium  rounded-lg shadow-sm w-full text-left flex justify-between items-center"
               onClick={() => {
                 setCircuits((prev) => ({
                   ...prev,
@@ -198,12 +198,12 @@ export function RouteList(props: {
                     <div
                       key={route.id}
                       onClick={()=>props.setSidebarRoute(route.id)}
-                      className="bg-white shadow overflow-hidden sm:rounded-lg mt-2 cursor-pointer hover:bg-slate-50"
+                      className="bg-white shadow-sm overflow-hidden sm:rounded-lg mt-2 cursor-pointer hover:bg-slate-50"
                     >
                       <div className="px-4 py-4 sm:px-6 flex items-center justify-between">
                         <div className="flex items-center">
                           <img
-                            className="h-24 rounded"
+                            className="h-24 rounded-sm"
                             src={"/api/img_thumb/" + route.id + ".webp"}
                             alt=""
                           ></img>

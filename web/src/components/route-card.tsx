@@ -18,12 +18,12 @@ export function RouteCard(props:{route:Route,climbs:any[],sets: Record<string, S
     return (
                 <div
                     key={props.route.id}
-                    className="bg-white shadow overflow-hidden sm:rounded-lg mt-2"
+                    className="bg-white shadow-sm overflow-hidden sm:rounded-lg mt-2"
                   >
                     <div className="px-4 py-5 sm:px-6 flex items-center justify-between">
                     <div className="flex items-center">
                       <img
-                        className="h-24 rounded"
+                        className="h-24 rounded-sm"
                         src={"/api/img_thumb/"+props.route.id + ".webp"}
                         alt=""></img>
                       <div className="ml-4">

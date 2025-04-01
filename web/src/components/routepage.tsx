@@ -63,7 +63,7 @@ export function RoutePage(props: {
             {route?.name}{" "}
             {complete ? (
               <span className="float-right">
-                <div className=" inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                <div className=" inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                   <CheckIcon
                     aria-hidden="true"
                     className="-ml-0.5 mr-1.5 size-5"
@@ -125,7 +125,7 @@ export function RoutePage(props: {
                 add_attempt(id, props.updateData);
               }}
               type="button"
-              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
             >
               {/* <PencilIcon aria-hidden="true" className="-ml-0.5 mr-1.5 size-5 text-gray-400" /> */}
               Add attempt
@@ -135,7 +135,7 @@ export function RoutePage(props: {
           <span className="ml-3 sm:block">
             <button
               type="button"
-              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
               onClick={() => {
                 add_send(id, props.updateData);
               }}
@@ -152,7 +152,7 @@ export function RoutePage(props: {
           .map((climb) => (
             <div
               key={climb.id}
-              className="flex mb-2 items-center justify-between p-2 bg-white rounded-md shadow-sm"
+              className="flex mb-2 items-center justify-between p-2 bg-white rounded-md shadow-xs"
             >
               <div className="text-sm text-gray-600">
                 {new Date(climb.time).toLocaleString("en-GB", {

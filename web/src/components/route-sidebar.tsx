@@ -85,7 +85,7 @@ export default function RouteSideBar(props: {
 
       <DialogBackdrop
         transition
-        className="fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out data-[closed]:opacity-0"
+        className="fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out data-closed:opacity-0"
       />
 
       <div className="fixed inset-0 overflow-hidden">
@@ -93,14 +93,14 @@ export default function RouteSideBar(props: {
           <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
             <DialogPanel
               transition
-              className="pointer-events-auto relative w-screen max-w-md transform transition duration-500 ease-in-out data-[closed]:translate-x-full sm:duration-700"
+              className="pointer-events-auto relative w-screen max-w-md transform transition duration-500 ease-in-out data-closed:translate-x-full sm:duration-700"
             >
               <TransitionChild>
-                <div className="absolute left-0 top-0 -ml-8 flex pr-2 pt-4 duration-500 ease-in-out data-[closed]:opacity-0 sm:-ml-10 sm:pr-4">
+                <div className="absolute left-0 top-0 -ml-8 flex pr-2 pt-4 duration-500 ease-in-out data-closed:opacity-0 sm:-ml-10 sm:pr-4">
                   <button
                     type="button"
                     onClick={() => props.closeCallback()}
-                    className="relative rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                    className="relative rounded-md text-gray-300 hover:text-white focus:outline-hidden focus:ring-2 focus:ring-white"
                   >
                     <span className="absolute -inset-2.5" />
                     <span className="sr-only">Close panel</span>
@@ -170,7 +170,7 @@ export default function RouteSideBar(props: {
                         add_send(route.id, props.updateData);
                         setJustCompleted(true);
                       }}
-                      className={"rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  " +  (circuit ? colors[circuit.color] || "" : "") +" "+  (circuit ? "hover:"+colorsBold[circuit.color] || "" : "") }
+                      className={"rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-xs  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  " +  (circuit ? colors[circuit.color] || "" : "") +" "+  (circuit ? "hover:"+colorsBold[circuit.color] || "" : "") }
                     >
                       Add Send
                     </button>
@@ -185,7 +185,7 @@ export default function RouteSideBar(props: {
                     {sent_by_imgs.map((id) => (
                       <img
                       key={id}
-                      className="w-10 h-10 rounded-full -ml-5 border-2 border-white shadow"
+                      className="w-10 h-10 rounded-full -ml-5 border-2 border-white shadow-sm"
                       src={"/api/profile_photo/"+id}
                       ></img>
                     ))}
@@ -400,14 +400,14 @@ export function SentByModal(props: {
     >
       <DialogBackdrop
         transition
-        className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+        className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-leave:duration-200 data-enter:ease-out data-leave:ease-in"
       />
 
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex min-h-full  justify-center text-center items-center p-0">
           <DialogPanel
             transition
-            className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in my-8 w-[90%] sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+            className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-leave:duration-200 data-enter:ease-out data-leave:ease-in my-8 w-[90%] sm:max-w-lg sm:data-closed:translate-y-0 sm:data-closed:scale-95"
           >
             <div className="w-full bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
               <div className="w-full sm:flex sm:items-start">
@@ -417,7 +417,7 @@ export function SentByModal(props: {
 
                     {props.sent_by.users.map((user) => (
                       <div className="p-2" key={user.id}>
-                      <a href={`/profile/${user.username}`} className="font-semibold text-slate-700 rounded cursor-pointer w-full p-2 hover:bg-gray-100 m-auto flex">
+                      <a href={`/profile/${user.username}`} className="font-semibold text-slate-700 rounded-sm cursor-pointer w-full p-2 hover:bg-gray-100 m-auto flex">
                       {user.has_profile_photo ? (
                         <img
                           className="w-10 h-10 rounded-full"
