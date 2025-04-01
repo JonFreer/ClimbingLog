@@ -2,7 +2,7 @@ fastapi==0.115.12
 itsdangerous==2.2.0
 uvicorn==0.34.0
 autoflake==2.3.1
-black==24.10.0
+black==25.1.0
 isort==5.13.2
 SQLAlchemy==2.0.40
 psycopg2==2.9.10
