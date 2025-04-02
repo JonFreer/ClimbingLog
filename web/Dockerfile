@@ -1,5 +1,5 @@
 # stage: dependencies
-FROM node:20 AS dependencies
+FROM node:22 AS dependencies
 
 WORKDIR /app/
 # removed yarn.lock
