@@ -1,4 +1,3 @@
-import { User } from "../types/routes";
 import {
   HomeIcon,
   Square3Stack3DIcon,
@@ -12,8 +11,10 @@ import {
 } from "@heroicons/react/24/outline";
 import { NavLink } from "react-router";
 import { useState } from "react";
-export default function NavBarBottom(props: { user: User | false }) {
-  const [path, setPath] = useState<string | undefined>(undefined);
+import { useUser } from "../lib/auth";
+export default function NavBarBottom() {
+  const [_path, setPath] = useState<string | undefined>(undefined);
+  const user = useUser();
 
   return (
     <>
@@ -75,7 +76,7 @@ export default function NavBarBottom(props: { user: User | false }) {
         </NavLink>
         <NavLink
           onClick={() => setPath("/profile")}
-          to={props.user ? "/profile" : "/login"}
+          to={user.data ? "/profile" : "/login"}
           className={
             "hover:bg-gray-100 rounded-full px-4 py-2 cursor-pointer " +
             ("/profile" === window.location.pathname
@@ -83,11 +84,11 @@ export default function NavBarBottom(props: { user: User | false }) {
               : "text-gray-400")
           }
         >
-          {props.user && props.user.has_profile_photo ? (
+          {user.data && user.data.has_profile_photo ? (
             <img
               className="rounded-full size-7"
               onError={(e) => (e.currentTarget.style.display = "none")}
-              src={`/api/profile_photo/${props.user.id}`}
+              src={`/api/profile_photo/${user.data.id}`}
             />
           ) : (
             <UserCircleIcon

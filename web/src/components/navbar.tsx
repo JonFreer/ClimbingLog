@@ -7,34 +7,30 @@ import {
   MenuItem,
   MenuItems,
 } from "@headlessui/react";
-import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+import { UserCircleIcon } from "@heroicons/react/24/solid";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NavLink } from "react-router";
-import { User } from "../types/routes";
-
-// const navigation = [
-//   { name: "Dashboard", href: "#", current: true },
-//   // { name: 'Team', href: '#', current: false },
-//   // { name: 'Projects', href: '#', current: false },
-// ];
+import { useUser } from "../lib/auth";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
 //todo: add user type
-export function NavBar(props: { user: User | false }) {
+export function NavBar() {
+  const user = useUser();
+
   const navigation = [
     { name: "Dashboard", href: "/", current: false },
     { name: "Feed", href: "/feed", current: false },
   ];
 
-  if (props.user && props.user.is_superuser) {
+  if (user.data && user.data.is_superuser) {
     navigation.push({ name: "Admin", href: "/admin", current: false });
   }
 
-  if (props.user && props.user.route_setter) {
+  if (user.data && user.data.route_setter) {
     navigation.push({
       name: "Route Setting",
       href: "/route_setting",
@@ -42,7 +38,7 @@ export function NavBar(props: { user: User | false }) {
     });
   }
 
-  const [path, setPath] = useState<string | undefined>(undefined);
+  const [_path, setPath] = useState<string | undefined>(undefined);
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -97,7 +93,7 @@ export function NavBar(props: { user: User | false }) {
             </div>
           </div>
 
-          {props.user != false ? (
+          {user.data ? (
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
               <button
                 type="button"
@@ -114,13 +110,13 @@ export function NavBar(props: { user: User | false }) {
                   <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
-                    {props.user.has_profile_photo ? (
+                    {user.data.has_profile_photo ? (
                       <img
                         className="rounded-full size-8"
                         onError={(e) =>
                           (e.currentTarget.style.display = "none")
                         }
-                        src={`/api/profile_photo/${props.user.id}`}
+                        src={`/api/profile_photo/${user.data.id}`}
                       />
                     ) : (
                       <UserCircleIcon
@@ -209,8 +205,4 @@ export function NavBar(props: { user: User | false }) {
       </DisclosurePanel>
     </Disclosure>
   );
-}
-
-function onEffect(arg0: () => void, arg1: never[]) {
-  throw new Error("Function not implemented.");
 }

@@ -3,18 +3,26 @@ import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import { User } from "../types/routes";
 import { useEffect, useState } from "react";
 import { Toast } from "./toast";
+import { useUser } from "../lib/auth";
 
 export default function Settings(props: { user: User | false }) {
-  if (props.user == false) {
+  const user = useUser();
+
+  if (!user.data) {
     return;
   }
+
+  if (props.user === false) {
+    return;
+  }
+
   const [toastOpen, setToastOpen] = useState(false);
   const [usernameError, setUserNameError] = useState(false);
   const [formData, setFormData] = useState({
-    username: props.user.username,
-    about: props.user.about,
-    profile_visible: props.user.profile_visible,
-    send_visible: props.user.send_visible,
+    username: user.data.username,
+    about: user.data.about,
+    profile_visible: user.data.profile_visible,
+    send_visible: user.data.send_visible,
   });
 
   const handleChange = (
@@ -533,4 +541,7 @@ function ImageUploadProfilePic(props: {
       </div>
     </div>
   );
+}
+function getUser() {
+  throw new Error("Function not implemented.");
 }

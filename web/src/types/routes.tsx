@@ -52,3 +52,8 @@ export interface Set {
   date: string;
   circuit_id: string;
 }
+
+export type AuthResponse = {
+  jwt: string;
+  token_type: string;
+};

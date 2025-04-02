@@ -24,6 +24,8 @@ import Profile from "./components/profile";
 import Feed from "./components/feedpage";
 import StorePage from "./components/store";
 import NavBarBottom from "./components/navbar-bottom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { queryConfig } from "./lib/react-query";
 
 const ProtectedRoute = ({ authed, children }) => {
   if (!authed) {
@@ -33,6 +35,13 @@ const ProtectedRoute = ({ authed, children }) => {
 };
 
 function App() {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: queryConfig,
+      })
+  );
+
   const [user, setLoggedIn] = useState<User | false>(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : false;
@@ -141,124 +150,126 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
-      <NavBar user={user} />
-      <NavBarBottom user={user} />
-      <Routes>
-        <Route
-          path="/register"
-          element={
-            <ProtectedRoute authed={user === false}>
-              <Register />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            <ProtectedRoute authed={user === false}>
-              <Login />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute authed={user !== false}>
-              <Settings user={user} />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute authed={user && user.is_superuser}>
-              <AdminPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/route_setting"
-          element={
-            <ProtectedRoute authed={user && user.route_setter}>
-              <RouteSettingPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/route/:id"
-          element={
-            <RoutePage
-              routes={routes}
-              circuits={circuits}
-              climbs={climbs}
-              updateData={updateData}
-            />
-          }
-        />
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <NavBar user={user} />
+        <NavBarBottom user={user} />
+        <Routes>
+          <Route
+            path="/register"
+            element={
+              <ProtectedRoute authed={user === false}>
+                <Register />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <ProtectedRoute authed={user === false}>
+                <Login />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute authed={user !== false}>
+                <Settings user={user} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute authed={user && user.is_superuser}>
+                <AdminPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/route_setting"
+            element={
+              <ProtectedRoute authed={user && user.route_setter}>
+                <RouteSettingPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/route/:id"
+            element={
+              <RoutePage
+                routes={routes}
+                circuits={circuits}
+                climbs={climbs}
+                updateData={updateData}
+              />
+            }
+          />
 
-        <Route
-          path="/profile/:id"
-          element={
-            <Profile
-              routes={routes}
-              circuits={circuits}
-              sets={sets}
-              climbs={climbs}
-              projects={projects}
-              user={user}
-              updateData={updateData}
-            />
-          }
-        />
+          <Route
+            path="/profile/:id"
+            element={
+              <Profile
+                routes={routes}
+                circuits={circuits}
+                sets={sets}
+                climbs={climbs}
+                projects={projects}
+                user={user}
+                updateData={updateData}
+              />
+            }
+          />
 
-        <Route path="/store" element={<StorePage />} />
+          <Route path="/store" element={<StorePage />} />
 
-        <Route
-          path="/profile/"
-          element={
-            <Profile
-              routes={routes}
-              circuits={circuits}
-              sets={sets}
-              climbs={climbs}
-              projects={projects}
-              user={user}
-              updateData={updateData}
-            />
-          }
-        />
+          <Route
+            path="/profile/"
+            element={
+              <Profile
+                routes={routes}
+                circuits={circuits}
+                sets={sets}
+                climbs={climbs}
+                projects={projects}
+                user={user}
+                updateData={updateData}
+              />
+            }
+          />
 
-        <Route
-          path="/feed/"
-          element={
-            <Feed
-              routes={routes}
-              circuits={circuits}
-              sets={sets}
-              climbs={climbs}
-              projects={projects}
-              user={user}
-              updateData={updateData}
-            />
-          }
-        />
+          <Route
+            path="/feed/"
+            element={
+              <Feed
+                routes={routes}
+                circuits={circuits}
+                sets={sets}
+                climbs={climbs}
+                projects={projects}
+                user={user}
+                updateData={updateData}
+              />
+            }
+          />
 
-        <Route
-          path="*"
-          element={
-            <RoutesPage
-              routes={routes}
-              circuits={circuits}
-              sets={sets}
-              climbs={climbs}
-              projects={projects}
-              updateData={updateData}
-            />
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+          <Route
+            path="*"
+            element={
+              <RoutesPage
+                routes={routes}
+                circuits={circuits}
+                sets={sets}
+                climbs={climbs}
+                projects={projects}
+                updateData={updateData}
+              />
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 
