@@ -5,14 +5,10 @@ import { useEffect, useState } from "react";
 import { Toast } from "./toast";
 import { useUser } from "../lib/auth";
 
-export default function Settings(props: { user: User | false }) {
+export default function Settings() {
   const user = useUser();
 
   if (!user.data) {
-    return;
-  }
-
-  if (props.user === false) {
     return;
   }
 
@@ -24,6 +20,15 @@ export default function Settings(props: { user: User | false }) {
     profile_visible: user.data.profile_visible,
     send_visible: user.data.send_visible,
   });
+
+  useEffect(() => {
+    setFormData({
+      username: user.data.username,
+      about: user.data.about,
+      profile_visible: user.data.profile_visible,
+      send_visible: user.data.send_visible,
+    });
+  }, [user.data]);
 
   const handleChange = (
     e:
@@ -101,7 +106,7 @@ export default function Settings(props: { user: User | false }) {
                     name="username"
                     type="text"
                     placeholder="janesmith"
-                    defaultValue={props.user.username}
+                    defaultValue={user.data.username}
                     className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6"
                   />
                 </div>
@@ -135,7 +140,7 @@ export default function Settings(props: { user: User | false }) {
                   name="about"
                   rows={3}
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                  defaultValue={props.user.about}
+                  defaultValue={user.data.about}
                 />
               </div>
             </div>
@@ -186,7 +191,7 @@ export default function Settings(props: { user: User | false }) {
                   <div className="flex h-6 shrink-0 items-center">
                     <div className="group grid size-4 grid-cols-1">
                       <input
-                        defaultChecked={props.user.profile_visible}
+                        defaultChecked={user.data.profile_visible}
                         onChange={handleChange}
                         id="profile_visible"
                         name="profile_visible"
@@ -232,7 +237,7 @@ export default function Settings(props: { user: User | false }) {
                   <div className="flex h-6 shrink-0 items-center">
                     <div className="group grid size-4 grid-cols-1">
                       <input
-                        defaultChecked={props.user.send_visible}
+                        defaultChecked={user.data.send_visible}
                         onChange={handleChange}
                         id="send_visible"
                         name="send_visible"
@@ -541,7 +546,4 @@ function ImageUploadProfilePic(props: {
       </div>
     </div>
   );
-}
-function getUser() {
-  throw new Error("Function not implemented.");
 }

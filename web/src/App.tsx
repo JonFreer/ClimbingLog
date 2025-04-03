@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import "./App.css";
 import { Register } from "./components/register";
 import { Login } from "./components/login";
@@ -26,6 +26,7 @@ import StorePage from "./components/store";
 import NavBarBottom from "./components/navbar-bottom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { queryConfig } from "./lib/react-query";
+import { useUser } from "./lib/auth";
 
 const ProtectedRoute = ({ authed, children }) => {
   if (!authed) {
@@ -34,18 +35,11 @@ const ProtectedRoute = ({ authed, children }) => {
   return children;
 };
 
-function App() {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: queryConfig,
-      })
-  );
 
-  const [user, setLoggedIn] = useState<User | false>(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : false;
-  });
+
+function App() {
+  const user = useUser();
+
   const [routes, setRoutes] = useState<RouteType[]>([]);
   const [climbs, setClimbs] = useState<Climb[]>([]);
   const [circuits, setCircuits] = useState<Record<string, Circuit>>({});
@@ -130,147 +124,134 @@ function App() {
     fetchSets();
   }
 
-  // On component mount: Check if user logged in, if so load their achievements
-  useEffect(() => {
-    fetchClimbs();
-    fetchRoutes();
-    fetchCircuits();
-    fetchProjects();
-    fetchSets();
-    checkAuth()
-      .then((user_) => {
-        setLoggedIn(user_);
-        console.log("user log:", user_);
-        localStorage.setItem("user", JSON.stringify(user_));
-      })
-      .catch(() => {
-        setLoggedIn(false);
-        localStorage.removeItem("user");
-      });
-  }, []);
+    // On component mount: Check if user logged in, if so load their achievements
+    useEffect(() => {
+      fetchClimbs();
+      fetchRoutes();
+      fetchCircuits();
+      fetchProjects();
+      fetchSets();
+    }, []);
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <NavBar user={user} />
-        <NavBarBottom user={user} />
-        <Routes>
-          <Route
-            path="/register"
-            element={
-              <ProtectedRoute authed={user === false}>
-                <Register />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <ProtectedRoute authed={user === false}>
-                <Login />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <ProtectedRoute authed={user !== false}>
-                <Settings user={user} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute authed={user && user.is_superuser}>
-                <AdminPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/route_setting"
-            element={
-              <ProtectedRoute authed={user && user.route_setter}>
-                <RouteSettingPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/route/:id"
-            element={
-              <RoutePage
-                routes={routes}
-                circuits={circuits}
-                climbs={climbs}
-                updateData={updateData}
-              />
-            }
-          />
+    return(    
+    <BrowserRouter>
+      <NavBar/>
+      <NavBarBottom user={user} />
+      <Routes>
+        <Route
+          path="/register"
+          element={
+            <ProtectedRoute authed={!user.data}>
+              <Register />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <ProtectedRoute authed={!user.data}>
+              <Login />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute authed={user.data}>
+              <Settings/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute authed={user.data && user.data.is_superuser}>
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/route_setting"
+          element={
+            <ProtectedRoute authed={user.data && user.data.route_setter}>
+              <RouteSettingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/route/:id"
+          element={
+            <RoutePage
+              routes={routes}
+              circuits={circuits}
+              climbs={climbs}
+              updateData={updateData}
+            />
+          }
+        />
 
-          <Route
-            path="/profile/:id"
-            element={
-              <Profile
-                routes={routes}
-                circuits={circuits}
-                sets={sets}
-                climbs={climbs}
-                projects={projects}
-                user={user}
-                updateData={updateData}
-              />
-            }
-          />
+        <Route
+          path="/profile/:id"
+          element={
+            <Profile
+              routes={routes}
+              circuits={circuits}
+              sets={sets}
+              climbs={climbs}
+              projects={projects}
+              user={user}
+              updateData={updateData}
+            />
+          }
+        />
 
-          <Route path="/store" element={<StorePage />} />
+        <Route path="/store" element={<StorePage />} />
 
-          <Route
-            path="/profile/"
-            element={
-              <Profile
-                routes={routes}
-                circuits={circuits}
-                sets={sets}
-                climbs={climbs}
-                projects={projects}
-                user={user}
-                updateData={updateData}
-              />
-            }
-          />
+        <Route
+          path="/profile/"
+          element={
+            <Profile
+              routes={routes}
+              circuits={circuits}
+              sets={sets}
+              climbs={climbs}
+              projects={projects}
+              user={user}
+              updateData={updateData}
+            />
+          }
+        />
 
-          <Route
-            path="/feed/"
-            element={
-              <Feed
-                routes={routes}
-                circuits={circuits}
-                sets={sets}
-                climbs={climbs}
-                projects={projects}
-                user={user}
-                updateData={updateData}
-              />
-            }
-          />
+        <Route
+          path="/feed/"
+          element={
+            <Feed
+              routes={routes}
+              circuits={circuits}
+              sets={sets}
+              climbs={climbs}
+              projects={projects}
+              user={user}
+              updateData={updateData}
+            />
+          }
+        />
 
-          <Route
-            path="*"
-            element={
-              <RoutesPage
-                routes={routes}
-                circuits={circuits}
-                sets={sets}
-                climbs={climbs}
-                projects={projects}
-                updateData={updateData}
-              />
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </QueryClientProvider>
-  );
+        <Route
+          path="*"
+          element={
+            <RoutesPage
+              routes={routes}
+              circuits={circuits}
+              sets={sets}
+              climbs={climbs}
+              projects={projects}
+              updateData={updateData}
+            />
+          }
+        />
+      </Routes>
+    </BrowserRouter>)
 }
 
 export default App;

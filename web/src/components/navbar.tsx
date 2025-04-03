@@ -19,8 +19,9 @@ function classNames(...classes: any) {
 
 //todo: add user type
 export function NavBar() {
+  
   const user = useUser();
-
+  console.log("Navbar user", user.data);
   const navigation = [
     { name: "Dashboard", href: "/", current: false },
     { name: "Feed", href: "/feed", current: false },
