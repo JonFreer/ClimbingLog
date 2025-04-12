@@ -10,4 +10,4 @@ requests==2.32.3
 pytest==8.3.5 
 fastapi-users[sqlalchemy]==14.0.1
 asyncpg==0.30.0
-pillow==11.1.0
+pillow==11.2.1
