@@ -23,14 +23,6 @@ export function RoutesPage(props: {
 }) {
   const routesQuery = useRoutes();
 
-  if (routesQuery.isLoading) {
-    return (
-      <div className="flex justify-center items-center h-full">
-        Loading Routes
-      </div>
-    );
-  }
-
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
   const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(
     undefined
@@ -65,6 +57,18 @@ export function RoutesPage(props: {
       window.removeEventListener("popstate", handlePopState);
     };
   }, [sidebarRoute]);
+
+  if (
+    routesQuery.isLoading ||
+    routesQuery.isFetching ||
+    routesQuery.data === undefined
+  ) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        Loading Routes
+      </div>
+    );
+  }
 
   const active_sets = Object.values(props.sets).reduce((acc, set) => {
     if (

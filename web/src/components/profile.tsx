@@ -15,6 +15,10 @@ import { Bar } from "react-chartjs-2";
 import { useParams } from "react-router";
 import { API } from "../types/api";
 import RouteSideBar from "./route-sidebar";
+import { useCircuits } from "../features/circuits/api/get-circuits";
+import { useRoutes } from "../features/routes/api/get-routes";
+import { useSets } from "../features/sets/api/get-sets";
+import { useUser } from "../lib/auth";
 
 ChartJS.register(
   CategoryScale,
@@ -45,14 +49,15 @@ export const options = {
 //   const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 
 export default function Profile(props: {
-  routes: Route[];
   climbs: Climb[];
-  circuits: Record<string, Circuit>;
-  sets: Record<string, Set>;
   projects: Projects;
-  user: User | false;
   updateData: () => void;
 }) {
+  const { data: routes } = useRoutes();
+  const { data: circuits } = useCircuits();
+  const { data: sets } = useSets();
+  const { data: user_me } = useUser();
+
   const [user, setUser] = useState<User | false>(false);
   const [climbs, setClimbs] = useState<Climb[]>([]);
   const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(
@@ -62,7 +67,7 @@ export default function Profile(props: {
   const { id } = useParams();
 
   function fetchUser() {
-    const username = id || props.user.username;
+    const username = id || user_me.username;
     API("GET", "/api/users/get_public/" + username)
       .then((data) => {
         setUser(data.data);
@@ -74,7 +79,7 @@ export default function Profile(props: {
   }
 
   function fetchClimbs() {
-    const username = id || props.user.username;
+    const username = id || user_me.username;
     API("GET", "/api/users/get_climbs/" + username)
       .then((data) => {
         setClimbs(data.data);
@@ -92,7 +97,7 @@ export default function Profile(props: {
 
   console.log(`Profile ID: ${id}`);
 
-  const labels = Object.values(props.sets)
+  const labels = Object.values(sets?.data || {})
     .map((set) =>
       new Date(set.date).toLocaleString("default", {
         month: "long",
@@ -115,8 +120,8 @@ export default function Profile(props: {
 
   const out_data: any = {};
 
-  Object.values(props.sets).forEach((set) => {
-    const n_complete = props.routes.filter(
+  Object.values(sets?.data || {}).forEach((set) => {
+    const n_complete = routes?.data.filter(
       (route) => route.set_id === set.id && sent_ids.includes(route.id)
     ).length;
 
@@ -124,7 +129,7 @@ export default function Profile(props: {
       month: "long",
       year: "numeric",
     });
-    const color = props.circuits[set.circuit_id]?.color;
+    const color = circuits?.data[set.circuit_id]?.color;
 
     if (color) {
       out_data[color] = out_data[color] || {};
@@ -135,7 +140,7 @@ export default function Profile(props: {
 
   const data = {
     labels: labels,
-    datasets: Object.values(props.circuits).map((circuit) => {
+    datasets: Object.values(circuits?.data || {}).map((circuit) => {
       const data = labels.map((label) => {
         return out_data[circuit.color]?.[label] || 0;
       });
@@ -152,7 +157,7 @@ export default function Profile(props: {
     climbs
       .filter((climb) => climb.sent)
       .reduce((acc, climb) => {
-        const location = props.routes.find(
+        const location = routes?.data.find(
           (route) => route.id === climb.route
         )?.location;
         if (location) {
@@ -172,7 +177,7 @@ export default function Profile(props: {
       .filter((climb) => climb.sent)
       .reduce((acc, climb) => {
         const styles =
-          props.routes
+          routes?.data
             .find((route) => route.id === climb.route)
             ?.style.split(",") || [];
         styles.forEach((style) => {
@@ -192,9 +197,9 @@ export default function Profile(props: {
   return (
     <div className="bg-gray-100 min-h-screen p-4 sm:mb-8 mb-14">
       <RouteSideBar
-        route={props.routes.find((route) => route.id === sidebarRoute)}
-        circuits={props.circuits}
-        sets={props.sets}
+        route={routes?.data.find((route) => route.id === sidebarRoute)}
+        circuits={circuits?.data || {}}
+        sets={sets?.data || {}}
         climbs={props.climbs}
         projects={props.projects}
         updateData={props.updateData}
@@ -281,7 +286,7 @@ export default function Profile(props: {
                 {climbs
                   .filter((climb) => climb.sent)
                   .filter((climb) =>
-                    props.routes.find((route) => route.id === climb.route)
+                    routes?.data.find((route) => route.id === climb.route)
                   )
                   .sort(
                     (a, b) =>
@@ -291,11 +296,11 @@ export default function Profile(props: {
                   .map((climb) => (
                     <RouteCardProfile
                       key={climb.route}
-                      route={props.routes.find(
+                      route={routes?.data.find(
                         (route) => route.id === climb.route
                       )}
-                      circuits={props.circuits}
-                      sets={props.sets}
+                      circuits={circuits?.data || {}}
+                      sets={sets?.data || {}}
                       climb={climb}
                       setSidebarRoute={setSidebarRoute}
                     />
