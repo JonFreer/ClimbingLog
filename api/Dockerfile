@@ -1,26 +1,25 @@
-FROM python:3.13 AS main
+FROM python:3.13-alpine as main
 
-ENV FORWARDED_ALLOW_IPS="*"
+RUN apk add build-base libpq libpq-dev
 
+ENV FORWARDED_ALLOW_IPS="*" \
+    PYTHONPATH=/app
+
+WORKDIR /app
+COPY ./requirements.txt /app/
+
+# Create necessary directories in a single RUN command to reduce image layers
+RUN mkdir -p ./imgs/routes/full ./imgs/routes/thumb ./imgs/cover_photos ./imgs/profile_photos \
+    && pip install --no-cache-dir -r requirements.txt
+
+WORKDIR /app
 COPY ./ /app/
-WORKDIR "/app"
-RUN mkdir -p ./imgs
-RUN mkdir -p ./imgs/routes/
-RUN mkdir -p ./imgs/routes/full
-RUN mkdir -p ./imgs/routes/thumb
-RUN mkdir -p ./imgs/cover_photos
-RUN mkdir -p ./imgs/profile_photos
-
-RUN pip install -r requirements.txt
 
 FROM main AS test
-ENV PYTHONPATH=$PWD
 CMD pytest
 
 FROM main AS dev
-ENV PYTHONPATH=$PWD
 CMD PORT=80 sh ./prestart.sh
 
 FROM main AS prod
-ENV PYTHONPATH=$PWD
 CMD PORT=80 sh ./prestart.sh

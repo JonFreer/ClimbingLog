@@ -19,7 +19,6 @@ function classNames(...classes: any) {
 
 //todo: add user type
 export function NavBar() {
-  
   const user = useUser();
   console.log("Navbar user", user.data);
   const navigation = [

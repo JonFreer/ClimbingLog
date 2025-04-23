@@ -11,8 +11,11 @@ import { Login } from "./components/login.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { queryConfig } from "./lib/react-query.ts";
 
-import { persistQueryClient, PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import {
+  persistQueryClient,
+  PersistQueryClientProvider,
+} from "@tanstack/react-query-persist-client";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 
 // createRoot(document.getElementById('root')!).render(
 //   <StrictMode>
@@ -21,24 +24,26 @@ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persist
 // )
 
 const queryClient = new QueryClient({
-  defaultOptions: queryConfig
-  
-})
+  defaultOptions: queryConfig,
+});
 
 // 2. the persister
 const localStoragePersister = createSyncStoragePersister({
   storage: window.localStorage,
-})
+});
 
 persistQueryClient({
   queryClient,
   persister: localStoragePersister,
-})
+});
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-     <PersistQueryClientProvider client={queryClient} persistOptions={{ persister: localStoragePersister }}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: localStoragePersister }}
+    >
       <App />
-     </PersistQueryClientProvider>
+    </PersistQueryClientProvider>
   </StrictMode>
 );

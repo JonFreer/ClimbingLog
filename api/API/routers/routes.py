@@ -147,7 +147,7 @@ async def update_route(
     return route
 
 
-@router.delete("/routes/remove_route/{route_id}", response_model=None, tags=["routes"])
+@router.delete("/routes/{route_id}", response_model=None, tags=["routes"])
 async def remove_route(
     route_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),

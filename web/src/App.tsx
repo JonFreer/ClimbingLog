@@ -1,14 +1,12 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import { Register } from "./components/register";
 import { Login } from "./components/login";
-import { checkAuth } from "./providers/AuthProvider";
 import { NavBar } from "./components/navbar";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import {
   Circuit,
   Route as RouteType,
-  User,
   Climb,
   Projects,
   Set,
@@ -18,24 +16,20 @@ import { RoutesPage } from "./components/routespage";
 import { RoutePage } from "./components/routepage";
 import { API } from "./types/api";
 import Settings from "./components/settings";
-import DraggableDotsCanvas from "./components/map";
 import { RouteSettingPage } from "./components/route-setting";
 import Profile from "./components/profile";
 import Feed from "./components/feedpage";
 import StorePage from "./components/store";
 import NavBarBottom from "./components/navbar-bottom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { queryConfig } from "./lib/react-query";
 import { useUser } from "./lib/auth";
-
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Notifications } from "./components/ui/notifications";
 const ProtectedRoute = ({ authed, children }) => {
   if (!authed) {
     return <Navigate to="/" />;
   }
   return children;
 };
-
-
 
 function App() {
   const user = useUser();
@@ -124,18 +118,20 @@ function App() {
     fetchSets();
   }
 
-    // On component mount: Check if user logged in, if so load their achievements
-    useEffect(() => {
-      fetchClimbs();
-      fetchRoutes();
-      fetchCircuits();
-      fetchProjects();
-      fetchSets();
-    }, []);
+  // On component mount: Check if user logged in, if so load their achievements
+  useEffect(() => {
+    fetchClimbs();
+    fetchRoutes();
+    fetchCircuits();
+    fetchProjects();
+    fetchSets();
+  }, []);
 
-    return(    
+  return (
     <BrowserRouter>
-      <NavBar/>
+      {import.meta.env.DEV && <ReactQueryDevtools />}
+      <Notifications />
+      <NavBar />
       <NavBarBottom user={user} />
       <Routes>
         <Route
@@ -158,7 +154,7 @@ function App() {
           path="/settings"
           element={
             <ProtectedRoute authed={user.data}>
-              <Settings/>
+              <Settings />
             </ProtectedRoute>
           }
         />
@@ -251,7 +247,8 @@ function App() {
           }
         />
       </Routes>
-    </BrowserRouter>)
+    </BrowserRouter>
+  );
 }
 
 export default App;

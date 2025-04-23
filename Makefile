@@ -1,5 +1,5 @@
 ifeq ($(INFRA), dev)
-FILES=-f docker-compose.yaml -f docker-compose.dev.yaml
+FILES=-f docker-compose.yaml -f docker-compose.dev.yaml 
 else
 FILES=-f docker-compose.yaml
 endif
@@ -13,7 +13,7 @@ up:
 down:
 	docker compose $(FILES) down --remove-orphans
 build:
-	docker compose $(FILES) build
+	docker compose $(FILES) build 
 pull:
 	docker compose $(FILES) pull
 logs:

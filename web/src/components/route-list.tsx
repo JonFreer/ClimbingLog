@@ -3,9 +3,9 @@ import { Circuit, Projects, Route, Set } from "../types/routes";
 import { useEffect, useState } from "react";
 import { colors } from "../types/colors";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
+import { useRoutes } from "../features/routes/api/get-routes";
 
 export function RouteList(props: {
-  routes: Route[];
   climbs: any[];
   circuits: Record<string, Circuit>;
   sets: Record<string, Set>;
@@ -13,6 +13,16 @@ export function RouteList(props: {
   updateData: () => void;
   setSidebarRoute: (route: string) => void;
 }) {
+  const routesQuery = useRoutes();
+
+  if (routesQuery.isLoading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        Loading Routes
+      </div>
+    );
+  }
+
   // const [openCircuits, setCircuits] = useState<{ [key: string]: boolean }>({});
   const [openCircuits, setCircuits] = useState<{ [key: string]: boolean }>(
     () => {
@@ -68,7 +78,7 @@ export function RouteList(props: {
                 </span>
                 <span className={"font-bold ml-auto mr-2"}>
                   {
-                    props.routes.filter(
+                    routesQuery.data?.data.filter(
                       (route) =>
                         props.projects.includes(route.id) &&
                         sent_ids.includes(route.id)
@@ -76,7 +86,7 @@ export function RouteList(props: {
                   }{" "}
                   /{" "}
                   {
-                    props.routes.filter((route) =>
+                    routesQuery.data?.data.filter((route) =>
                       props.projects.includes(route.id)
                     ).length
                   }{" "}
@@ -91,7 +101,7 @@ export function RouteList(props: {
             </button>
             {openCircuits["projects"] && (
               <div className="ml mt-2" key={"projects"}>
-                {props.routes
+                {routesQuery.data?.data
                   .filter((route) => props.projects.includes(route.id))
                   .map((route) => (
                     <div
@@ -174,7 +184,7 @@ export function RouteList(props: {
                     </span>
                     <div className={"font-bold ml-auto mr-2"}>
                       {
-                        props.routes.filter(
+                        routesQuery.data?.data.filter(
                           (route) =>
                             route.set_id == active_sets[circuit.id].id &&
                             sent_ids.includes(route.id)
@@ -182,7 +192,7 @@ export function RouteList(props: {
                       }{" "}
                       /{" "}
                       {
-                        props.routes.filter(
+                        routesQuery.data?.data.filter(
                           (route) => route.set_id === active_sets[circuit.id].id
                         ).length
                       }{" "}
@@ -197,7 +207,7 @@ export function RouteList(props: {
                 </button>
                 {openCircuits[circuit.id] && (
                   <div className="ml mt-2" key={circuit.id}>
-                    {props.routes
+                    {routesQuery.data?.data
                       .filter(
                         (route) => route.set_id === active_sets[circuit.id].id
                       )

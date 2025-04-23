@@ -12,15 +12,25 @@ import {
 import { RouteCard } from "./route-card";
 import RouteSideBar from "./route-sidebar";
 import { XMarkIcon } from "@heroicons/react/24/solid";
+import { useRoutes } from "../features/routes/api/get-routes";
 
 export function RoutesPage(props: {
-  routes: Route[];
   climbs: Climb[];
   circuits: Record<string, Circuit>;
   sets: Record<string, Set>;
   projects: Projects;
   updateData: () => void;
 }) {
+  const routesQuery = useRoutes();
+
+  if (routesQuery.isLoading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        Loading Routes
+      </div>
+    );
+  }
+
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
   const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(
     undefined
@@ -66,10 +76,16 @@ export function RoutesPage(props: {
     return acc;
   }, {} as Record<string, Set>);
 
+  const selectedRouteData = routesQuery.data?.data.find(
+    (route) => route.id === selectedRoute
+  );
+
   return (
     <div className="sm:mb-8 mb-16">
       <RouteSideBar
-        route={props.routes.find((route) => route.id === sidebarRoute)}
+        route={routesQuery.data?.data.find(
+          (route) => route.id === sidebarRoute
+        )}
         circuits={props.circuits}
         sets={props.sets}
         climbs={props.climbs}
@@ -79,32 +95,34 @@ export function RoutesPage(props: {
       ></RouteSideBar>
       <div className="">
         <DraggableDotsCanvas
-          dots={props.routes
-            .filter(
-              (route) =>
-                props.sets[route.set_id] &&
-                ((active_sets[props.sets[route.set_id].circuit_id].id ==
-                  route.set_id &&
-                  filterCircuits[props.sets[route.set_id].circuit_id]) ||
-                  !anyFitlered)
-            )
-            .map((route) => ({
-              id: route.id,
-              x: route.x,
-              y: route.y,
-              isDragging: false,
-              complete:
-                props.climbs.filter(
-                  (climb) => climb.route === route.id && climb.sent
-                ).length == 0,
-              radius: 4,
-              draggable: false,
-              color:
-                colorsHex[
-                  props.circuits[props.sets[route.set_id].circuit_id]?.color ||
-                    "black"
-                ],
-            }))}
+          dots={
+            routesQuery.data?.data
+              .filter(
+                (route) =>
+                  props.sets[route.set_id] &&
+                  ((active_sets[props.sets[route.set_id].circuit_id].id ==
+                    route.set_id &&
+                    filterCircuits[props.sets[route.set_id].circuit_id]) ||
+                    !anyFitlered)
+              )
+              .map((route) => ({
+                id: route.id,
+                x: route.x,
+                y: route.y,
+                isDragging: false,
+                complete:
+                  props.climbs.filter(
+                    (climb) => climb.route === route.id && climb.sent
+                  ).length == 0,
+                radius: 4,
+                draggable: false,
+                color:
+                  colorsHex[
+                    props.circuits[props.sets[route.set_id].circuit_id]
+                      ?.color || "black"
+                  ],
+              })) || []
+          }
           selected_id={selectedRoute}
           updateDots={(_dots) => {}}
           setSelected={setSelectedRoute}
@@ -149,10 +167,9 @@ export function RoutesPage(props: {
           ))}
       </div>
 
-      {selectedRoute &&
-      props.routes.find((route) => route.id === selectedRoute) != undefined ? (
+      {selectedRoute && selectedRouteData ? (
         <RouteCard
-          route={props.routes.find((route) => route.id === selectedRoute)}
+          route={selectedRouteData}
           circuits={props.circuits}
           sets={props.sets}
           climbs={props.climbs}
@@ -164,7 +181,6 @@ export function RoutesPage(props: {
       )}
 
       <RouteList
-        routes={props.routes}
         sets={props.sets}
         circuits={props.circuits}
         climbs={props.climbs}
