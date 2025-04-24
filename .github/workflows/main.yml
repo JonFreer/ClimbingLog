@@ -32,6 +32,9 @@ jobs:
       - name: Build docker containers
         run: docker compose -f docker-compose.yaml -f docker-compose.dev.yaml build
 
+      - name: Run tests
+        run: npm run test
+
       - name: Run docker containers
         run: |
           docker compose -f docker-compose.yaml -f docker-compose.dev.yaml up -d
