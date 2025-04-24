@@ -33,6 +33,7 @@ jobs:
         run: docker compose -f docker-compose.yaml -f docker-compose.dev.yaml build
 
       - name: Run tests
+        working-directory: ./web
         run: npm run test
 
       - name: Run docker containers
