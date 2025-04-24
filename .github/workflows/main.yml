@@ -9,6 +9,22 @@ on:
   workflow_dispatch:
 
 jobs:
+  test: 
+    runs-on: ubuntu-latest
+    steps: 
+       - name: Checkout code
+         uses: actions/checkout@v4
+       - name: Setup env
+         run: |
+          echo "PROJECT_ROOT=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
+          echo "PROJECT_NAME=combine" >> $GITHUB_ENV
+          echo "${GITHUB_WORKSPACE}/bin" >> $GITHUB_PATH
+       - name: Install dependencies
+         working-directory: ./web
+         run: npm install
+       - name: Run Tests
+         run: npm run test
+    
   build:
     runs-on: ubuntu-latest
     env:
@@ -31,10 +47,6 @@ jobs:
 
       - name: Build docker containers
         run: docker compose -f docker-compose.yaml -f docker-compose.dev.yaml build
-
-      - name: Run tests
-        working-directory: ./web
-        run: npm run test
 
       - name: Run docker containers
         run: |
