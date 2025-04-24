@@ -4,37 +4,26 @@ import { useEffect, useState } from "react";
 import { RouteCardProfile } from "./profile";
 import RouteSideBar from "./route-sidebar";
 import { colorsPastel } from "../types/colors";
+import { useSets } from "../features/sets/api/get-sets";
+import { useCircuits } from "../features/circuits/api/get-circuits";
+import { useRoutes } from "../features/routes/api/get-routes";
+import { useClimbs } from "../features/climbs/api/get-climbs";
 
 export default function Feed(props: {
-  routes: Route[];
-  climbs: Climb[];
-  circuits: Record<string, Circuit>;
-  sets: Record<string, Set>;
   projects: Projects;
   user: User | false;
   updateData: () => void;
 }) {
-  const [user, setUser] = useState<User | false>(false);
-  const [climbs, setClimbs] = useState<Climb[]>([]);
   const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(
     undefined
   );
 
-  function fetchClimbs() {
-    API("GET", "/api/climbs/get_all")
-      .then((data) => {
-        setClimbs(data.data);
-        console.log("User Climbs", data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching climbs:", error);
-      });
-  }
+  const { data: routes } = useRoutes();
+  const { data: circuits } = useCircuits();
+  const { data: sets } = useSets();
+  const { data: climbs } = useClimbs();
 
-  useEffect(() => {
-    fetchClimbs();
-  }, []);
-  const clumped_climbs = climbs.reduce((acc, climb) => {
+  const clumped_climbs = climbs.data.reduce((acc, climb) => {
     const climbDate = new Date(climb.time).toDateString();
     if (!acc[climbDate]) {
       acc[climbDate] = {};
@@ -55,9 +44,6 @@ export default function Feed(props: {
 
   console.log("clumped_climbs", clumped_climbs);
 
-  if (props.routes === undefined) {
-    return <div></div>;
-  }
   return (
     <>
       <div className="bg-white p-10 pt-6 pb-6 rounded-lg ">
@@ -65,10 +51,10 @@ export default function Feed(props: {
       </div>
       <div className="bg-gray-100 p-4 sm:mb-8 mb-14">
         <RouteSideBar
-          route={props.routes.find((route) => route.id === sidebarRoute)}
-          circuits={props.circuits}
-          sets={props.sets}
-          climbs={props.climbs}
+          route={routes.data.find((route) => route.id === sidebarRoute)}
+          circuits={circuits.data}
+          sets={sets.data}
+          climbs={climbs.data}
           projects={props.projects}
           updateData={props.updateData}
           closeCallback={() => setSidebarRoute(undefined)}
@@ -93,17 +79,17 @@ export default function Feed(props: {
 
                 <div className="m-2">
                   <div className="m-1 my-4 flex gap-2 ">
-                    {Object.keys(props.circuits).map((circuitId) => {
+                    {Object.keys(circuits.data).map((circuitId) => {
                       const circuitClimbCount = Object.values(
                         clumped_climbs[date][user]
                       )
                         .flat()
                         .filter((climb: Climb) => {
                           const setId =
-                            props.routes.find(
+                            routes.data.find(
                               (route) => route.id === climb.route
                             )?.set_id ?? "";
-                          return props.sets[setId]?.circuit_id === circuitId;
+                          return sets.data[setId]?.circuit_id === circuitId;
                         }).length;
 
                       return (
@@ -112,7 +98,7 @@ export default function Feed(props: {
                             key={circuitId}
                             className={
                               "p-1 px-3 rounded-full text-white " +
-                              colorsPastel[props.circuits[circuitId].color]
+                              colorsPastel[circuits.data[circuitId].color]
                             }
                           >
                             {circuitClimbCount}{" "}
@@ -128,11 +114,11 @@ export default function Feed(props: {
                         {clumped_climbs[date][user].map((climb) => (
                           <RouteCardProfile
                             key={climb.route}
-                            route={props.routes.find(
+                            route={routes.data.find(
                               (route) => route.id === climb.route
                             )}
-                            circuits={props.circuits}
-                            sets={props.sets}
+                            circuits={circuits.data}
+                            sets={sets.data}
                             climb={climb}
                             setSidebarRoute={setSidebarRoute}
                           />

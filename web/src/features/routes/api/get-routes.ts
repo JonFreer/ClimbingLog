@@ -23,5 +23,6 @@ export const useRoutes = ({ queryConfig = {} }: UseRoutesOptions = {}) => {
   return useQuery({
     ...getRoutesQueryOptions(),
     ...queryConfig,
+    initialData: { data: [] },
   });
 };

@@ -33,5 +33,6 @@ export const useCircuits = ({ queryConfig = {} }: UseCircuitsOptions = {}) => {
   return useQuery({
     ...getCircuitsQueryOptions(),
     ...queryConfig,
+    initialData: { data: {} },
   });
 };

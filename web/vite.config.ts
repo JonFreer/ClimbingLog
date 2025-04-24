@@ -1,7 +1,6 @@
 /// <reference types="vitest" />
 /// <reference types="vite/client" />
 
-
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
@@ -36,11 +35,11 @@ export default defineConfig({
   ],
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: "jsdom",
     // setupFiles: './src/testing/setup-tests.ts',
-    exclude: ['**/node_modules/**', '**/e2e/**'],
+    exclude: ["**/node_modules/**", "**/e2e/**"],
     coverage: {
-      include: ['src/**'],
+      include: ["src/**"],
     },
   },
 });

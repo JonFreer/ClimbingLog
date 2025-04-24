@@ -84,9 +84,6 @@ export function AddCircuit(props: {
             >
               <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                 <div className="sm:flex sm:items-start">
-                  {/* <div className="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10">
-                      <ExclamationTriangleIcon aria-hidden="true" className="size-6 text-red-600" />
-                    </div> */}
                   <div className="w-full mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                     <DialogTitle
                       as="h3"
@@ -94,11 +91,7 @@ export function AddCircuit(props: {
                     >
                       Add a new circuit
                     </DialogTitle>
-                    <div className="mt-2 mb-4">
-                      {/* <p className="text-sm text-gray-500 w-100%">
-                          Add a new route to the circuit
-                        </p> */}
-                    </div>
+                    <div className="mt-2 mb-4"></div>
                     <div>
                       <div className="flex items-center justify-between">
                         <label

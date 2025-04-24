@@ -33,23 +33,7 @@ const ProtectedRoute = ({ authed, children }) => {
 
 function App() {
   const user = useUser();
-
-  const [routes, setRoutes] = useState<RouteType[]>([]);
-  const [climbs, setClimbs] = useState<Climb[]>([]);
-  const [circuits, setCircuits] = useState<Record<string, Circuit>>({});
   const [projects, setProjects] = useState<Projects>([]);
-  const [sets, setSets] = useState<Record<string, Set>>({});
-
-  function fetchClimbs() {
-    API("GET", "/api/climbs/me/get_all")
-      .then((data) => {
-        setClimbs(data.data);
-        console.log("climbs main", data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching climbs:", error);
-      });
-  }
 
   function fetchProjects() {
     API("GET", "/api/projects/me/get_all")
@@ -62,69 +46,13 @@ function App() {
       });
   }
 
-  function fetchRoutes() {
-    API("GET", "/api/routes/get_all")
-      .then((data) => {
-        setRoutes(data.data);
-        console.log("route main", data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching route:", error);
-      });
-  }
-
-  function fetchCircuits() {
-    API("GET", "/api/circuits/get_all")
-      .then((data) => {
-        const circuits_dict = data.data.reduce(
-          (acc: Record<string, Circuit>, circuit: Circuit) => {
-            acc[circuit.id] = circuit;
-            return acc;
-          },
-          {}
-        );
-        console.log("circuits_dict", circuits_dict);
-        setCircuits(circuits_dict);
-        console.log("circuit main", data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching circuit:", error);
-      });
-  }
-
-  function fetchSets() {
-    API("GET", "/api/sets/get_all")
-      .then((data) => {
-        const setsDict = data.data.reduce(
-          (acc: Record<string, Set>, set: Set) => {
-            acc[set.id] = set;
-            return acc;
-          },
-          {}
-        );
-        setSets(setsDict);
-        console.log("sets main", data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching set:", error);
-      });
-  }
-
   function updateData() {
-    fetchClimbs();
-    fetchRoutes();
-    fetchCircuits();
     fetchProjects();
-    fetchSets();
   }
 
   // On component mount: Check if user logged in, if so load their achievements
   useEffect(() => {
-    fetchClimbs();
-    fetchRoutes();
-    fetchCircuits();
     fetchProjects();
-    fetchSets();
   }, []);
 
   return (
@@ -174,7 +102,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
+        {/* <Route
           path="/route/:id"
           element={
             <RoutePage
@@ -184,20 +112,12 @@ function App() {
               updateData={updateData}
             />
           }
-        />
+        /> */}
 
         <Route
           path="/profile/:id"
           element={
-            <Profile
-              routes={routes}
-              circuits={circuits}
-              sets={sets}
-              climbs={climbs}
-              projects={projects}
-              user={user}
-              updateData={updateData}
-            />
+            <Profile projects={projects} user={user} updateData={updateData} />
           }
         />
 
@@ -206,45 +126,20 @@ function App() {
         <Route
           path="/profile/"
           element={
-            <Profile
-              routes={routes}
-              circuits={circuits}
-              sets={sets}
-              climbs={climbs}
-              projects={projects}
-              user={user}
-              updateData={updateData}
-            />
+            <Profile projects={projects} user={user} updateData={updateData} />
           }
         />
 
         <Route
           path="/feed/"
           element={
-            <Feed
-              routes={routes}
-              circuits={circuits}
-              sets={sets}
-              climbs={climbs}
-              projects={projects}
-              user={user}
-              updateData={updateData}
-            />
+            <Feed projects={projects} user={user} updateData={updateData} />
           }
         />
 
         <Route
           path="*"
-          element={
-            <RoutesPage
-              routes={routes}
-              circuits={circuits}
-              sets={sets}
-              climbs={climbs}
-              projects={projects}
-              updateData={updateData}
-            />
-          }
+          element={<RoutesPage projects={projects} updateData={updateData} />}
         />
       </Routes>
     </BrowserRouter>

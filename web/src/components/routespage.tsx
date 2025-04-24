@@ -13,15 +13,18 @@ import { RouteCard } from "./route-card";
 import RouteSideBar from "./route-sidebar";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { useRoutes } from "../features/routes/api/get-routes";
+import { useCircuits } from "../features/circuits/api/get-circuits";
+import { useSets } from "../features/sets/api/get-sets";
+import { useClimbs } from "../features/climbs/api/get-climbs";
 
 export function RoutesPage(props: {
-  climbs: Climb[];
-  circuits: Record<string, Circuit>;
-  sets: Record<string, Set>;
   projects: Projects;
   updateData: () => void;
 }) {
   const routesQuery = useRoutes();
+  const { data: circuits } = useCircuits();
+  const { data: sets } = useSets();
+  const { data: climbs } = useClimbs();
 
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
   const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(
@@ -58,19 +61,7 @@ export function RoutesPage(props: {
     };
   }, [sidebarRoute]);
 
-  if (
-    routesQuery.isLoading ||
-    routesQuery.isFetching ||
-    routesQuery.data === undefined
-  ) {
-    return (
-      <div className="flex justify-center items-center h-full">
-        Loading Routes
-      </div>
-    );
-  }
-
-  const active_sets = Object.values(props.sets).reduce((acc, set) => {
+  const active_sets = Object.values(sets.data).reduce((acc, set) => {
     if (
       !acc[set.circuit_id] ||
       new Date(set.date) > new Date(acc[set.circuit_id].date)
@@ -90,9 +81,9 @@ export function RoutesPage(props: {
         route={routesQuery.data?.data.find(
           (route) => route.id === sidebarRoute
         )}
-        circuits={props.circuits}
-        sets={props.sets}
-        climbs={props.climbs}
+        circuits={circuits.data}
+        sets={sets.data}
+        climbs={climbs.data}
         projects={props.projects}
         updateData={props.updateData}
         closeCallback={() => setSidebarRoute(undefined)}
@@ -103,10 +94,10 @@ export function RoutesPage(props: {
             routesQuery.data?.data
               .filter(
                 (route) =>
-                  props.sets[route.set_id] &&
-                  ((active_sets[props.sets[route.set_id].circuit_id].id ==
+                  sets.data[route.set_id] &&
+                  ((active_sets[sets.data[route.set_id].circuit_id].id ==
                     route.set_id &&
-                    filterCircuits[props.sets[route.set_id].circuit_id]) ||
+                    filterCircuits[sets.data[route.set_id].circuit_id]) ||
                     !anyFitlered)
               )
               .map((route) => ({
@@ -115,15 +106,15 @@ export function RoutesPage(props: {
                 y: route.y,
                 isDragging: false,
                 complete:
-                  props.climbs.filter(
+                  climbs.data.filter(
                     (climb) => climb.route === route.id && climb.sent
                   ).length == 0,
                 radius: 4,
                 draggable: false,
                 color:
                   colorsHex[
-                    props.circuits[props.sets[route.set_id].circuit_id]
-                      ?.color || "black"
+                    circuits.data[sets.data[route.set_id].circuit_id]?.color ||
+                      "black"
                   ],
               })) || []
           }
@@ -136,7 +127,7 @@ export function RoutesPage(props: {
         {/* <div className="text-md font-medium text-gray-600 mt-1 mr-1">
         FILTERS
         </div> */}
-        {Object.values(props.circuits)
+        {Object.values(circuits.data)
           .filter((circuit) => filterCircuits[circuit.id])
           .map((circuit) => (
             <button
@@ -154,7 +145,7 @@ export function RoutesPage(props: {
             </button>
           ))}
 
-        {Object.values(props.circuits)
+        {Object.values(circuits.data)
           .filter((circuit) => !filterCircuits[circuit.id])
           .map((circuit) => (
             <button
@@ -174,9 +165,9 @@ export function RoutesPage(props: {
       {selectedRoute && selectedRouteData ? (
         <RouteCard
           route={selectedRouteData}
-          circuits={props.circuits}
-          sets={props.sets}
-          climbs={props.climbs}
+          circuits={circuits.data}
+          sets={sets.data}
+          climbs={climbs.data}
           updateData={props.updateData}
           setSidebarRoute={setSidebarRoute}
         />
@@ -185,9 +176,9 @@ export function RoutesPage(props: {
       )}
 
       <RouteList
-        sets={props.sets}
-        circuits={props.circuits}
-        climbs={props.climbs}
+        sets={sets.data}
+        circuits={circuits.data}
+        climbs={climbs.data}
         projects={props.projects}
         updateData={props.updateData}
         setSidebarRoute={setSidebarRoute}

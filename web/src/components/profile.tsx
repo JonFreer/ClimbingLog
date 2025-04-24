@@ -19,6 +19,7 @@ import { useCircuits } from "../features/circuits/api/get-circuits";
 import { useRoutes } from "../features/routes/api/get-routes";
 import { useSets } from "../features/sets/api/get-sets";
 import { useUser } from "../lib/auth";
+import { useClimbs } from "../features/climbs/api/get-climbs";
 
 ChartJS.register(
   CategoryScale,
@@ -49,7 +50,6 @@ export const options = {
 //   const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 
 export default function Profile(props: {
-  climbs: Climb[];
   projects: Projects;
   updateData: () => void;
 }) {
@@ -57,6 +57,7 @@ export default function Profile(props: {
   const { data: circuits } = useCircuits();
   const { data: sets } = useSets();
   const { data: user_me } = useUser();
+  const { data: climbs_me } = useClimbs();
 
   const [user, setUser] = useState<User | false>(false);
   const [climbs, setClimbs] = useState<Climb[]>([]);
@@ -200,7 +201,7 @@ export default function Profile(props: {
         route={routes?.data.find((route) => route.id === sidebarRoute)}
         circuits={circuits?.data || {}}
         sets={sets?.data || {}}
-        climbs={props.climbs}
+        climbs={climbs_me.data}
         projects={props.projects}
         updateData={props.updateData}
         closeCallback={() => setSidebarRoute(undefined)}

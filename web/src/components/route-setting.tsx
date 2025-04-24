@@ -1,30 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Circuit, Route, Set } from "../types/routes";
-
+import { Route } from "../types/routes";
 import { colors, colorsFaint } from "../types/colors";
-
-import { AddSet } from "./modals/add_set";
 import { useRoutes } from "../features/routes/api/get-routes";
 import { DeleteRoute } from "../features/routes/components/delete-route";
 import { CreateRoute } from "../features/routes/components/create-route";
 import { useCircuits } from "../features/circuits/api/get-circuits";
 import { UpdateRoute } from "../features/routes/components/update-route";
 import { useSets } from "../features/sets/api/get-sets";
+import { CreateSet } from "../features/sets/components/create-set";
 
 export function RouteSettingPage() {
   const routesQuery = useRoutes();
   const { data: circuits } = useCircuits();
   const { data: sets } = useSets();
-  // const [circuits, setCircuits] = useState<Record<string, Circuit>>({});
 
-  const [routeModalOpen, setRouteModalOpen] = useState<{
-    set_id: string;
-    route: null | Route;
-  }>({ set_id: "", route: null });
-  const [deleteRouteModalOpen, setDeleteRouteModalOpen] = useState<string>("");
-  const [setModalOpen, setSetModalOpen] = useState<boolean>(false);
   const [openCircuit, setOpenCircuit] = useState<string>("");
   const [selectedSet, setSelectedSet] = useState<string>("");
 
@@ -56,17 +47,8 @@ export function RouteSettingPage() {
     }
   }, [openCircuit, sets]);
 
-  // useEffect(() => {
-  //   routesQuery.refetch();
-  // }, [routeModalOpen]);
-
   return (
     <div className="m-5 sm:mb-8 mb-14">
-      <AddSet
-        open={setModalOpen}
-        setOpen={setSetModalOpen}
-        circuit_id={openCircuit}
-      />
       <div className="flex gap-4 mt-5">
         <h1 className="font-bold text-3xl">Route Setting</h1>
       </div>
@@ -113,17 +95,7 @@ export function RouteSettingPage() {
                 ))}
             </select>
           </span>
-          <span
-            className={
-              "ml-2 px-2 text-sm py-2 rounded-lg font-bold text-white cursor-pointer " +
-              (circuits?.data[openCircuit]
-                ? colors[circuits?.data[openCircuit].color]
-                : "")
-            }
-            onClick={() => setSetModalOpen(true)}
-          >
-            + Set
-          </span>
+          <CreateSet circuit_id={openCircuit} />
         </div>
       )}
 

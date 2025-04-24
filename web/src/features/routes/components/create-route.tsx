@@ -51,7 +51,7 @@ export const CreateRoute = ({ set_id, circuit_id }: CreateRouteProps) => {
           setOpen(true);
         }}
       >
-        + Route
+        New Route
       </span>
       <RouteModal
         routes={routes?.data || []}
