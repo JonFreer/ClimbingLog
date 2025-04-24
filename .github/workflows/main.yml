@@ -23,6 +23,7 @@ jobs:
          working-directory: ./web
          run: npm install
        - name: Run Tests
+         working-directory: ./web
          run: npm run test
     
   build:
