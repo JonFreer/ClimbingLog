@@ -4,7 +4,7 @@ import { Register } from "./components/register";
 import { Login } from "./components/login";
 import { NavBar } from "./components/navbar";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
-import { Route as RouteType, Projects } from "./types/routes";
+import { User } from "./types/routes";
 import { AdminPage } from "./components/admin";
 import { RoutesPage } from "./components/routespage";
 import { API } from "./types/api";
@@ -17,7 +17,13 @@ import NavBarBottom from "./components/navbar-bottom";
 import { useUser } from "./lib/auth";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Notifications } from "./components/ui/notifications";
-const ProtectedRoute = ({ authed, children }) => {
+const ProtectedRoute = ({
+  authed,
+  children,
+}: {
+  authed: boolean | undefined | User;
+  children: React.ReactNode;
+}) => {
   if (!authed) {
     return <Navigate to="/" />;
   }
@@ -32,7 +38,7 @@ function App() {
       {import.meta.env.DEV && <ReactQueryDevtools />}
       <Notifications />
       <NavBar />
-      <NavBarBottom user={user} />
+      <NavBarBottom />
       <Routes>
         <Route
           path="/register"

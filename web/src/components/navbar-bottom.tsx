@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useUser } from "../lib/auth";
 export default function NavBarBottom() {
   const [_path, setPath] = useState<string | undefined>(undefined);
+
   const user = useUser();
 
   return (
