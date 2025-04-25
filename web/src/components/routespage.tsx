@@ -81,9 +81,6 @@ export function RoutesPage(props: {
         route={routesQuery.data?.data.find(
           (route) => route.id === sidebarRoute
         )}
-        circuits={circuits.data}
-        sets={sets.data}
-        climbs={climbs.data}
         projects={props.projects}
         updateData={props.updateData}
         closeCallback={() => setSidebarRoute(undefined)}

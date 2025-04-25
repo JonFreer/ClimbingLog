@@ -8,6 +8,7 @@ import { useSets } from "../features/sets/api/get-sets";
 import { useCircuits } from "../features/circuits/api/get-circuits";
 import { useRoutes } from "../features/routes/api/get-routes";
 import { useClimbs } from "../features/climbs/api/get-climbs";
+import { useAllClimbs } from "../features/climbs/api/get-all-climbs";
 
 export default function Feed(props: {
   projects: Projects;
@@ -21,7 +22,7 @@ export default function Feed(props: {
   const { data: routes } = useRoutes();
   const { data: circuits } = useCircuits();
   const { data: sets } = useSets();
-  const { data: climbs } = useClimbs();
+  const { data: climbs } = useAllClimbs();
 
   const clumped_climbs = climbs.data.reduce((acc, climb) => {
     const climbDate = new Date(climb.time).toDateString();
@@ -52,9 +53,6 @@ export default function Feed(props: {
       <div className="bg-gray-100 p-4 sm:mb-8 mb-14">
         <RouteSideBar
           route={routes.data.find((route) => route.id === sidebarRoute)}
-          circuits={circuits.data}
-          sets={sets.data}
-          climbs={climbs.data}
           projects={props.projects}
           updateData={props.updateData}
           closeCallback={() => setSidebarRoute(undefined)}

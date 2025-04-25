@@ -18,16 +18,43 @@ import {
 import { Circuit, Climb, Projects, Route, SentBy, Set } from "../types/routes";
 import { colors, colorsBold, colorsPastel } from "../types/colors";
 import { NavLink } from "react-router";
+import { useSets } from "../features/sets/api/get-sets";
+import { useClimbs } from "../features/climbs/api/get-climbs";
+import { useCircuits } from "../features/circuits/api/get-circuits";
+import { useDeleteClimb } from "../features/climbs/api/delete-climb";
+import { useCreateSend } from "../features/climbs/api/create-send";
+import { useCreateAttempt } from "../features/climbs/api/create-attempt";
 
 export default function RouteSideBar(props: {
   route: Route | undefined;
-  climbs: Climb[];
-  circuits: Record<string, Circuit>;
-  sets: Record<string, Set>;
   projects: Projects;
   updateData: () => void;
   closeCallback: () => void;
 }) {
+  const { data: climbs } = useClimbs();
+  const { data: circuits } = useCircuits();
+  const { data: sets } = useSets();
+
+  const deleteClimbMutation = useDeleteClimb({
+    mutationConfig: {
+      onSuccess: () => {},
+    },
+  });
+
+  const createSendMutation = useCreateSend({
+    mutationConfig: {
+      onSuccess: () => {
+        setJustCompleted(true);
+      },
+    },
+  });
+
+  const createAttemptMutation = useCreateAttempt({
+    mutationConfig: {
+      onSuccess: () => {},
+    },
+  });
+
   const [sentBy, setSentBy] = useState<SentBy>({ users: [], num_users: 0 });
   const [sentByOpen, setSentByOpen] = useState(false);
 
@@ -64,17 +91,17 @@ export default function RouteSideBar(props: {
     }
   }, [props.route]);
 
-  const complete = props.climbs.find(
+  const complete = climbs.data.find(
     (climb) => climb.route == route.id && climb.sent == true
   );
-  const attempts = props.climbs.filter(
+  const attempts = climbs.data.filter(
     (climb) => climb.route == route.id && climb.sent == false
   );
-  const sends = props.climbs.filter(
+  const sends = climbs.data.filter(
     (climb) => climb.route == route.id && climb.sent == true
   );
 
-  const circuit = props.circuits[props.sets[route.set_id]?.circuit_id];
+  const circuit = circuits.data[sets.data[route.set_id]?.circuit_id];
 
   const open = props.route != undefined;
 
@@ -188,7 +215,9 @@ export default function RouteSideBar(props: {
                   <div className="px-8 pt-2 grid grid-cols-2 gap-4 ">
                     <button
                       onClick={() => {
-                        add_attempt(route.id, props.updateData);
+                        createAttemptMutation.mutate({
+                          route_id: route.id,
+                        });
                       }}
                       className=" text-center rounded-md hover:bg-gray-100 hover:text-gray-900 px-3 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-500/30"
                     >
@@ -196,8 +225,7 @@ export default function RouteSideBar(props: {
                     </button>
                     <button
                       onClick={() => {
-                        add_send(route.id, props.updateData);
-                        setJustCompleted(true);
+                        createSendMutation.mutate({ route_id: route.id });
                       }}
                       className={
                         "rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-xs  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  " +
@@ -269,7 +297,7 @@ export default function RouteSideBar(props: {
                   </DialogTitle>
                   {attempts.length + sends.length > 0 && (
                     <div className="m-4  mt-0 lg:ml-4 lg:mt-0 rounded-md p-4 max-h-42 divide-y divide-gray-200">
-                      {props.climbs
+                      {climbs.data
                         .filter((climb) => climb.route == route.id)
                         .reverse()
                         .map((climb) => (
@@ -296,7 +324,9 @@ export default function RouteSideBar(props: {
                             <button
                               className="text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md"
                               onClick={() =>
-                                remove_climb(climb.id, props.updateData)
+                                deleteClimbMutation.mutate({
+                                  climb_id: climb.id,
+                                })
                               }
                             >
                               <TrashIcon
@@ -373,81 +403,6 @@ function remove_project(id: string | undefined, sucessCallback: () => void) {
       sucessCallback();
     })
     .catch((error) => console.error("Error removing project:", error));
-}
-
-function add_send(id: string | undefined, sucessCallback: () => void) {
-  const token = localStorage.getItem("token");
-  const formData = new FormData();
-  if (id) {
-    formData.append("route", id);
-  } else {
-    console.error("Route ID is undefined");
-    return;
-  }
-
-  fetch("/api/climbs/me/add_send", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Attempt added:", data);
-      sucessCallback();
-    })
-    .catch((error) => console.error("Error adding attempt:", error));
-}
-
-function add_attempt(id: string | undefined, sucessCallback: () => void) {
-  const token = localStorage.getItem("token");
-  const formData = new FormData();
-  if (id) {
-    formData.append("route", id);
-  } else {
-    console.error("Route ID is undefined");
-    return;
-  }
-
-  fetch("/api/climbs/me/add_attempt", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Attempt added:", data);
-      sucessCallback();
-    })
-    .catch((error) => console.error("Error adding attempt:", error));
-}
-
-function remove_climb(id: string | undefined, sucessCallback: () => void) {
-  const token = localStorage.getItem("token");
-  const formData = new FormData();
-  if (id) {
-    formData.append("climb_id", id);
-  } else {
-    console.error("Route ID is undefined");
-    return;
-  }
-
-  fetch("/api/climbs/me/remove_climb", {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Attempt added:", data);
-      sucessCallback();
-    })
-    .catch((error) => console.error("Error adding attempt:", error));
 }
 
 export function SentByModal(props: {

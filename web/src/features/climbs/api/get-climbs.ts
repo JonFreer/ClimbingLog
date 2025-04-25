@@ -4,7 +4,7 @@ import { Climb } from "../../../types/routes";
 import { QueryConfig } from "../../../lib/react-query";
 
 export const getClimbs = (): Promise<{ data: Climb[] }> => {
-  return api.get(`/api/climbs/get_all`);
+  return api.get(`/api/climbs/me`);
 };
 
 export const getClimbsQueryOptions = () => {

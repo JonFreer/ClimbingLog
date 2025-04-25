@@ -1,8 +1,8 @@
 import datetime
 import uuid
-from typing import Annotated, List
+from typing import List
 
-from fastapi import APIRouter, Depends, Form, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -37,7 +37,7 @@ async def get_all_climbs(
     return routes
 
 
-@router.get("/climbs/me/get_all", response_model=List[schemas.Climb], tags=["climbs"])
+@router.get("/climbs/me", response_model=List[schemas.Climb], tags=["climbs"])
 async def get_all_climbs(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(current_active_user),
@@ -48,14 +48,16 @@ async def get_all_climbs(
     return routes
 
 
-@router.post("/climbs/me/add_attempt", response_model=schemas.Climb, tags=["climbs"])
+@router.post(
+    "/climbs/me/add_attempt/{route_id}", response_model=schemas.Climb, tags=["climbs"]
+)
 async def create_attempt(
-    route: Annotated[uuid.UUID, Form(...)],
+    route_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
     user: User = Depends(current_active_user),
 ):
     new_climb = Climbs(
-        time=datetime.datetime.now(), sent=False, route=route, user=user.id
+        time=datetime.datetime.now(), sent=False, route=route_id, user=user.id
     )
     db.add(new_climb)
     await db.commit()
@@ -63,14 +65,16 @@ async def create_attempt(
     return new_climb
 
 
-@router.post("/climbs/me/add_send", response_model=schemas.Climb, tags=["climbs"])
+@router.post(
+    "/climbs/me/add_send/{route_id}", response_model=schemas.Climb, tags=["climbs"]
+)
 async def create_send(
-    route: Annotated[uuid.UUID, Form(...)],
+    route_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
     user: User = Depends(current_active_user),
 ):
     new_climb = Climbs(
-        time=datetime.datetime.now(), sent=True, route=route, user=user.id
+        time=datetime.datetime.now(), sent=True, route=route_id, user=user.id
     )
     db.add(new_climb)
     await db.commit()
@@ -78,9 +82,9 @@ async def create_send(
     return new_climb
 
 
-@router.delete("/climbs/me/remove_climb", response_model=schemas.Climb, tags=["climbs"])
+@router.delete("/climbs/me/{climb_id}", response_model=schemas.Climb, tags=["climbs"])
 async def remove_climb(
-    climb_id: Annotated[uuid.UUID, Form(...)],
+    climb_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
     user: User = Depends(current_active_user),
 ):
