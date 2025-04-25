@@ -15,26 +15,29 @@ import {
   TrashIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
-import { Circuit, Climb, Projects, Route, SentBy, Set } from "../types/routes";
+import { Route, SentBy } from "../types/routes";
 import { colors, colorsBold, colorsPastel } from "../types/colors";
-import { NavLink } from "react-router";
 import { useSets } from "../features/sets/api/get-sets";
 import { useClimbs } from "../features/climbs/api/get-climbs";
 import { useCircuits } from "../features/circuits/api/get-circuits";
 import { useDeleteClimb } from "../features/climbs/api/delete-climb";
 import { useCreateSend } from "../features/climbs/api/create-send";
 import { useCreateAttempt } from "../features/climbs/api/create-attempt";
+import { useProjects } from "../features/projects/api/get-projects";
+import { useCreateProject } from "../features/projects/api/create-project";
+import { useDeleteProject } from "../features/projects/api/delete-project";
 
 export default function RouteSideBar(props: {
   route: Route | undefined;
-  projects: Projects;
   updateData: () => void;
   closeCallback: () => void;
 }) {
   const { data: climbs } = useClimbs();
   const { data: circuits } = useCircuits();
   const { data: sets } = useSets();
+  const { data: projects } = useProjects();
 
+  console.log("projects", projects);
   const deleteClimbMutation = useDeleteClimb({
     mutationConfig: {
       onSuccess: () => {},
@@ -50,6 +53,18 @@ export default function RouteSideBar(props: {
   });
 
   const createAttemptMutation = useCreateAttempt({
+    mutationConfig: {
+      onSuccess: () => {},
+    },
+  });
+
+  const createProjectMutation = useCreateProject({
+    mutationConfig: {
+      onSuccess: () => {},
+    },
+  });
+
+  const deleteProjectMutation = useDeleteProject({
     mutationConfig: {
       onSuccess: () => {},
     },
@@ -173,10 +188,12 @@ export default function RouteSideBar(props: {
                       {route.name}
                     </DialogTitle>
 
-                    {!props.projects.includes(route.id) ? (
+                    {!projects.includes(route.id) ? (
                       <button
                         onClick={() => {
-                          add_project(route.id, props.updateData);
+                          createProjectMutation.mutate({
+                            route_id: route.id,
+                          });
                         }}
                         className="ml-auto  hover:bg-gray-100 hover:text-gray-500 text-gray-400 p-2 rounded-full flex items-center"
                       >
@@ -185,7 +202,9 @@ export default function RouteSideBar(props: {
                     ) : (
                       <button
                         onClick={() => {
-                          remove_project(route.id, props.updateData);
+                          deleteProjectMutation.mutate({
+                            route_id: route.id,
+                          });
                         }}
                         className="ml-auto  hover:bg-red-100 hover:text-red-500 text-red-500 p-2 rounded-full flex items-center"
                       >
@@ -353,56 +372,6 @@ export default function RouteSideBar(props: {
       </div>
     </Dialog>
   );
-}
-
-function add_project(id: string | undefined, sucessCallback: () => void) {
-  const token = localStorage.getItem("token");
-  const formData = new FormData();
-  if (id) {
-    formData.append("route_id", id);
-  } else {
-    console.error("Route ID is undefined");
-    return;
-  }
-
-  fetch("/api/projects/me/add", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Project added:", data);
-      sucessCallback();
-    })
-    .catch((error) => console.error("Error adding project:", error));
-}
-
-function remove_project(id: string | undefined, sucessCallback: () => void) {
-  const token = localStorage.getItem("token");
-  const formData = new FormData();
-  if (id) {
-    formData.append("route_id", id);
-  } else {
-    console.error("Route ID is undefined");
-    return;
-  }
-
-  fetch("/api/projects/me/remove", {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Project removed:", data);
-      sucessCallback();
-    })
-    .catch((error) => console.error("Error removing project:", error));
 }
 
 export function SentByModal(props: {

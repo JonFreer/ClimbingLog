@@ -81,7 +81,6 @@ export function RoutesPage(props: {
         route={routesQuery.data?.data.find(
           (route) => route.id === sidebarRoute
         )}
-        projects={props.projects}
         updateData={props.updateData}
         closeCallback={() => setSidebarRoute(undefined)}
       ></RouteSideBar>
@@ -121,9 +120,6 @@ export function RoutesPage(props: {
         />
       </div>
       <div className="mx-4 mt-4 flex flex-wrap gap-1 justify-center h-full">
-        {/* <div className="text-md font-medium text-gray-600 mt-1 mr-1">
-        FILTERS
-        </div> */}
         {Object.values(circuits.data)
           .filter((circuit) => filterCircuits[circuit.id])
           .map((circuit) => (
@@ -173,10 +169,6 @@ export function RoutesPage(props: {
       )}
 
       <RouteList
-        sets={sets.data}
-        circuits={circuits.data}
-        climbs={climbs.data}
-        projects={props.projects}
         updateData={props.updateData}
         setSidebarRoute={setSidebarRoute}
       />

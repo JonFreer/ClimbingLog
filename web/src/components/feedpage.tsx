@@ -53,7 +53,6 @@ export default function Feed(props: {
       <div className="bg-gray-100 p-4 sm:mb-8 mb-14">
         <RouteSideBar
           route={routes.data.find((route) => route.id === sidebarRoute)}
-          projects={props.projects}
           updateData={props.updateData}
           closeCallback={() => setSidebarRoute(undefined)}
         ></RouteSideBar>

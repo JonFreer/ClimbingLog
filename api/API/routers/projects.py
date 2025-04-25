@@ -1,7 +1,7 @@
 import uuid
-from typing import Annotated, List
+from typing import List
 
-from fastapi import APIRouter, Depends, Form, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -12,7 +12,7 @@ from ..users import User, current_active_user
 router = APIRouter()
 
 
-@router.get("/projects/me/get_all", response_model=List[uuid.UUID], tags=["projects"])
+@router.get("/projects/me", response_model=List[uuid.UUID], tags=["projects"])
 async def get_all_projects(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(current_active_user),
@@ -25,9 +25,9 @@ async def get_all_projects(
     return projects
 
 
-@router.post("/projects/me/add", response_model=uuid.UUID, tags=["projects"])
+@router.post("/projects/me/{route_id}", response_model=uuid.UUID, tags=["projects"])
 async def create_projects(
-    route_id: Annotated[uuid.UUID, Form(...)],
+    route_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
     user: User = Depends(current_active_user),
 ):
@@ -46,9 +46,9 @@ async def create_projects(
     return new_project.route_id
 
 
-@router.delete("/projects/me/remove", response_model=uuid.UUID, tags=["projects"])
+@router.delete("/projects/me/{route_id}", response_model=uuid.UUID, tags=["projects"])
 async def remove_projects(
-    route_id: Annotated[uuid.UUID, Form(...)],
+    route_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
     user: User = Depends(current_active_user),
 ):

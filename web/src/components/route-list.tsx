@@ -4,16 +4,20 @@ import { useEffect, useState } from "react";
 import { colors } from "../types/colors";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import { useRoutes } from "../features/routes/api/get-routes";
+import { useCircuits } from "../features/circuits/api/get-circuits";
+import { useSets } from "../features/sets/api/get-sets";
+import { useClimbs } from "../features/climbs/api/get-climbs";
+import { useProjects } from "../features/projects/api/get-projects";
 
 export function RouteList(props: {
-  climbs: any[];
-  circuits: Record<string, Circuit>;
-  sets: Record<string, Set>;
-  projects: Projects;
   updateData: () => void;
   setSidebarRoute: (route: string) => void;
 }) {
   const routesQuery = useRoutes();
+  const { data: circuits } = useCircuits();
+  const { data: sets } = useSets();
+  const { data: climbs } = useClimbs();
+  const { data: projects } = useProjects();
 
   if (routesQuery.isLoading) {
     return (
@@ -32,13 +36,13 @@ export function RouteList(props: {
   );
 
   var sent_ids: string[] = [];
-  if (props.climbs != undefined) {
-    sent_ids = props.climbs
+  if (climbs.data != undefined) {
+    sent_ids = climbs.data
       .filter((climb) => climb.sent == true)
       .map((climb) => climb.route);
   }
 
-  if (props.circuits == undefined) {
+  if (circuits.data == undefined) {
     return <div> Loading </div>;
   }
 
@@ -46,7 +50,7 @@ export function RouteList(props: {
     localStorage.setItem("openCircuits", JSON.stringify(openCircuits));
   }, [openCircuits]);
 
-  const active_sets = Object.values(props.sets).reduce((acc, set) => {
+  const active_sets = Object.values(sets.data).reduce((acc, set) => {
     if (
       !acc[set.circuit_id] ||
       new Date(set.date) > new Date(acc[set.circuit_id].date)
@@ -56,11 +60,9 @@ export function RouteList(props: {
     return acc;
   }, {} as Record<string, Set>);
 
-  console.log("active_sets", active_sets, props.sets);
-
   return (
     <>
-      {props.projects.length > 0 ? (
+      {projects.length > 0 ? (
         <>
           <div key={"projects"} className="mt-8 mx-4">
             <button
@@ -80,14 +82,14 @@ export function RouteList(props: {
                   {
                     routesQuery.data?.data.filter(
                       (route) =>
-                        props.projects.includes(route.id) &&
+                        projects.includes(route.id) &&
                         sent_ids.includes(route.id)
                     ).length
                   }{" "}
                   /{" "}
                   {
                     routesQuery.data?.data.filter((route) =>
-                      props.projects.includes(route.id)
+                      projects.includes(route.id)
                     ).length
                   }{" "}
                   Routes
@@ -102,7 +104,7 @@ export function RouteList(props: {
             {openCircuits["projects"] && (
               <div className="ml mt-2" key={"projects"}>
                 {routesQuery.data?.data
-                  .filter((route) => props.projects.includes(route.id))
+                  .filter((route) => projects.includes(route.id))
                   .map((route) => (
                     <div
                       key={route.id}
@@ -138,8 +140,8 @@ export function RouteList(props: {
                               className={
                                 "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white " +
                                 (colors[
-                                  props.circuits[
-                                    props.sets[route.set_id]?.circuit_id
+                                  circuits.data[
+                                    sets.data[route.set_id]?.circuit_id
                                   ]?.color || ""
                                 ] || "")
                               }
@@ -160,7 +162,7 @@ export function RouteList(props: {
       ) : null}
 
       <div className={"mx-4 mb-8"}>
-        {Object.values(props.circuits).map((circuit) => (
+        {Object.values(circuits.data).map((circuit) => (
           <>
             {active_sets[circuit.id] ? (
               <div key={circuit.id} className="mt-4">
