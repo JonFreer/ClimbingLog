@@ -8,7 +8,6 @@ export function RouteCard(props: {
   climbs: any[];
   sets: Record<string, Set>;
   circuits: Record<string, Circuit>;
-  updateData: () => void;
   setSidebarRoute: (route: string) => void;
 }) {
   var sent_ids: string[] = [];

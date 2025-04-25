@@ -29,7 +29,6 @@ import { useDeleteProject } from "../features/projects/api/delete-project";
 
 export default function RouteSideBar(props: {
   route: Route | undefined;
-  updateData: () => void;
   closeCallback: () => void;
 }) {
   const { data: climbs } = useClimbs();

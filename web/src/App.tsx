@@ -4,16 +4,9 @@ import { Register } from "./components/register";
 import { Login } from "./components/login";
 import { NavBar } from "./components/navbar";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
-import {
-  Circuit,
-  Route as RouteType,
-  Climb,
-  Projects,
-  Set,
-} from "./types/routes";
+import { Route as RouteType, Projects } from "./types/routes";
 import { AdminPage } from "./components/admin";
 import { RoutesPage } from "./components/routespage";
-import { RoutePage } from "./components/routepage";
 import { API } from "./types/api";
 import Settings from "./components/settings";
 import { RouteSettingPage } from "./components/route-setting";
@@ -33,27 +26,6 @@ const ProtectedRoute = ({ authed, children }) => {
 
 function App() {
   const user = useUser();
-  const [projects, setProjects] = useState<Projects>([]);
-
-  function fetchProjects() {
-    API("GET", "/api/projects/me/get_all")
-      .then((data) => {
-        setProjects(data.data);
-        console.log("projects main", data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching projects:", error);
-      });
-  }
-
-  function updateData() {
-    fetchProjects();
-  }
-
-  // On component mount: Check if user logged in, if so load their achievements
-  useEffect(() => {
-    fetchProjects();
-  }, []);
 
   return (
     <BrowserRouter>
@@ -114,33 +86,15 @@ function App() {
           }
         /> */}
 
-        <Route
-          path="/profile/:id"
-          element={
-            <Profile projects={projects} user={user} updateData={updateData} />
-          }
-        />
+        <Route path="/profile/:id" element={<Profile />} />
 
         <Route path="/store" element={<StorePage />} />
 
-        <Route
-          path="/profile/"
-          element={
-            <Profile projects={projects} user={user} updateData={updateData} />
-          }
-        />
+        <Route path="/profile/" element={<Profile />} />
 
-        <Route
-          path="/feed/"
-          element={
-            <Feed projects={projects} user={user} updateData={updateData} />
-          }
-        />
+        <Route path="/feed/" element={<Feed />} />
 
-        <Route
-          path="*"
-          element={<RoutesPage projects={projects} updateData={updateData} />}
-        />
+        <Route path="*" element={<RoutesPage />} />
       </Routes>
     </BrowserRouter>
   );

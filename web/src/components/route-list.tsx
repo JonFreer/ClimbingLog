@@ -9,10 +9,7 @@ import { useSets } from "../features/sets/api/get-sets";
 import { useClimbs } from "../features/climbs/api/get-climbs";
 import { useProjects } from "../features/projects/api/get-projects";
 
-export function RouteList(props: {
-  updateData: () => void;
-  setSidebarRoute: (route: string) => void;
-}) {
+export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
   const routesQuery = useRoutes();
   const { data: circuits } = useCircuits();
   const { data: sets } = useSets();

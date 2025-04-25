@@ -17,10 +17,7 @@ import { useCircuits } from "../features/circuits/api/get-circuits";
 import { useSets } from "../features/sets/api/get-sets";
 import { useClimbs } from "../features/climbs/api/get-climbs";
 
-export function RoutesPage(props: {
-  projects: Projects;
-  updateData: () => void;
-}) {
+export function RoutesPage() {
   const routesQuery = useRoutes();
   const { data: circuits } = useCircuits();
   const { data: sets } = useSets();
@@ -81,7 +78,6 @@ export function RoutesPage(props: {
         route={routesQuery.data?.data.find(
           (route) => route.id === sidebarRoute
         )}
-        updateData={props.updateData}
         closeCallback={() => setSidebarRoute(undefined)}
       ></RouteSideBar>
       <div className="">
@@ -161,17 +157,13 @@ export function RoutesPage(props: {
           circuits={circuits.data}
           sets={sets.data}
           climbs={climbs.data}
-          updateData={props.updateData}
           setSidebarRoute={setSidebarRoute}
         />
       ) : (
         ""
       )}
 
-      <RouteList
-        updateData={props.updateData}
-        setSidebarRoute={setSidebarRoute}
-      />
+      <RouteList setSidebarRoute={setSidebarRoute} />
     </div>
   );
 }

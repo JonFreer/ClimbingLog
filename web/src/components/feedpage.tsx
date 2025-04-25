@@ -10,11 +10,7 @@ import { useRoutes } from "../features/routes/api/get-routes";
 import { useClimbs } from "../features/climbs/api/get-climbs";
 import { useAllClimbs } from "../features/climbs/api/get-all-climbs";
 
-export default function Feed(props: {
-  projects: Projects;
-  user: User | false;
-  updateData: () => void;
-}) {
+export default function Feed() {
   const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(
     undefined
   );
@@ -53,7 +49,6 @@ export default function Feed(props: {
       <div className="bg-gray-100 p-4 sm:mb-8 mb-14">
         <RouteSideBar
           route={routes.data.find((route) => route.id === sidebarRoute)}
-          updateData={props.updateData}
           closeCallback={() => setSidebarRoute(undefined)}
         ></RouteSideBar>
 
