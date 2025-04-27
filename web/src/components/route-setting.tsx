@@ -12,9 +12,9 @@ import { useSets } from "../features/sets/api/get-sets";
 import { CreateSet } from "../features/sets/components/create-set";
 
 export function RouteSettingPage() {
-  const routesQuery = useRoutes();
+  const routes = useRoutes().data || [];
   const circuits = useCircuits().data || {};
-  const { data: sets } = useSets();
+  const sets = useSets().data || {};
 
   const [openCircuit, setOpenCircuit] = useState<string>("");
   const [selectedSet, setSelectedSet] = useState<string>("");
@@ -34,7 +34,7 @@ export function RouteSettingPage() {
 
   useEffect(() => {
     if (openCircuit) {
-      const recentSet = Object.values(sets?.data || {})
+      const recentSet = Object.values(sets)
         .filter((set) => set.circuit_id === openCircuit)
         .sort(
           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -83,7 +83,7 @@ export function RouteSettingPage() {
               value={selectedSet}
               onChange={(e) => setSelectedSet(e.target.value)}
             >
-              {Object.values(sets?.data || {})
+              {Object.values(sets)
                 .filter((set) => set.circuit_id === openCircuit)
                 .map((set) => (
                   <option key={set.id} value={set.id}>
@@ -102,20 +102,17 @@ export function RouteSettingPage() {
       {selectedSet != "" && (
         <div className="m-2 flex items-center justify-between">
           <span>
-            {new Date(sets?.data[selectedSet]?.date || "").toLocaleString(
-              "default",
-              {
-                month: "long",
-                year: "numeric",
-              }
-            )}
+            {new Date(sets[selectedSet]?.date || "").toLocaleString("default", {
+              month: "long",
+              year: "numeric",
+            })}
           </span>
           <CreateRoute set_id={selectedSet} circuit_id={openCircuit} />
         </div>
       )}
 
       {selectedSet != "" &&
-        (routesQuery.data?.data || [])
+        routes
           .filter((route) => route.set_id === selectedSet)
           .map((route) => (
             <div

@@ -1,27 +1,19 @@
 import { useEffect, useState } from "react";
-import { Circuit, Climb, Projects, Route, Set } from "../types/routes";
+import { Set } from "../types/routes";
 import { RouteList } from "./route-list";
 import DraggableDotsCanvas from "./map";
-import {
-  colors,
-  colorsBold,
-  colorsBorder,
-  colorsFaint,
-  colorsHex,
-} from "../types/colors";
+import { colors, colorsBold, colorsFaint, colorsHex } from "../types/colors";
 import { RouteCard } from "./route-card";
 import RouteSideBar from "./route-sidebar";
-import { XMarkIcon } from "@heroicons/react/24/solid";
 import { useRoutes } from "../features/routes/api/get-routes";
 import { useCircuits } from "../features/circuits/api/get-circuits";
 import { useSets } from "../features/sets/api/get-sets";
 import { useClimbs } from "../features/climbs/api/get-climbs";
 
 export function RoutesPage() {
-  const routesQuery = useRoutes();
-  const { data: circuits } = useCircuits();
-  const { data: sets } = useSets();
-
+  const routes = useRoutes().data || [];
+  const sets = useSets().data ?? {};
+  const circuits = useCircuits().data ?? {};
   const climbs = useClimbs().data ?? [];
 
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
@@ -59,7 +51,7 @@ export function RoutesPage() {
     };
   }, [sidebarRoute]);
 
-  const active_sets = Object.values(sets.data).reduce((acc, set) => {
+  const active_sets = Object.values(sets).reduce((acc, set) => {
     if (
       !acc[set.circuit_id] ||
       new Date(set.date) > new Date(acc[set.circuit_id].date)
@@ -69,28 +61,24 @@ export function RoutesPage() {
     return acc;
   }, {} as Record<string, Set>);
 
-  const selectedRouteData = routesQuery.data?.data.find(
-    (route) => route.id === selectedRoute
-  );
+  const selectedRouteData = routes.find((route) => route.id === selectedRoute);
 
   return (
     <div className="sm:mb-8 mb-16">
       <RouteSideBar
-        route={routesQuery.data?.data.find(
-          (route) => route.id === sidebarRoute
-        )}
+        route={routes.find((route) => route.id === sidebarRoute)}
         closeCallback={() => setSidebarRoute(undefined)}
       ></RouteSideBar>
       <div className="">
         <DraggableDotsCanvas
           dots={
-            routesQuery.data?.data
+            routes
               .filter(
                 (route) =>
-                  sets.data[route.set_id] &&
-                  ((active_sets[sets.data[route.set_id].circuit_id].id ==
+                  sets[route.set_id] &&
+                  ((active_sets[sets[route.set_id].circuit_id].id ==
                     route.set_id &&
-                    filterCircuits[sets.data[route.set_id].circuit_id]) ||
+                    filterCircuits[sets[route.set_id].circuit_id]) ||
                     !anyFitlered)
               )
               .map((route) => ({
@@ -106,8 +94,7 @@ export function RoutesPage() {
                 draggable: false,
                 color:
                   colorsHex[
-                    circuits[sets.data[route.set_id].circuit_id]?.color ||
-                      "black"
+                    circuits[sets[route.set_id].circuit_id]?.color || "black"
                   ],
               })) || []
           }
@@ -156,7 +143,7 @@ export function RoutesPage() {
         <RouteCard
           route={selectedRouteData}
           circuits={circuits}
-          sets={sets.data}
+          sets={sets}
           climbs={climbs}
           setSidebarRoute={setSidebarRoute}
         />

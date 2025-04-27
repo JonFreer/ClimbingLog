@@ -50,11 +50,11 @@ export const options = {
 //   const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 
 export default function Profile() {
-  const { data: routes } = useRoutes();
-  const { data: circuits } = useCircuits();
-  const { data: sets } = useSets();
+  const routes = useRoutes().data || [];
+  const circuits = useCircuits().data || {};
+  const sets = useSets().data || {};
+
   const { data: user_me } = useUser();
-  const { data: climbs_me } = useClimbs();
 
   const [user, setUser] = useState<User | false>(false);
   const [climbs, setClimbs] = useState<Climb[]>([]);
@@ -95,7 +95,7 @@ export default function Profile() {
 
   console.log(`Profile ID: ${id}`);
 
-  const labels = Object.values(sets?.data || {})
+  const labels = Object.values(sets)
     .map((set) =>
       new Date(set.date).toLocaleString("default", {
         month: "long",
@@ -118,8 +118,8 @@ export default function Profile() {
 
   const out_data: any = {};
 
-  Object.values(sets?.data || {}).forEach((set) => {
-    const n_complete = routes?.data.filter(
+  Object.values(sets).forEach((set) => {
+    const n_complete = routes.filter(
       (route) => route.set_id === set.id && sent_ids.includes(route.id)
     ).length;
 
@@ -127,7 +127,7 @@ export default function Profile() {
       month: "long",
       year: "numeric",
     });
-    const color = circuits?.data[set.circuit_id]?.color;
+    const color = circuits[set.circuit_id]?.color;
 
     if (color) {
       out_data[color] = out_data[color] || {};
@@ -138,7 +138,7 @@ export default function Profile() {
 
   const data = {
     labels: labels,
-    datasets: Object.values(circuits?.data || {}).map((circuit) => {
+    datasets: Object.values(circuits).map((circuit) => {
       const data = labels.map((label) => {
         return out_data[circuit.color]?.[label] || 0;
       });
@@ -155,7 +155,7 @@ export default function Profile() {
     climbs
       .filter((climb) => climb.sent)
       .reduce((acc, climb) => {
-        const location = routes?.data.find(
+        const location = routes.find(
           (route) => route.id === climb.route
         )?.location;
         if (location) {
@@ -175,9 +175,8 @@ export default function Profile() {
       .filter((climb) => climb.sent)
       .reduce((acc, climb) => {
         const styles =
-          routes?.data
-            .find((route) => route.id === climb.route)
-            ?.style.split(",") || [];
+          routes.find((route) => route.id === climb.route)?.style.split(",") ||
+          [];
         styles.forEach((style) => {
           if (style) {
             acc[style.trim()] = (acc[style.trim()] || 0) + 1;
@@ -195,8 +194,7 @@ export default function Profile() {
   return (
     <div className="bg-gray-100 min-h-screen p-4 sm:mb-8 mb-14">
       <RouteSideBar
-        route={routes?.data.find((route) => route.id === sidebarRoute)}
-        updateData={props.updateData}
+        route={routes.find((route) => route.id === sidebarRoute)}
         closeCallback={() => setSidebarRoute(undefined)}
       ></RouteSideBar>
 
@@ -280,7 +278,7 @@ export default function Profile() {
                 {climbs
                   .filter((climb) => climb.sent)
                   .filter((climb) =>
-                    routes?.data.find((route) => route.id === climb.route)
+                    routes.find((route) => route.id === climb.route)
                   )
                   .sort(
                     (a, b) =>
@@ -290,11 +288,9 @@ export default function Profile() {
                   .map((climb) => (
                     <RouteCardProfile
                       key={climb.route}
-                      route={routes?.data.find(
-                        (route) => route.id === climb.route
-                      )}
-                      circuits={circuits?.data || {}}
-                      sets={sets?.data || {}}
+                      route={routes.find((route) => route.id === climb.route)}
+                      circuits={circuits}
+                      sets={sets}
                       climb={climb}
                       setSidebarRoute={setSidebarRoute}
                     />

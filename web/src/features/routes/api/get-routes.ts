@@ -12,6 +12,8 @@ export const getRoutesQueryOptions = () => {
   return queryOptions({
     queryKey: ["routes"],
     queryFn: () => getRoutes(),
+    select: (response) => response?.data,
+    placeholderData: { data: [] },
   });
 };
 
@@ -23,6 +25,5 @@ export const useRoutes = ({ queryConfig = {} }: UseRoutesOptions = {}) => {
   return useQuery({
     ...getRoutesQueryOptions(),
     ...queryConfig,
-    placeholderData: { data: [] },
   });
 };

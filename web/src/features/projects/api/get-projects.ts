@@ -3,7 +3,7 @@ import { api } from "../../../lib/api-client";
 import { Projects } from "../../../types/routes";
 import { QueryConfig } from "../../../lib/react-query";
 
-export const getProjects = (): Promise<{data: Projects}> => {
+export const getProjects = (): Promise<{ data: Projects }> => {
   return api.get(`/api/projects/me`);
 };
 

@@ -30,8 +30,8 @@ api.interceptors.response.use(
         title: "Error",
         message,
       });
-    } 
-    
+    }
+
     // if (error.response?.status === 401) {
     //   const searchParams = new URLSearchParams();
     //   const redirectTo =

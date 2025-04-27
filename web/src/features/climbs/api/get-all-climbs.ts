@@ -11,6 +11,8 @@ export const getAllClimbsQueryOptions = () => {
   return queryOptions({
     queryKey: ["climbs_all"],
     queryFn: () => getAllClimbs(),
+    placeholderData: { data: [] },
+    select: (response) => response?.data,
   });
 };
 
@@ -22,6 +24,5 @@ export const useAllClimbs = ({ queryConfig = {} }: UseClimbsOptions = {}) => {
   return useQuery({
     ...getAllClimbsQueryOptions(),
     ...queryConfig,
-    placeholderData: { data: [] },
   });
 };

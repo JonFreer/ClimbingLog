@@ -31,12 +31,10 @@ export default function RouteSideBar(props: {
   route: Route | undefined;
   closeCallback: () => void;
 }) {
-
   const climbs = useClimbs().data ?? [];
   const projects = useProjects().data ?? [];
-
-  const { data: circuits } = useCircuits();
-  const { data: sets } = useSets();
+  const sets = useSets().data ?? {};
+  const circuits = useCircuits().data ?? {};
 
   console.log("projects", projects);
   console.log("climbs", climbs);
@@ -118,7 +116,7 @@ export default function RouteSideBar(props: {
     (climb) => climb.route == route.id && climb.sent == true
   );
 
-  const circuit = circuits[sets.data[route.set_id]?.circuit_id];
+  const circuit = circuits[sets[route.set_id]?.circuit_id];
 
   const open = props.route != undefined;
 

@@ -19,6 +19,8 @@ export const getSetsQueryOptions = () => {
   return queryOptions({
     queryKey: ["sets"],
     queryFn: () => getSets(),
+    placeholderData: { data: {} },
+    select: (response) => response?.data,
   });
 };
 
@@ -30,6 +32,5 @@ export const useSets = ({ queryConfig = {} }: UseSetsOptions = {}) => {
   return useQuery({
     ...getSetsQueryOptions(),
     ...queryConfig,
-    placeholderData: { data: {} },
   });
 };
