@@ -17,7 +17,7 @@ type CreateSetProps = {
 
 export const CreateSet = ({ circuit_id }: CreateSetProps) => {
   const [open, setOpen] = useState(false);
-  const { data: circuits } = useCircuits();
+  const circuits = useCircuits().data || {};  
 
   const { addNotification } = useNotifications();
 
@@ -38,8 +38,8 @@ export const CreateSet = ({ circuit_id }: CreateSetProps) => {
       <span
         className={
           "ml-2 px-2 text-sm py-2 rounded-lg font-bold text-white cursor-pointer " +
-          (circuits?.data[circuit_id]
-            ? colors[circuits.data[circuit_id].color]
+          (circuits[circuit_id]
+            ? colors[circuits[circuit_id].color]
             : "")
         }
         onClick={() => {

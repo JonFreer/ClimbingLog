@@ -15,7 +15,7 @@ type CreateRouteProps = {
 export const CreateRoute = ({ set_id, circuit_id }: CreateRouteProps) => {
   const [open, setOpen] = useState(false);
   const { data: routes } = useRoutes();
-  const { data: circuits } = useCircuits();
+  const circuits = useCircuits().data || {};  
 
   const { addNotification } = useNotifications();
 
@@ -43,8 +43,8 @@ export const CreateRoute = ({ set_id, circuit_id }: CreateRouteProps) => {
       <span
         className={
           "ml-2 px-2 text-sm py-2 rounded-lg font-bold text-white cursor-pointer " +
-          (circuits?.data[circuit_id]
-            ? colors[circuits.data[circuit_id].color]
+          (circuits[circuit_id]
+            ? colors[circuits[circuit_id].color]
             : "")
         }
         onClick={() => {
@@ -55,7 +55,7 @@ export const CreateRoute = ({ set_id, circuit_id }: CreateRouteProps) => {
       </span>
       <RouteModal
         routes={routes?.data || []}
-        circuits={circuits?.data || {}}
+        circuits={circuits}
         set_id={set_id}
         circuit_id={circuit_id}
         route={null}

@@ -22,6 +22,6 @@ export const useAllClimbs = ({ queryConfig = {} }: UseClimbsOptions = {}) => {
   return useQuery({
     ...getAllClimbsQueryOptions(),
     ...queryConfig,
-    initialData: { data: [] },
+    placeholderData: { data: [] },
   });
 };

@@ -21,7 +21,8 @@ export function RoutesPage() {
   const routesQuery = useRoutes();
   const { data: circuits } = useCircuits();
   const { data: sets } = useSets();
-  const { data: climbs } = useClimbs();
+
+  const climbs = useClimbs().data ?? [];
 
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
   const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(
@@ -98,14 +99,14 @@ export function RoutesPage() {
                 y: route.y,
                 isDragging: false,
                 complete:
-                  climbs.data.filter(
+                  climbs.filter(
                     (climb) => climb.route === route.id && climb.sent
                   ).length == 0,
                 radius: 4,
                 draggable: false,
                 color:
                   colorsHex[
-                    circuits.data[sets.data[route.set_id].circuit_id]?.color ||
+                    circuits[sets.data[route.set_id].circuit_id]?.color ||
                       "black"
                   ],
               })) || []
@@ -116,7 +117,7 @@ export function RoutesPage() {
         />
       </div>
       <div className="mx-4 mt-4 flex flex-wrap gap-1 justify-center h-full">
-        {Object.values(circuits.data)
+        {Object.values(circuits)
           .filter((circuit) => filterCircuits[circuit.id])
           .map((circuit) => (
             <button
@@ -134,7 +135,7 @@ export function RoutesPage() {
             </button>
           ))}
 
-        {Object.values(circuits.data)
+        {Object.values(circuits)
           .filter((circuit) => !filterCircuits[circuit.id])
           .map((circuit) => (
             <button
@@ -154,9 +155,9 @@ export function RoutesPage() {
       {selectedRoute && selectedRouteData ? (
         <RouteCard
           route={selectedRouteData}
-          circuits={circuits.data}
+          circuits={circuits}
           sets={sets.data}
-          climbs={climbs.data}
+          climbs={climbs}
           setSidebarRoute={setSidebarRoute}
         />
       ) : (

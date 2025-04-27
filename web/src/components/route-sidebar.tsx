@@ -31,12 +31,15 @@ export default function RouteSideBar(props: {
   route: Route | undefined;
   closeCallback: () => void;
 }) {
-  const { data: climbs } = useClimbs();
+
+  const climbs = useClimbs().data ?? [];
+  const projects = useProjects().data ?? [];
+
   const { data: circuits } = useCircuits();
   const { data: sets } = useSets();
-  const { data: projects } = useProjects();
 
   console.log("projects", projects);
+  console.log("climbs", climbs);
   const deleteClimbMutation = useDeleteClimb({
     mutationConfig: {
       onSuccess: () => {},
@@ -105,17 +108,17 @@ export default function RouteSideBar(props: {
     }
   }, [props.route]);
 
-  const complete = climbs.data.find(
+  const complete = climbs.find(
     (climb) => climb.route == route.id && climb.sent == true
   );
-  const attempts = climbs.data.filter(
+  const attempts = climbs.filter(
     (climb) => climb.route == route.id && climb.sent == false
   );
-  const sends = climbs.data.filter(
+  const sends = climbs.filter(
     (climb) => climb.route == route.id && climb.sent == true
   );
 
-  const circuit = circuits.data[sets.data[route.set_id]?.circuit_id];
+  const circuit = circuits[sets.data[route.set_id]?.circuit_id];
 
   const open = props.route != undefined;
 
@@ -315,7 +318,7 @@ export default function RouteSideBar(props: {
                   </DialogTitle>
                   {attempts.length + sends.length > 0 && (
                     <div className="m-4  mt-0 lg:ml-4 lg:mt-0 rounded-md p-4 max-h-42 divide-y divide-gray-200">
-                      {climbs.data
+                      {climbs
                         .filter((climb) => climb.route == route.id)
                         .reverse()
                         .map((climb) => (

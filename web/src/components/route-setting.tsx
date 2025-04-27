@@ -13,7 +13,7 @@ import { CreateSet } from "../features/sets/components/create-set";
 
 export function RouteSettingPage() {
   const routesQuery = useRoutes();
-  const { data: circuits } = useCircuits();
+  const circuits = useCircuits().data || {};
   const { data: sets } = useSets();
 
   const [openCircuit, setOpenCircuit] = useState<string>("");
@@ -54,7 +54,7 @@ export function RouteSettingPage() {
       </div>
 
       <div className=" flex justify-center gap-2 flex-wrap text-white my-4">
-        {Object.values(circuits?.data || {}).map((circuit, index, array) => (
+        {Object.values(circuits).map((circuit, index, array) => (
           <button
             key={circuit.id}
             className={
@@ -74,7 +74,7 @@ export function RouteSettingPage() {
         <div className="flex m-2">
           <span className={`font-bold text-lg rounded-lg text-gray-900`}>
             {" "}
-            {openCircuit && circuits?.data[openCircuit]?.name}{" "}
+            {openCircuit && circuits[openCircuit]?.name}{" "}
           </span>
           <span className="ml-auto flex">
             <span className="flex items-center mr-2 ">Set: </span>

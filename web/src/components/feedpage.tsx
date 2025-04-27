@@ -71,7 +71,7 @@ export default function Feed() {
 
                 <div className="m-2">
                   <div className="m-1 my-4 flex gap-2 ">
-                    {Object.keys(circuits.data).map((circuitId) => {
+                    {Object.keys(circuits).map((circuitId) => {
                       const circuitClimbCount = Object.values(
                         clumped_climbs[date][user]
                       )
@@ -90,7 +90,7 @@ export default function Feed() {
                             key={circuitId}
                             className={
                               "p-1 px-3 rounded-full text-white " +
-                              colorsPastel[circuits.data[circuitId].color]
+                              colorsPastel[circuits[circuitId].color]
                             }
                           >
                             {circuitClimbCount}{" "}
@@ -109,7 +109,7 @@ export default function Feed() {
                             route={routes.data.find(
                               (route) => route.id === climb.route
                             )}
-                            circuits={circuits.data}
+                            circuits={circuits}
                             sets={sets.data}
                             climb={climb}
                             setSidebarRoute={setSidebarRoute}

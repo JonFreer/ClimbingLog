@@ -49,10 +49,7 @@ export const options = {
 
 //   const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 
-export default function Profile(props: {
-  projects: Projects;
-  updateData: () => void;
-}) {
+export default function Profile() {
   const { data: routes } = useRoutes();
   const { data: circuits } = useCircuits();
   const { data: sets } = useSets();

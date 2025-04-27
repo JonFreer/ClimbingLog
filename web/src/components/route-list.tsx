@@ -11,11 +11,12 @@ import { useProjects } from "../features/projects/api/get-projects";
 
 export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
   const routesQuery = useRoutes();
-  const { data: circuits } = useCircuits();
   const { data: sets } = useSets();
-  const { data: climbs } = useClimbs();
-  const { data: projects } = useProjects();
 
+  const climbs = useClimbs().data ?? [];
+  const projects = useProjects().data ?? [];
+  const circuits  = useCircuits().data ?? {};
+  
   if (routesQuery.isLoading) {
     return (
       <div className="flex justify-center items-center h-full">
@@ -39,7 +40,7 @@ export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
       .map((climb) => climb.route);
   }
 
-  if (circuits.data == undefined) {
+  if (circuits == undefined) {
     return <div> Loading </div>;
   }
 
@@ -137,7 +138,7 @@ export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
                               className={
                                 "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white " +
                                 (colors[
-                                  circuits.data[
+                                  circuits[
                                     sets.data[route.set_id]?.circuit_id
                                   ]?.color || ""
                                 ] || "")
@@ -159,7 +160,7 @@ export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
       ) : null}
 
       <div className={"mx-4 mb-8"}>
-        {Object.values(circuits.data).map((circuit) => (
+        {Object.values(circuits).map((circuit) => (
           <>
             {active_sets[circuit.id] ? (
               <div key={circuit.id} className="mt-4">

@@ -22,6 +22,8 @@ export const getCircuitsQueryOptions = () => {
   return queryOptions({
     queryKey: ["circuits"],
     queryFn: () => getCircuits(),
+    placeholderData: { data: {} },
+    select: (response) => response?.data ,
   });
 };
 
@@ -33,6 +35,6 @@ export const useCircuits = ({ queryConfig = {} }: UseCircuitsOptions = {}) => {
   return useQuery({
     ...getCircuitsQueryOptions(),
     ...queryConfig,
-    initialData: { data: {} },
+    
   });
 };

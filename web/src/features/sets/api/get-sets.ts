@@ -30,6 +30,6 @@ export const useSets = ({ queryConfig = {} }: UseSetsOptions = {}) => {
   return useQuery({
     ...getSetsQueryOptions(),
     ...queryConfig,
-    initialData: { data: {} },
+    placeholderData: { data: {} },
   });
 };
