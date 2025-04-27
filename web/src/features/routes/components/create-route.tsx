@@ -1,6 +1,5 @@
 import { useNotifications } from "../../../components/ui/notifications";
 import { useCreateRoute } from "../api/create-route";
-import { Route } from "../../../types/routes";
 import RouteModal from "./route-modal";
 import { useRoutes } from "../api/get-routes";
 import { useCircuits } from "../../circuits/api/get-circuits";
@@ -14,7 +13,7 @@ type CreateRouteProps = {
 
 export const CreateRoute = ({ set_id, circuit_id }: CreateRouteProps) => {
   const [open, setOpen] = useState(false);
-  const { data: routes } = useRoutes();
+  const routes = useRoutes().data || [];
   const circuits = useCircuits().data || {};
 
   const { addNotification } = useNotifications();
@@ -52,7 +51,7 @@ export const CreateRoute = ({ set_id, circuit_id }: CreateRouteProps) => {
         New Route
       </span>
       <RouteModal
-        routes={routes?.data || []}
+        routes={routes}
         circuits={circuits}
         set_id={set_id}
         circuit_id={circuit_id}

@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Route } from "../types/routes";
+import { useEffect, useState } from "react";
 import { colors, colorsFaint } from "../types/colors";
 import { useRoutes } from "../features/routes/api/get-routes";
 import { DeleteRoute } from "../features/routes/components/delete-route";
@@ -54,7 +53,7 @@ export function RouteSettingPage() {
       </div>
 
       <div className=" flex justify-center gap-2 flex-wrap text-white my-4">
-        {Object.values(circuits).map((circuit, index, array) => (
+        {Object.values(circuits).map((circuit, _index, _array) => (
           <button
             key={circuit.id}
             className={

@@ -1,5 +1,4 @@
-import { NavLink } from "react-router";
-import { Circuit, Projects, Route, Set } from "../types/routes";
+import { Set } from "../types/routes";
 import { useEffect, useState } from "react";
 import { colors } from "../types/colors";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";

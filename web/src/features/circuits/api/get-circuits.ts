@@ -1,7 +1,7 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
 import { api } from "../../../lib/api-client";
-import { Circuit, Route } from "../../../types/routes";
+import { Circuit } from "../../../types/routes";
 import { QueryConfig } from "../../../lib/react-query";
 
 export const getCircuits = (): Promise<{ data: Record<string, Circuit> }> => {

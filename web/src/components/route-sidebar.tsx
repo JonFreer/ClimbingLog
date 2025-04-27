@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogBackdrop,
@@ -247,7 +247,7 @@ export default function RouteSideBar(props: {
                         createSendMutation.mutate({ route_id: route.id });
                       }}
                       className={
-                        "rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-xs  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  " +
+                        "rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2  " +
                         (circuit ? colors[circuit.color] || "" : "") +
                         " " +
                         (circuit
