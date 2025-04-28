@@ -123,15 +123,15 @@ export default function Feed() {
                   Be the first to bump
                 </span>
               ) : (
-                <>
+                <span className="flex ml-4">
                   {activity.reactions
                     .filter((user) => user.has_profile_photo)
-                    .slice(0, 3)
+                    .slice(0, 5)
                     .map((user) => (
                       <img
                         key={user.username}
                         src={`/api/profile_photo/${user.id}`}
-                        className="rounded-full h-6 w-6 mt-1"
+                        className="w-8 h-8 rounded-full -ml-4 border-2 border-white shadow-sm"
                       />
                     ))}
                   <span className="text-gray-400 text-sm font py-2 ml-2">
@@ -139,7 +139,7 @@ export default function Feed() {
 
                     {activity.reactions.length == 1 ? " bump" : " bumps"}
                   </span>
-                </>
+                </span>
               )}
 
               {!activity.reactions.find(
