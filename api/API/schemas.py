@@ -68,7 +68,7 @@ class Climb(BaseModel):
     time: datetime.datetime
     route: uuid.UUID
     user: uuid.UUID
-    activity: uuid.UUID
+    activity: Optional[uuid.UUID]
 
 
 class UserNamePair(BaseModel):
