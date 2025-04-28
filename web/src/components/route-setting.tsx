@@ -11,7 +11,7 @@ import { useSets } from "../features/sets/api/get-sets";
 import { CreateSet } from "../features/sets/components/create-set";
 
 export function RouteSettingPage() {
-  const routes = useRoutes().data || [];
+  const routes = useRoutes().data || {};
   const circuits = useCircuits().data || {};
   const sets = useSets().data || {};
 
@@ -111,7 +111,7 @@ export function RouteSettingPage() {
       )}
 
       {selectedSet != "" &&
-        routes
+        Object.values(routes)
           .filter((route) => route.set_id === selectedSet)
           .map((route) => (
             <div

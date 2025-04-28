@@ -57,3 +57,19 @@ export type AuthResponse = {
   jwt: string;
   token_type: string;
 };
+
+export interface UserNamePair {
+  id: string;
+  username: string;
+  has_profile_photo: boolean;
+}
+
+export interface Activity {
+  id: string;
+  user: string;
+  time: string;
+  climb_ids: string[];
+  username: string;
+  has_profile_photo: boolean;
+  reactions: UserNamePair[];
+}

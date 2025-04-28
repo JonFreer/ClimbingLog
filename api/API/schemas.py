@@ -68,6 +68,7 @@ class Climb(BaseModel):
     time: datetime.datetime
     route: uuid.UUID
     user: uuid.UUID
+    activity: uuid.UUID
 
 
 class UserNamePair(BaseModel):
@@ -89,3 +90,19 @@ class ClimbFeed(BaseModel):
     user: uuid.UUID
     username: str
     has_profile_photo: bool
+
+
+class Activity(BaseModel):
+    id: uuid.UUID
+    time: datetime.datetime
+    user: uuid.UUID
+    climb_ids: list[uuid.UUID]
+    username: str
+    has_profile_photo: bool
+    reactions: list[UserNamePair]
+
+
+class Reaction(BaseModel):
+    id: uuid.UUID
+    user: uuid.UUID
+    activity: uuid.UUID

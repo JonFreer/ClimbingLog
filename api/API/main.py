@@ -6,7 +6,17 @@ from starlette.middleware.sessions import SessionMiddleware
 from . import config
 from .db import create_db_and_tables
 from .models import User
-from .routers import admin, circuits, climbs, projects, routes, sets, users
+from .routers import (
+    activities,
+    admin,
+    circuits,
+    climbs,
+    projects,
+    reactions,
+    routes,
+    sets,
+    users,
+)
 from .schemas import UserCreate, UserRead, UserUpdate
 from .users import auth_backend, current_active_user, fastapi_users
 
@@ -60,3 +70,5 @@ app.include_router(projects.router)
 app.include_router(circuits.router)
 app.include_router(sets.router)
 app.include_router(users.router)
+app.include_router(activities.router)
+app.include_router(reactions.router)

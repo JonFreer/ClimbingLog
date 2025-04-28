@@ -7,37 +7,34 @@ import { useSets } from "../features/sets/api/get-sets";
 import { useCircuits } from "../features/circuits/api/get-circuits";
 import { useRoutes } from "../features/routes/api/get-routes";
 import { useAllClimbs } from "../features/climbs/api/get-all-climbs";
+import { useActivities } from "../features/activities/api/get-activities";
+import { useCreateReaction } from "../features/reactions/api/create-reaction";
+import { useDeleteReaction } from "../features/reactions/api/delete-reaction";
+import { useUser } from "../lib/auth";
 
 export default function Feed() {
   const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(
     undefined
   );
 
-  const routes = useRoutes().data || [];
+  const user = useUser();
+  const routes = useRoutes().data || {};
   const sets = useSets().data || {};
   const circuits = useCircuits().data || {};
   const climbs = useAllClimbs().data || [];
+  const activities = useActivities().data || [];
 
-  const clumped_climbs = climbs.reduce((acc, climb) => {
-    const climbDate = new Date(climb.time).toDateString();
-    if (!acc[climbDate]) {
-      acc[climbDate] = {};
-    }
-    if (!acc[climbDate][climb.username]) {
-      acc[climbDate][climb.username] = [];
-    }
-    acc[climbDate][climb.username].push(climb);
-    return acc;
-  }, {} as Record<string, Record<string, Climb[]>>);
+  const createReactionMutation = useCreateReaction({
+    mutationConfig: {
+      onSuccess: () => {},
+    },
+  });
 
-  const sorted_clumped_climbs = Object.keys(clumped_climbs)
-    .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
-    .reduce((acc, date) => {
-      acc[date] = clumped_climbs[date];
-      return acc;
-    }, {} as Record<string, Record<string, Climb[]>>);
-
-  console.log("clumped_climbs", clumped_climbs);
+  const deleteReactionMutation = useDeleteReaction({
+    mutationConfig: {
+      onSuccess: () => {},
+    },
+  });
 
   return (
     <>
@@ -46,78 +43,127 @@ export default function Feed() {
       </div>
       <div className="bg-gray-100 p-4 sm:mb-8 mb-14">
         <RouteSideBar
-          route={routes.find((route) => route.id === sidebarRoute)}
+          route={routes[sidebarRoute] || undefined}
           closeCallback={() => setSidebarRoute(undefined)}
         ></RouteSideBar>
 
-        {Object.keys(sorted_clumped_climbs).map((date) => (
-          <div key={date}>
-            {Object.keys(clumped_climbs[date]).map((user) => (
-              <div className="bg-white p-4 rounded-lg mt-4 pb-2" key={user}>
-                <div className="font-bold flex items-center text-slate-800">
-                  {clumped_climbs[date][user][0].has_profile_photo ? (
-                    <img
-                      src={`/api/profile_photo/${clumped_climbs[date][user][0].user}`}
-                      className="rounded-full h-9 w-9"
-                    />
-                  ) : null}
-                  <a href={`/profile/${user}`} className="ml-3">
-                    {user}
-                  </a>{" "}
-                  <div className="ml-auto font-normal text-sm">{date}</div>
-                </div>
+        {activities.map((activity) => (
+          <div
+            className="bg-white p-4 rounded-lg mt-4 pb-2"
+            key={activity.username + activity.time}
+          >
+            <div className="font-bold flex items-center text-slate-800">
+              {activity.has_profile_photo ? (
+                <img
+                  src={`/api/profile_photo/${activity.user}`}
+                  className="rounded-full h-9 w-9"
+                />
+              ) : null}
+              <a href={`/profile/${activity.username}`} className="ml-3">
+                {activity.username}
+              </a>{" "}
+              <div className="ml-auto font-normal text-sm">
+                {new Date(activity.time).toDateString()}
+              </div>
+            </div>
 
-                <div className="m-2">
-                  <div className="m-1 my-4 flex gap-2 ">
-                    {Object.keys(circuits).map((circuitId) => {
-                      const circuitClimbCount = Object.values(
-                        clumped_climbs[date][user]
-                      )
-                        .flat()
-                        .filter((climb: Climb) => {
-                          const setId =
-                            routes.find((route) => route.id === climb.route)
-                              ?.set_id ?? "";
-                          return sets[setId]?.circuit_id === circuitId;
-                        }).length;
+            <div className="m-2">
+              <div className="m-1 my-4 flex gap-2 ">
+                {Object.keys(circuits).map((circuitId) => {
+                  const circuitClimbCount = activity.climb_ids.filter(
+                    (climbId) =>
+                      sets[
+                        routes[
+                          climbs.find((climb) => climb.id === climbId)?.route
+                        ]?.set_id
+                      ]?.circuit_id === circuitId
+                  ).length;
 
+                  return (
+                    circuitClimbCount > 0 && (
+                      <div
+                        key={circuitId}
+                        className={
+                          "p-1 px-3 rounded-full text-white " +
+                          colorsPastel[circuits[circuitId].color]
+                        }
+                      >
+                        {circuitClimbCount}{" "}
+                        {circuitClimbCount > 1 ? "sends" : "send"}
+                      </div>
+                    )
+                  );
+                })}
+              </div>
+              <div className="flex flex-col bg-white m-auto p-auto mt-5 relative">
+                <div className="flex overflow-x-scroll pb-8 hide-scroll-bar">
+                  <div className="flex gap-4 flex-nowrap">
+                    {activity.climb_ids.map((climbId) => {
+                      const climb = climbs.find((c) => c.id === climbId);
                       return (
-                        circuitClimbCount > 0 && (
-                          <div
-                            key={circuitId}
-                            className={
-                              "p-1 px-3 rounded-full text-white " +
-                              colorsPastel[circuits[circuitId].color]
-                            }
-                          >
-                            {circuitClimbCount}{" "}
-                            {circuitClimbCount > 1 ? "sends" : "send"}
-                          </div>
-                        )
-                      );
-                    })}
-                  </div>
-                  <div className="flex flex-col bg-white m-auto p-auto mt-5 relative">
-                    <div className="flex overflow-x-scroll pb-10 hide-scroll-bar">
-                      <div className="flex gap-4 flex-nowrap">
-                        {clumped_climbs[date][user].map((climb) => (
+                        climb && (
                           <RouteCardProfile
-                            key={climb.route}
-                            route={routes.find(
-                              (route) => route.id === climb.route
-                            )}
+                            key={climb.route + climbId}
+                            route={routes[climb.route]}
                             circuits={circuits}
                             sets={sets}
                             climb={climb}
                             setSidebarRoute={setSidebarRoute}
                           />
-                        ))}
-                      </div>
-                    </div>
+                        )
+                      );
+                    })}
                   </div>
                 </div>
               </div>
-            ))}
+            </div>
+            <div className="flex">
+              {activity.reactions.length == 0 ? (
+                <span className="text-gray-400 text-sm font-semibold py-2">
+                  Be the first to bump
+                </span>
+              ) : (
+                <>
+                  {activity.reactions
+                    .filter((user) => user.has_profile_photo)
+                    .slice(0, 3)
+                    .map((user) => (
+                      <img
+                        key={user.username}
+                        src={`/api/profile_photo/${user.id}`}
+                        className="rounded-full h-6 w-6 mt-1"
+                      />
+                    ))}
+                  <span className="text-gray-400 text-sm font py-2 ml-2">
+                    {activity.reactions.length}
+
+                    {activity.reactions.length == 1 ? " bump" : " bumps"}
+                  </span>
+                </>
+              )}
+
+              {!activity.reactions.find(
+                (react) => react.username === user.data?.username
+              ) ? (
+                <button
+                  onClick={() => {
+                    createReactionMutation.mutate({ activity_id: activity.id });
+                  }}
+                  className="ml-auto cursor-pointer bg-gray-50 text-gray-600 border rounded-xl px-2 py-1  hover:bg-gray-100"
+                >
+                  <span className="saturate-0 text-xl">👊</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    deleteReactionMutation.mutate({ activity_id: activity.id });
+                  }}
+                  className="ml-auto cursor-pointer bg-amber-100 text-gray-600 border rounded-xl px-2 py-1  hover:bg-amber-200 border-amber-500"
+                >
+                  <span className="text-xl">👊</span>
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>

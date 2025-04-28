@@ -4,10 +4,11 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.sql import func
 
 from .. import schemas
 from ..db import get_db
-from ..models import User
+from ..models import Activities, Climbs, User
 from ..users import current_active_superuser
 
 router = APIRouter()
@@ -113,6 +114,42 @@ async def demote_route_setter(
     await db.commit()
     await db.refresh(user_to_promote)
     return user_to_promote
+
+
+@router.post(
+    "/admin/activites/generate_activies/",
+    response_model=None,
+    tags=["admin"],
+)
+async def generate_activities(
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(current_active_superuser),
+):
+    if not user.is_superuser:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+
+    climbs = await db.execute(select(Climbs))
+    for climb in climbs.scalars().all():
+        activity = await db.execute(
+            select(Activities).where(
+                Activities.user == climb.user,
+                func.date(Activities.time) == climb.time.date(),
+            )
+        )
+
+        existing_activity = activity.scalars().first()
+
+        if existing_activity is None:
+            existing_activity = Activities(time=climb.time, user=climb.user)
+            db.add(existing_activity)
+            await db.commit()
+            await db.refresh(existing_activity)
+
+        climb.activity = existing_activity.id
+
+        db.add(climb)
+        await db.commit()
+        await db.refresh(climb)
 
 
 # @router.get("/admin/users/get_all", response_model=List[schemas.UserRead], tags=["admin"])

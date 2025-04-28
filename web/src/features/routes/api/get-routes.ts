@@ -4,8 +4,18 @@ import { api } from "../../../lib/api-client";
 import { Route } from "../../../types/routes";
 import { QueryConfig } from "../../../lib/react-query";
 
-export const getRoutes = (): Promise<{ data: Route[] }> => {
-  return api.get(`/api/routes/get_all`);
+export const getRoutes = (): Promise<{ data: Record<string, Route> }> => {
+  return api.get(`/api/routes/get_all`).then((response) => {
+    const routeArray = response.data;
+    const routeDict = routeArray.reduce(
+      (dict: Record<string, Route>, set: Route) => {
+        dict[set.id] = set; // Use `id` as the key
+        return dict;
+      },
+      {} as Record<string, Route>
+    );
+    return { data: routeDict };
+  });
 };
 
 export const getRoutesQueryOptions = () => {
@@ -13,7 +23,7 @@ export const getRoutesQueryOptions = () => {
     queryKey: ["routes"],
     queryFn: () => getRoutes(),
     select: (response) => response?.data,
-    placeholderData: { data: [] },
+    placeholderData: { data: {} },
   });
 };
 

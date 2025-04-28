@@ -5,10 +5,11 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.sql import func
 
 from .. import schemas
 from ..db import get_db
-from ..models import Climbs
+from ..models import Activities, Climbs
 from ..users import User, current_active_user
 
 router = APIRouter()
@@ -73,12 +74,35 @@ async def create_send(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(current_active_user),
 ):
+    # Check if an activity already exists for this user today
+
+    activity = await db.execute(
+        select(Activities).where(
+            Activities.user == user.id,
+            func.date(Activities.time) == datetime.datetime.today().date(),
+        )
+    )
+
+    existing_activity = activity.scalars().first()
+    if existing_activity:
+        current_activity = existing_activity
+    else:
+        current_activity = Activities(time=datetime.datetime.now(), user=user.id)
+        db.add(current_activity)
+        await db.commit()
+        await db.refresh(current_activity)
+
     new_climb = Climbs(
-        time=datetime.datetime.now(), sent=True, route=route_id, user=user.id
+        time=datetime.datetime.now(),
+        sent=True,
+        route=route_id,
+        user=user.id,
+        activity=current_activity.id,
     )
     db.add(new_climb)
     await db.commit()
     await db.refresh(new_climb)
+
     return new_climb
 
 

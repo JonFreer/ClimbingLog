@@ -13,7 +13,7 @@ import { CreateRouteInput } from "../api/create-route";
 import { UpdateRouteInput } from "../api/update-route";
 
 export default function RouteModal(props: {
-  routes: Route[];
+  routes: Record<string, Route>;
   circuits: Record<string, Circuit>;
   set_id: string;
   circuit_id: string;
@@ -90,7 +90,7 @@ export default function RouteModal(props: {
 
   const circuite_name = props.circuits[props.circuit_id]?.name || "";
 
-  const num_routes_in_set = props.routes.filter(
+  const num_routes_in_set = Object.values(props.routes).filter(
     (route) => route.set_id === props.set_id
   ).length;
 
@@ -108,7 +108,7 @@ export default function RouteModal(props: {
 
   useEffect(() => {
     const circuite_name = props.circuits[props.circuit_id]?.name || "";
-    const num_routes_in_set = props.routes.filter(
+    const num_routes_in_set = Object.values(props.routes).filter(
       (route) => route.set_id === props.set_id
     ).length;
     console.log("Circuit name: ", circuite_name);

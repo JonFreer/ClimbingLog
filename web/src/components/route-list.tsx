@@ -9,7 +9,7 @@ import { useClimbs } from "../features/climbs/api/get-climbs";
 import { useProjects } from "../features/projects/api/get-projects";
 
 export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
-  const routes = useRoutes().data || [];
+  const routes = useRoutes().data || {};
   const sets = useSets().data || {};
   const climbs = useClimbs().data ?? [];
   const projects = useProjects().data ?? [];
@@ -68,14 +68,18 @@ export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
                 </span>
                 <span className={"font-bold ml-auto mr-2"}>
                   {
-                    routes.filter(
+                    Object.values(routes).filter(
                       (route) =>
                         projects.includes(route.id) &&
                         sent_ids.includes(route.id)
                     ).length
                   }{" "}
                   /{" "}
-                  {routes.filter((route) => projects.includes(route.id)).length}{" "}
+                  {
+                    Object.values(routes).filter((route) =>
+                      projects.includes(route.id)
+                    ).length
+                  }{" "}
                   Routes
                 </span>
               </div>
@@ -87,7 +91,7 @@ export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
             </button>
             {openCircuits["projects"] && (
               <div className="ml mt-2" key={"projects"}>
-                {routes
+                {Object.values(routes)
                   .filter((route) => projects.includes(route.id))
                   .map((route) => (
                     <div
@@ -169,7 +173,7 @@ export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
                     </span>
                     <div className={"font-bold ml-auto mr-2"}>
                       {
-                        routes.filter(
+                        Object.values(routes).filter(
                           (route) =>
                             route.set_id == active_sets[circuit.id].id &&
                             sent_ids.includes(route.id)
@@ -177,7 +181,7 @@ export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
                       }{" "}
                       /{" "}
                       {
-                        routes.filter(
+                        Object.values(routes).filter(
                           (route) => route.set_id === active_sets[circuit.id].id
                         ).length
                       }{" "}
@@ -192,7 +196,7 @@ export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
                 </button>
                 {openCircuits[circuit.id] && (
                   <div className="ml mt-2" key={circuit.id}>
-                    {routes
+                    {Object.values(routes)
                       .filter(
                         (route) => route.set_id === active_sets[circuit.id].id
                       )

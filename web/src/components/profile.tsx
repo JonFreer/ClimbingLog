@@ -19,7 +19,6 @@ import { useCircuits } from "../features/circuits/api/get-circuits";
 import { useRoutes } from "../features/routes/api/get-routes";
 import { useSets } from "../features/sets/api/get-sets";
 import { useUser } from "../lib/auth";
-import { useClimbs } from "../features/climbs/api/get-climbs";
 
 ChartJS.register(
   CategoryScale,

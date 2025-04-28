@@ -69,6 +69,9 @@ class Climbs(Base):
     user: uuid.UUID = Column(
         UUID(as_uuid=True), ForeignKey("user.id"), index=True, nullable=False
     )
+    activity: uuid.UUID = Column(
+        UUID(as_uuid=True), ForeignKey("activities.id"), index=True, nullable=False
+    )
 
 
 class Projects(Base):
@@ -86,4 +89,28 @@ class Projects(Base):
         primary_key=True,
         index=True,
         nullable=False,
+    )
+
+
+class Activities(Base):
+    __tablename__ = "activities"
+    id: uuid.UUID = Column(
+        UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4
+    )
+    time: datetime.datetime = Column(DateTime, index=True, nullable=False)
+    user: uuid.UUID = Column(
+        UUID(as_uuid=True), ForeignKey("user.id"), index=True, nullable=False
+    )
+
+
+class Reactions(Base):
+    __tablename__ = "reactions"
+    id: uuid.UUID = Column(
+        UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4
+    )
+    user: uuid.UUID = Column(
+        UUID(as_uuid=True), ForeignKey("user.id"), index=True, nullable=False
+    )
+    activity: uuid.UUID = Column(
+        UUID(as_uuid=True), ForeignKey("activities.id"), index=True, nullable=False
     )

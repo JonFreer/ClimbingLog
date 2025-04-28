@@ -11,7 +11,7 @@ import { useSets } from "../features/sets/api/get-sets";
 import { useClimbs } from "../features/climbs/api/get-climbs";
 
 export function RoutesPage() {
-  const routes = useRoutes().data || [];
+  const routes = useRoutes().data || {};
   const sets = useSets().data ?? {};
   const circuits = useCircuits().data ?? {};
   const climbs = useClimbs().data ?? [];
@@ -61,18 +61,18 @@ export function RoutesPage() {
     return acc;
   }, {} as Record<string, Set>);
 
-  const selectedRouteData = routes.find((route) => route.id === selectedRoute);
+  const selectedRouteData = routes[selectedRoute] || null;
 
   return (
     <div className="sm:mb-8 mb-16">
       <RouteSideBar
-        route={routes.find((route) => route.id === sidebarRoute)}
+        route={routes[sidebarRoute] || null}
         closeCallback={() => setSidebarRoute(undefined)}
       ></RouteSideBar>
       <div className="">
         <DraggableDotsCanvas
           dots={
-            routes
+            Object.values(routes)
               .filter(
                 (route) =>
                   sets[route.set_id] &&
