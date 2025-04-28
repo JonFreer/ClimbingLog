@@ -118,7 +118,7 @@ export default function Profile() {
   const out_data: any = {};
 
   Object.values(sets).forEach((set) => {
-    const n_complete = routes.filter(
+    const n_complete = Object.values(routes).filter(
       (route) => route.set_id === set.id && sent_ids.includes(route.id)
     ).length;
 
@@ -154,9 +154,7 @@ export default function Profile() {
     climbs
       .filter((climb) => climb.sent)
       .reduce((acc, climb) => {
-        const location = routes.find(
-          (route) => route.id === climb.route
-        )?.location;
+        const location = routes[climb.route]?.location;
         if (location) {
           acc[location] = (acc[location] || 0) + 1;
         }
@@ -173,9 +171,7 @@ export default function Profile() {
     climbs
       .filter((climb) => climb.sent)
       .reduce((acc, climb) => {
-        const styles =
-          routes.find((route) => route.id === climb.route)?.style.split(",") ||
-          [];
+        const styles = routes[climb.route]?.style.split(",") || [];
         styles.forEach((style) => {
           if (style) {
             acc[style.trim()] = (acc[style.trim()] || 0) + 1;
@@ -193,7 +189,7 @@ export default function Profile() {
   return (
     <div className="bg-gray-100 min-h-screen p-4 sm:mb-8 mb-14">
       <RouteSideBar
-        route={routes.find((route) => route.id === sidebarRoute)}
+        route={routes[sidebarRoute]}
         closeCallback={() => setSidebarRoute(undefined)}
       ></RouteSideBar>
 
@@ -276,9 +272,7 @@ export default function Profile() {
               <div className="flex gap-4 flex-nowrap lg:ml-40 md:ml-20 ml-10">
                 {climbs
                   .filter((climb) => climb.sent)
-                  .filter((climb) =>
-                    routes.find((route) => route.id === climb.route)
-                  )
+                  .filter((climb) => routes[climb.route])
                   .sort(
                     (a, b) =>
                       new Date(b.time).getTime() - new Date(a.time).getTime()
@@ -287,7 +281,7 @@ export default function Profile() {
                   .map((climb) => (
                     <RouteCardProfile
                       key={climb.route}
-                      route={routes.find((route) => route.id === climb.route)}
+                      route={routes[climb.route]}
                       circuits={circuits}
                       sets={sets}
                       climb={climb}
