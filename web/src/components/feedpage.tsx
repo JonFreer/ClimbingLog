@@ -38,10 +38,10 @@ export default function Feed() {
 
   return (
     <>
-      <div className="bg-white p-10 pt-6 pb-6 rounded-lg ">
+      <div className="bg-white p-10 pt-6 pb-2 rounded-lg ">
         <div className="font-semibold text-xl">Send Feed</div>
       </div>
-      <div className="bg-gray-100 p-4 sm:mb-8 mb-14">
+      <div className="bg-gray-100 sm:mb-8 mb-14">
         <RouteSideBar
           route={routes[sidebarRoute] || undefined}
           closeCallback={() => setSidebarRoute(undefined)}
@@ -49,7 +49,7 @@ export default function Feed() {
 
         {activities.map((activity) => (
           <div
-            className="bg-white p-4 rounded-lg mt-4 pb-2"
+            className="bg-white p-4 mt-4 pb-2"
             key={activity.username + activity.time}
           >
             <div className="font-bold flex items-center text-slate-800">
