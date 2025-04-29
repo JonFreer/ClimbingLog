@@ -50,7 +50,7 @@ export const options = {
 
 export default function Profile() {
   const routes = useRoutes().data || [];
-  const circuits = useCircuits().data || {};
+  const circuits = useCircuits().data?.data || {};
   const sets = useSets().data || {};
 
   const { data: user_me } = useUser();

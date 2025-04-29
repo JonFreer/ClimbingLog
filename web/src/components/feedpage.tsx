@@ -20,7 +20,8 @@ export default function Feed() {
   const user = useUser();
   const routes = useRoutes().data || {};
   const sets = useSets().data || {};
-  const circuits = useCircuits().data || {};
+  const circuits = useCircuits().data?.data || {};
+  const circuitsOrder = useCircuits().data?.order || [];
   const climbs = useAllClimbs().data || [];
   const activities = useActivities().data || [];
 
@@ -69,31 +70,33 @@ export default function Feed() {
 
             <div className="m-2">
               <div className="m-1 my-4 flex gap-2 ">
-                {Object.keys(circuits).map((circuitId) => {
-                  const circuitClimbCount = activity.climb_ids.filter(
-                    (climbId) =>
-                      sets[
-                        routes[
-                          climbs.find((climb) => climb.id === climbId)?.route
-                        ]?.set_id
-                      ]?.circuit_id === circuitId
-                  ).length;
+                {circuitsOrder
+                  .map((circuit_id) => circuits[circuit_id])
+                  .map((circuit) => {
+                    const circuitClimbCount = activity.climb_ids.filter(
+                      (climbId) =>
+                        sets[
+                          routes[
+                            climbs.find((climb) => climb.id === climbId)?.route
+                          ]?.set_id
+                        ]?.circuit_id === circuit.id
+                    ).length;
 
-                  return (
-                    circuitClimbCount > 0 && (
-                      <div
-                        key={circuitId}
-                        className={
-                          "p-1 px-3 rounded-full text-white " +
-                          colorsPastel[circuits[circuitId].color]
-                        }
-                      >
-                        {circuitClimbCount}{" "}
-                        {circuitClimbCount > 1 ? "sends" : "send"}
-                      </div>
-                    )
-                  );
-                })}
+                    return (
+                      circuitClimbCount > 0 && (
+                        <div
+                          key={circuit.id}
+                          className={
+                            "p-1 px-3 rounded-full text-white " +
+                            colorsPastel[circuits[circuit.id].color]
+                          }
+                        >
+                          {circuitClimbCount}{" "}
+                          {circuitClimbCount > 1 ? "sends" : "send"}
+                        </div>
+                      )
+                    );
+                  })}
               </div>
               <div className="flex flex-col bg-white m-auto p-auto mt-5 relative">
                 <div className="flex overflow-x-scroll pb-8 hide-scroll-bar">

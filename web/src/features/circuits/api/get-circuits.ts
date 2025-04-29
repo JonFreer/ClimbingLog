@@ -4,7 +4,22 @@ import { api } from "../../../lib/api-client";
 import { Circuit } from "../../../types/routes";
 import { QueryConfig } from "../../../lib/react-query";
 
-export const getCircuits = (): Promise<{ data: Record<string, Circuit> }> => {
+export const orderedColors = [
+  "Green",
+  "White",
+  "Blue",
+  "Black",
+  "Red",
+  "Purple",
+  "Yellow",
+  "Orange",
+  "Pink",
+];
+
+export const getCircuits = (): Promise<{
+  data: Record<string, Circuit>;
+  order: string[];
+}> => {
   return api.get(`/api/circuits/get_all`).then((response) => {
     const circuitsArray = response.data;
     const circuitsDict = circuitsArray.reduce(
@@ -14,7 +29,22 @@ export const getCircuits = (): Promise<{ data: Record<string, Circuit> }> => {
       },
       {} as Record<string, Circuit>
     );
-    return { data: circuitsDict };
+
+    const order = circuitsArray
+      .map((circuit: Circuit) => {
+        return {
+          id: circuit.id,
+          name: circuit.name,
+          color: circuit.color,
+          order: orderedColors.indexOf(circuit.name),
+        };
+      })
+      .sort((a, b) => a.order - b.order)
+      .map((circuit: Circuit) => circuit.id);
+
+    console.log("Circuits order", order);
+
+    return { data: circuitsDict, order: order };
   });
 };
 
@@ -22,8 +52,8 @@ export const getCircuitsQueryOptions = () => {
   return queryOptions({
     queryKey: ["circuits"],
     queryFn: () => getCircuits(),
-    placeholderData: { data: {} },
-    select: (response) => response?.data,
+    placeholderData: { data: {}, order: [] },
+    // select: (response) => response,
   });
 };
 

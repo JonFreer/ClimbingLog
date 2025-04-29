@@ -34,7 +34,7 @@ export default function RouteSideBar(props: {
   const climbs = useClimbs().data ?? [];
   const projects = useProjects().data ?? [];
   const sets = useSets().data ?? {};
-  const circuits = useCircuits().data ?? {};
+  const circuits = useCircuits().data?.data ?? {};
 
   console.log("projects", projects);
   console.log("climbs", climbs);

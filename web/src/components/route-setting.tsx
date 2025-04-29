@@ -12,7 +12,8 @@ import { CreateSet } from "../features/sets/components/create-set";
 
 export function RouteSettingPage() {
   const routes = useRoutes().data || {};
-  const circuits = useCircuits().data || {};
+  const circuits = useCircuits()?.data?.data || {};
+  const circuitOrder = useCircuits()?.data?.order || [];
   const sets = useSets().data || {};
 
   const [openCircuit, setOpenCircuit] = useState<string>("");
@@ -53,20 +54,23 @@ export function RouteSettingPage() {
       </div>
 
       <div className=" flex justify-center gap-2 flex-wrap text-white my-4">
-        {Object.values(circuits).map((circuit, _index, _array) => (
-          <button
-            key={circuit.id}
-            className={
-              "p-2 font-bold rounded-sm uppercase " +
-              (openCircuit == circuit.id
-                ? `${colors[circuit.color]} shadow-sm` || ""
-                : `${colorsFaint[circuit.color]} `)
-            }
-            onClick={() => setOpenCircuit(circuit.id)}
-          >
-            {circuit.name}
-          </button>
-        ))}
+        {circuitOrder.map((circuit_id, _index, _array) => {
+          const circuit = circuits[circuit_id];
+          return (
+            <button
+              key={circuit.id}
+              className={
+                "p-2 font-bold rounded-sm uppercase " +
+                (openCircuit == circuit.id
+                  ? `${colors[circuit.color]} shadow-sm` || ""
+                  : `${colorsFaint[circuit.color]} `)
+              }
+              onClick={() => setOpenCircuit(circuit.id)}
+            >
+              {circuit.name}
+            </button>
+          );
+        })}
       </div>
 
       {openCircuit && (

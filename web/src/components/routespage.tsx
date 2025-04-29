@@ -13,7 +13,8 @@ import { useClimbs } from "../features/climbs/api/get-climbs";
 export function RoutesPage() {
   const routes = useRoutes().data || {};
   const sets = useSets().data ?? {};
-  const circuits = useCircuits().data ?? {};
+  const circuits = useCircuits().data?.data ?? {};
+  const circuitsOrder = useCircuits().data?.order ?? [];
   const climbs = useClimbs().data ?? [];
 
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
@@ -103,40 +104,44 @@ export function RoutesPage() {
           setSelected={setSelectedRoute}
         />
       </div>
-      <div className="mx-4 mt-4 flex flex-wrap gap-1 justify-center h-full">
-        {Object.values(circuits)
-          .filter((circuit) => filterCircuits[circuit.id])
-          .map((circuit) => (
-            <button
-              className={
-                "rounded-full px-3 py-1 font-semibold text-sm  text-white " +
-                (colors[circuit.color] || "") +
-                " hover:" +
-                (colorsBold[circuit.color] || "")
-              }
-              onClick={() =>
-                setFilterCircuits((prev) => ({ ...prev, [circuit.id]: false }))
-              }
-            >
-              {circuit.name}
-            </button>
-          ))}
 
-        {Object.values(circuits)
-          .filter((circuit) => !filterCircuits[circuit.id])
-          .map((circuit) => (
-            <button
-              className={
-                "rounded-full px-3 py-1 text-sm font-semibold text-gray-700  " +
-                (colorsFaint[circuit.color] || "")
-              }
-              onClick={() =>
-                setFilterCircuits((prev) => ({ ...prev, [circuit.id]: true }))
-              }
-            >
-              {circuit.name}
-            </button>
-          ))}
+      <div className="mx-4 mt-4 flex flex-wrap gap-1 justify-center h-full">
+        {circuitsOrder
+          .map((circuit_id) => circuits[circuit_id])
+          .map((circuit) =>
+            filterCircuits[circuit.id] ? (
+              <button
+                key={circuit.id}
+                className={
+                  "rounded-full px-3 py-1 font-semibold text-sm text-white " +
+                  (colors[circuit.color] || "") +
+                  " hover:" +
+                  (colorsBold[circuit.color] || "")
+                }
+                onClick={() =>
+                  setFilterCircuits((prev) => ({
+                    ...prev,
+                    [circuit.id]: false,
+                  }))
+                }
+              >
+                {circuit.name}
+              </button>
+            ) : (
+              <button
+                key={circuit.id}
+                className={
+                  "rounded-full px-3 py-1 text-sm font-semibold text-gray-700  " +
+                  (colorsFaint[circuit.color] || "")
+                }
+                onClick={() =>
+                  setFilterCircuits((prev) => ({ ...prev, [circuit.id]: true }))
+                }
+              >
+                {circuit.name}
+              </button>
+            )
+          )}
       </div>
 
       {selectedRoute && selectedRouteData ? (

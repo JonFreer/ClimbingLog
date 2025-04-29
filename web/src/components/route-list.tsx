@@ -13,7 +13,8 @@ export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
   const sets = useSets().data || {};
   const climbs = useClimbs().data ?? [];
   const projects = useProjects().data ?? [];
-  const circuits = useCircuits().data ?? {};
+  const circuits = useCircuits().data?.data ?? {};
+  const circuitsOrder = useCircuits().data?.order ?? [];
 
   // const [openCircuits, setCircuits] = useState<{ [key: string]: boolean }>({});
   const [openCircuits, setCircuits] = useState<{ [key: string]: boolean }>(
@@ -149,109 +150,112 @@ export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
       ) : null}
 
       <div className={"mx-4 mb-8"}>
-        {Object.values(circuits).map((circuit) => (
-          <>
-            {active_sets[circuit.id] ? (
-              <div key={circuit.id} className="mt-4">
-                <button
-                  className="bg-white hover:bg-gray-50 text-gray-900 font-medium  rounded-lg shadow-sm w-full text-left flex justify-between items-center"
-                  onClick={() => {
-                    setCircuits((prev) => ({
-                      ...prev,
-                      [circuit.id]: !prev[circuit.id],
-                    }));
-                  }}
-                >
-                  <div className="flex items-center w-full">
-                    <span
-                      className={
-                        "text-lg font-bold text-white uppercase px-4 py-2 pr-10 w-52 rounded-l-lg clip-path truncate " +
-                        (colors[circuit.color] || "")
-                      }
-                    >
-                      {circuit.name}
-                    </span>
-                    <div className={"font-bold ml-auto mr-2"}>
-                      {
-                        Object.values(routes).filter(
-                          (route) =>
-                            route.set_id == active_sets[circuit.id].id &&
-                            sent_ids.includes(route.id)
-                        ).length
-                      }{" "}
-                      /{" "}
-                      {
-                        Object.values(routes).filter(
-                          (route) => route.set_id === active_sets[circuit.id].id
-                        ).length
-                      }{" "}
-                      Routes
+        {circuitsOrder
+          .map((circuit_id) => circuits[circuit_id])
+          .map((circuit) => (
+            <>
+              {active_sets[circuit.id] ? (
+                <div key={circuit.id} className="mt-4">
+                  <button
+                    className="bg-white hover:bg-gray-50 text-gray-900 font-medium  rounded-lg shadow-sm w-full text-left flex justify-between items-center"
+                    onClick={() => {
+                      setCircuits((prev) => ({
+                        ...prev,
+                        [circuit.id]: !prev[circuit.id],
+                      }));
+                    }}
+                  >
+                    <div className="flex items-center w-full">
+                      <span
+                        className={
+                          "text-lg font-bold text-white uppercase px-4 py-2 pr-10 w-52 rounded-l-lg clip-path truncate " +
+                          (colors[circuit.color] || "")
+                        }
+                      >
+                        {circuit.name}
+                      </span>
+                      <div className={"font-bold ml-auto mr-2"}>
+                        {
+                          Object.values(routes).filter(
+                            (route) =>
+                              route.set_id == active_sets[circuit.id].id &&
+                              sent_ids.includes(route.id)
+                          ).length
+                        }{" "}
+                        /{" "}
+                        {
+                          Object.values(routes).filter(
+                            (route) =>
+                              route.set_id === active_sets[circuit.id].id
+                          ).length
+                        }{" "}
+                        Routes
+                      </div>
                     </div>
-                  </div>
-                  <ChevronRightIcon
-                    className={`h-5 w-5 mr-3 transform transition-transform ${
-                      openCircuits[circuit.id] ? "rotate-90" : ""
-                    }`}
-                  />
-                </button>
-                {openCircuits[circuit.id] && (
-                  <div className="ml mt-2" key={circuit.id}>
-                    {Object.values(routes)
-                      .filter(
-                        (route) => route.set_id === active_sets[circuit.id].id
-                      )
-                      .map((route) => (
-                        <div
-                          key={route.id}
-                          onClick={() => props.setSidebarRoute(route.id)}
-                          className="bg-white shadow-sm overflow-hidden sm:rounded-lg mt-2 cursor-pointer hover:bg-slate-50"
-                        >
-                          <div className="px-4 py-4 sm:px-6 flex items-center justify-between">
-                            <div className="flex items-center">
-                              <img
-                                className="h-24 rounded-sm"
-                                src={"/api/img_thumb/" + route.id + ".webp"}
-                                alt=""
-                              ></img>
-                              <div className="ml-4">
-                                <h3 className="text-lg leading-6 font-medium text-gray-900">
-                                  {route.name}
-                                </h3>
-                                <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                                  {route.location}
-                                </p>
-                                <div className="flex gap-2 mt-1">
-                                  {route.style.split(",").map((style) => (
-                                    <span className="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-gray-600">
-                                      {style}
-                                    </span>
-                                  ))}
+                    <ChevronRightIcon
+                      className={`h-5 w-5 mr-3 transform transition-transform ${
+                        openCircuits[circuit.id] ? "rotate-90" : ""
+                      }`}
+                    />
+                  </button>
+                  {openCircuits[circuit.id] && (
+                    <div className="ml mt-2" key={circuit.id}>
+                      {Object.values(routes)
+                        .filter(
+                          (route) => route.set_id === active_sets[circuit.id].id
+                        )
+                        .map((route) => (
+                          <div
+                            key={route.id}
+                            onClick={() => props.setSidebarRoute(route.id)}
+                            className="bg-white shadow-sm overflow-hidden sm:rounded-lg mt-2 cursor-pointer hover:bg-slate-50"
+                          >
+                            <div className="px-4 py-4 sm:px-6 flex items-center justify-between">
+                              <div className="flex items-center">
+                                <img
+                                  className="h-24 rounded-sm"
+                                  src={"/api/img_thumb/" + route.id + ".webp"}
+                                  alt=""
+                                ></img>
+                                <div className="ml-4">
+                                  <h3 className="text-lg leading-6 font-medium text-gray-900">
+                                    {route.name}
+                                  </h3>
+                                  <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                                    {route.location}
+                                  </p>
+                                  <div className="flex gap-2 mt-1">
+                                    {route.style.split(",").map((style) => (
+                                      <span className="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-gray-600">
+                                        {style}
+                                      </span>
+                                    ))}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                            <div>
-                              {sent_ids.includes(route.id) ? (
-                                <span
-                                  className={
-                                    "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white " +
-                                    (colors[circuit.color] || "")
-                                  }
-                                >
-                                  Sent
-                                </span>
-                              ) : (
-                                <div className={"w-14"}> </div>
-                              )}
+                              <div>
+                                {sent_ids.includes(route.id) ? (
+                                  <span
+                                    className={
+                                      "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white " +
+                                      (colors[circuit.color] || "")
+                                    }
+                                  >
+                                    Sent
+                                  </span>
+                                ) : (
+                                  <div className={"w-14"}> </div>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                  </div>
-                )}
-              </div>
-            ) : null}
-          </>
-        ))}
+                        ))}
+                    </div>
+                  )}
+                </div>
+              ) : null}
+            </>
+          ))}
       </div>
     </>
   );
