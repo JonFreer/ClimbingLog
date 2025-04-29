@@ -9,6 +9,7 @@ import { useRoutes } from "../features/routes/api/get-routes";
 import { useCircuits } from "../features/circuits/api/get-circuits";
 import { useSets } from "../features/sets/api/get-sets";
 import { useClimbs } from "../features/climbs/api/get-climbs";
+import { useProjects } from "../features/projects/api/get-projects";
 
 export function RoutesPage() {
   const routes = useRoutes().data || {};
@@ -16,7 +17,7 @@ export function RoutesPage() {
   const circuits = useCircuits().data?.data ?? {};
   const circuitsOrder = useCircuits().data?.order ?? [];
   const climbs = useClimbs().data ?? [];
-
+  const projects = useProjects().data ?? [];
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
   const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(
     undefined
@@ -62,6 +63,8 @@ export function RoutesPage() {
     return acc;
   }, {} as Record<string, Set>);
 
+  console.log("active_sets", active_sets);
+
   const selectedRouteData = routes[selectedRoute] || null;
 
   return (
@@ -77,10 +80,12 @@ export function RoutesPage() {
               .filter(
                 (route) =>
                   sets[route.set_id] &&
-                  ((active_sets[sets[route.set_id].circuit_id].id ==
+                  active_sets[sets[route.set_id].circuit_id].id ==
                     route.set_id &&
-                    filterCircuits[sets[route.set_id].circuit_id]) ||
-                    !anyFitlered)
+                  (filterCircuits[sets[route.set_id].circuit_id] ||
+                    !anyFitlered ||
+                    (filterCircuits["projects"] &&
+                      projects.some((project) => project === route.id)))
               )
               .map((route) => ({
                 id: route.id,
@@ -113,7 +118,7 @@ export function RoutesPage() {
               <button
                 key={circuit.id}
                 className={
-                  "rounded-full px-3 py-1 font-semibold text-sm text-white " +
+                  "cursor-pointer rounded-full px-3 py-1 font-semibold text-sm text-white " +
                   (colors[circuit.color] || "") +
                   " hover:" +
                   (colorsBold[circuit.color] || "")
@@ -131,7 +136,7 @@ export function RoutesPage() {
               <button
                 key={circuit.id}
                 className={
-                  "rounded-full px-3 py-1 text-sm font-semibold text-gray-700  " +
+                  "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold text-gray-700  " +
                   (colorsFaint[circuit.color] || "")
                 }
                 onClick={() =>
@@ -142,6 +147,32 @@ export function RoutesPage() {
               </button>
             )
           )}
+
+        <button
+          key={"projects"}
+          className={
+            filterCircuits["projects"]
+              ? "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold text-white bg-linear-to-r from-indigo-500 from-10% via-sky-500 via-40% to-emerald-500 to-100%"
+              : "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold text-gray-700 bg-linear-to-r from-indigo-200 from-10% via-sky-200 via-40% to-emerald-200 to-100%"
+          }
+          onClick={() => {
+            // if (!filterCircuits["projects"]) {
+            //   setFilterCircuits((prev) => {
+            //     const updatedFilters = { ...prev };
+            //     Object.keys(updatedFilters).forEach((key) => {
+            //     updatedFilters[key] = false;
+            //     });
+            //     return updatedFilters;
+            //   });
+            // }
+            setFilterCircuits((prev) => ({
+              ...prev,
+              ["projects"]: !filterCircuits["projects"],
+            }));
+          }}
+        >
+          Projects
+        </button>
       </div>
 
       {selectedRoute && selectedRouteData ? (
