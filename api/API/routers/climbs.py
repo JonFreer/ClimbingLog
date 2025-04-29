@@ -118,6 +118,18 @@ async def remove_climb(
     climb = result.scalars().first()
     if not climb:
         raise HTTPException(status_code=404, detail="Climb not found")
+
+    # Count the number of activities associated with the climb
+    activity_count = await db.execute(
+        select(func.count()).where(Climbs.activity == climb.activity)
+    )
+    count = activity_count.scalar()
+
+    if count == 1:
+        # If this is the only activity associated with the climb, delete the activity
+        await db.delete(climb.activity)
+        await db.commit()
+    
     await db.delete(climb)
     await db.commit()
     return climb
