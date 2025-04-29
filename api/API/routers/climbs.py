@@ -127,7 +127,11 @@ async def remove_climb(
 
     if count == 1:
         # If this is the only activity associated with the climb, delete the activity
-        await db.delete(climb.activity)
+        activity = await db.execute(
+            select(Activities).where(Activities.id == climb.activity)
+        )
+        activity_instance = activity.scalars().first()
+        await db.delete(activity_instance)
         await db.commit()
     
     await db.delete(climb)
