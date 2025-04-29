@@ -14,7 +14,7 @@ type CreateRouteProps = {
 export const CreateRoute = ({ set_id, circuit_id }: CreateRouteProps) => {
   const [open, setOpen] = useState(false);
   const routes = useRoutes().data || [];
-  const circuits = useCircuits().data || {};
+  const circuits = useCircuits().data?.data || {};
 
   const { addNotification } = useNotifications();
 

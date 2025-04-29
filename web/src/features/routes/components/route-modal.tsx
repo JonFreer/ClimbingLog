@@ -11,6 +11,7 @@ import {
 import DraggableDotsCanvas from "../../../components/map";
 import { CreateRouteInput } from "../api/create-route";
 import { UpdateRouteInput } from "../api/update-route";
+import { colors, colorsBold, colorsHex } from "../../../types/colors";
 
 export default function RouteModal(props: {
   routes: Record<string, Route>;
@@ -83,7 +84,7 @@ export default function RouteModal(props: {
       complete: true,
       radius: 6,
       draggable: true,
-      color: "#ff0000",
+      color: colorsHex[props.circuits[props.circuit_id]?.color],
       id: "",
     },
   ]);
@@ -130,7 +131,7 @@ export default function RouteModal(props: {
         complete: true,
         radius: 6,
         draggable: true,
-        color: "#ff0000",
+        color: colorsHex[props.circuits[props.circuit_id]?.color],
         id: "",
       },
     ]);
@@ -264,7 +265,15 @@ export default function RouteModal(props: {
                             className={
                               "justify-center rounded-md  px-3 py-2 text-sm shadow-md sm:w-auto mb-1 cursor-pointer select-none " +
                               (location === loc
-                                ? "bg-violet-600 hover:bg-violet-500 text-white "
+                                ? `${
+                                    colors[
+                                      props.circuits[props.circuit_id].color
+                                    ]
+                                  } hover:${
+                                    colorsBold[
+                                      props.circuits[props.circuit_id].color
+                                    ]
+                                  } text-white`
                                 : "bg-white hover:bg-gray-100 text-gray-500")
                             }
                             key={loc}
@@ -297,7 +306,15 @@ export default function RouteModal(props: {
                             className={
                               "justify-center rounded-md  px-3 py-2 text-sm shadow-md sm:w-auto mb-1 cursor-pointer select-none " +
                               (styles.includes(loc)
-                                ? "bg-violet-600 hover:bg-violet-500 text-white "
+                                ? `${
+                                    colors[
+                                      props.circuits[props.circuit_id].color
+                                    ]
+                                  } hover:${
+                                    colorsBold[
+                                      props.circuits[props.circuit_id].color
+                                    ]
+                                  } text-white`
                                 : "bg-white hover:bg-gray-100 text-gray-500")
                             }
                             key={loc}

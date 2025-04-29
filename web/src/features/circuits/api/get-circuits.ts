@@ -9,11 +9,11 @@ export const orderedColors = [
   "White",
   "Blue",
   "Black",
+  "Pink",
   "Red",
   "Purple",
   "Yellow",
   "Orange",
-  "Pink",
 ];
 
 export const getCircuits = (): Promise<{

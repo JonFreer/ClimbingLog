@@ -17,7 +17,7 @@ type CreateSetProps = {
 
 export const CreateSet = ({ circuit_id }: CreateSetProps) => {
   const [open, setOpen] = useState(false);
-  const circuits = useCircuits().data || {};
+  const circuits = useCircuits().data?.data || {};
 
   const { addNotification } = useNotifications();
 
