@@ -38,9 +38,13 @@ async def get_all_activities(
             select(Climbs).where(Climbs.activity == activity.id)
         )
         activity_dict = activity._asdict()  # Convert the Row object to a dictionary
-        activity_dict["climb_ids"] = list(
-            reversed([climb.id for climb in climbs_result.scalars().all()])
-        )
+
+        routes = {}
+        for climb in climbs_result.scalars().all():
+            routes[climb.route] = climb.id
+
+        activity_dict["climb_ids"] = list(routes.values())  # Get the climb IDs
+
         activities[
             activities.index(activity)
         ] = activity_dict  # Replace the Row object with the updated dictionary
