@@ -133,7 +133,7 @@ async def remove_climb(
         activity_instance = activity.scalars().first()
         await db.delete(activity_instance)
         await db.commit()
-    
+
     await db.delete(climb)
     await db.commit()
     return climb

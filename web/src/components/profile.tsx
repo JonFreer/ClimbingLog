@@ -312,8 +312,11 @@ export function RouteCardProfile(props: {
     return <div></div>;
   }
 
-  const days_since =
-    new Date().getDate() - new Date(props.climb.time).getDate();
+  const today = Math.floor(new Date().getTime() / (1000 * 60 * 60 * 24));
+  const climb_day = Math.floor(
+    new Date(props.climb.time).getTime() / (1000 * 60 * 60 * 24)
+  );
+  const days_since = today - climb_day;
 
   var day_text =
     days_since === 0
