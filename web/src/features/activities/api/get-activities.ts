@@ -1,30 +1,38 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { infiniteQueryOptions, useInfiniteQuery } from "@tanstack/react-query";
 import { api } from "../../../lib/api-client";
-import { Activity } from "../../../types/routes";
+import { Activity, Meta } from "../../../types/routes";
 import { QueryConfig } from "../../../lib/react-query";
 
-export const getActivities = (): Promise<{ data: Activity[] }> => {
-  return api.get(`/api/activities/get_all`);
+export const getActivities = ({
+  page = 1,
+}: {
+  page?: number;
+}): Promise<{ data: Activity[]; meta: Meta }> => {
+  return api.get(`/api/activities/get_paginated`, { params: { page } });
 };
 
-export const getActivitiesQueryOptions = () => {
-  return queryOptions({
+export const getInfiniteActivitiesQueryOptions = () => {
+  return infiniteQueryOptions({
     queryKey: ["activities"],
-    queryFn: () => getActivities(),
-    select: (response) => response?.data ?? [],
-    placeholderData: { data: [] },
+    queryFn: ({ pageParam = 1 }) => {
+      return getActivities({ page: pageParam as number });
+    },
+    getNextPageParam: (lastPage) => {
+      if (lastPage?.meta?.page === lastPage?.meta?.totalPages) return undefined;
+      const nextPage = lastPage.meta.page + 1;
+      return nextPage;
+    },
+    initialPageParam: 1,
   });
 };
 
 type UseActivitiesOptions = {
-  queryConfig?: QueryConfig<typeof getActivitiesQueryOptions>;
+  queryConfig?: QueryConfig<typeof getActivities>;
+  page?: number;
 };
 
-export const useActivities = ({
-  queryConfig = {},
-}: UseActivitiesOptions = {}) => {
-  return useQuery({
-    ...getActivitiesQueryOptions(),
-    ...queryConfig,
+export const useInfiniteActivities = ({}: UseActivitiesOptions) => {
+  return useInfiniteQuery({
+    ...getInfiniteActivitiesQueryOptions(),
   });
 };

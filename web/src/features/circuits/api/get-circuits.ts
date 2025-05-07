@@ -21,7 +21,7 @@ export const getCircuits = (): Promise<{
   order: string[];
 }> => {
   return api.get(`/api/circuits/get_all`).then((response) => {
-    const circuitsArray = response.data;
+    const circuitsArray = response;
     const circuitsDict = circuitsArray.reduce(
       (dict: Record<string, Circuit>, circuit: Circuit) => {
         dict[circuit.id] = circuit; // Use `id` as the key

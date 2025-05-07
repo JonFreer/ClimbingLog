@@ -6,7 +6,7 @@ import { QueryConfig } from "../../../lib/react-query";
 
 export const getSets = (): Promise<{ data: Record<string, Set> }> => {
   return api.get(`/api/sets/get_all`).then((response) => {
-    const setArray = response.data;
+    const setArray = response as unknown as Set[];
     const setDict = setArray.reduce((dict: Record<string, Set>, set: Set) => {
       dict[set.id] = set; // Use `id` as the key
       return dict;

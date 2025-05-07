@@ -73,3 +73,9 @@ export interface Activity {
   has_profile_photo: boolean;
   reactions: UserNamePair[];
 }
+
+export type Meta = {
+  page: number;
+  total: number;
+  totalPages: number;
+};

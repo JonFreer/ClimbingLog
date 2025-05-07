@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../../lib/api-client";
 import { MutationConfig } from "../../../lib/react-query";
-import { getActivitiesQueryOptions } from "../../activities/api/get-activities";
+import { getInfiniteActivitiesQueryOptions } from "../../activities/api/get-activities";
 
 export const createReaction = ({
   activity_id,
@@ -25,7 +25,7 @@ export const useCreateReaction = ({
   return useMutation({
     onSuccess: (...args) => {
       queryClient.invalidateQueries({
-        queryKey: getActivitiesQueryOptions().queryKey,
+        queryKey: getInfiniteActivitiesQueryOptions().queryKey,
       });
       onSuccess?.(...args);
     },

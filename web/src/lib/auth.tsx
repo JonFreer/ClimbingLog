@@ -7,8 +7,8 @@ import { z } from "zod";
 
 const getUser = async (): Promise<User> => {
   const response = await api.get("/users/me");
-  console.log("getUser response", response.data);
-  return response.data;
+  console.log("getUser response", response);
+  return response;
 };
 
 const logout = (): Promise<void> => {

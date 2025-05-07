@@ -3,7 +3,7 @@ import { api } from "../../../lib/api-client";
 import { Climb } from "../../../types/routes";
 import { QueryConfig } from "../../../lib/react-query";
 
-export const getClimbs = (): Promise<{ data: Climb[] }> => {
+export const getClimbs = (): Promise<Climb[]> => {
   return api.get(`/api/climbs/me`);
 };
 
@@ -11,8 +11,7 @@ export const getClimbsQueryOptions = () => {
   return queryOptions({
     queryKey: ["climbs"],
     queryFn: () => getClimbs(),
-    select: (response) => response?.data ?? [],
-    placeholderData: { data: [] },
+    placeholderData: [],
   });
 };
 

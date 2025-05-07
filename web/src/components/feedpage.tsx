@@ -7,7 +7,7 @@ import { useSets } from "../features/sets/api/get-sets";
 import { useCircuits } from "../features/circuits/api/get-circuits";
 import { useRoutes } from "../features/routes/api/get-routes";
 import { useAllClimbs } from "../features/climbs/api/get-all-climbs";
-import { useActivities } from "../features/activities/api/get-activities";
+import { useInfiniteActivities } from "../features/activities/api/get-activities";
 import { useCreateReaction } from "../features/reactions/api/create-reaction";
 import { useDeleteReaction } from "../features/reactions/api/delete-reaction";
 import { useUser } from "../lib/auth";
@@ -23,7 +23,8 @@ export default function Feed() {
   const circuits = useCircuits().data?.data || {};
   const circuitsOrder = useCircuits().data?.order || [];
   const climbs = useAllClimbs().data || [];
-  const activities = useActivities().data || [];
+  // const activities = useActivities().data || [];
+  const activitiesQuery = useInfiniteActivities({});
 
   const createReactionMutation = useCreateReaction({
     mutationConfig: {
@@ -36,6 +37,17 @@ export default function Feed() {
       onSuccess: () => {},
     },
   });
+
+  if (activitiesQuery.isLoading) {
+    return (
+      <div className="flex h-48 w-full items-center justify-center">
+        Loading
+      </div>
+    );
+  }
+
+  const activities =
+    activitiesQuery.data?.pages.flatMap((page) => page.data) || [];
 
   return (
     <>
@@ -169,6 +181,17 @@ export default function Feed() {
             </div>
           </div>
         ))}
+        <div className="flex justify-center mt-4">
+          {activitiesQuery.hasNextPage && (
+            <div className="flex items-center justify-center py-4">
+              <button onClick={() => activitiesQuery.fetchNextPage()}>
+                {activitiesQuery.isFetchingNextPage
+                  ? "Loading..."
+                  : "Load More Comments"}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </>
   );
