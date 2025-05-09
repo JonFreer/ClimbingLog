@@ -42,4 +42,12 @@ export default defineConfig({
       include: ["src/**"],
     },
   },
+  build: {
+    sourcemap: true, // Enable source maps for easier debugging
+    rollupOptions: {
+      output: {
+        sourcemapExcludeSources: false, // Include original source code in source maps
+      },
+    },  
+  },
 });

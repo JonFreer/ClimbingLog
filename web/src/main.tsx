@@ -16,16 +16,19 @@ import {
   PersistQueryClientProvider,
 } from "@tanstack/react-query-persist-client";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
+import { APP_VERSION } from "./constants/version.ts";
 
-// createRoot(document.getElementById('root')!).render(
-//   <StrictMode>
-//     <App />
-//   </StrictMode>,
-// )
+const REACT_QUERY_CACHE_KEY = "react-query-cache-version";
 
 const queryClient = new QueryClient({
   defaultOptions: queryConfig,
 });
+
+const storedVersion = localStorage.getItem(REACT_QUERY_CACHE_KEY);
+if (storedVersion !== APP_VERSION) {
+  queryClient.clear(); // Clear React Query cache
+  localStorage.setItem(REACT_QUERY_CACHE_KEY, APP_VERSION); // Update stored version
+}
 
 // 2. the persister
 const localStoragePersister = createSyncStoragePersister({

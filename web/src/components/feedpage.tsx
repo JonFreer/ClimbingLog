@@ -38,13 +38,13 @@ export default function Feed() {
     },
   });
 
-  if (activitiesQuery.isLoading) {
-    return (
-      <div className="flex h-48 w-full items-center justify-center">
-        Loading
-      </div>
-    );
-  }
+  // if (activitiesQuery.isLoading) {
+  //   return (
+  //     <div className="flex h-48 w-full items-center justify-center">
+  //       Loading
+  //     </div>
+  //   );
+  // }
 
   const activities =
     activitiesQuery.data?.pages.flatMap((page) => page.data) || [];
