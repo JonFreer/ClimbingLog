@@ -44,7 +44,10 @@ export const UpdateRoute = ({ set_id, circuit_id, route }: EditRouteProps) => {
       <button
         className="ml-auto text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md"
         onClick={
-          () => setOpen(true) // Change to setOpen(true) to open the modal
+          (e) => {
+
+            setOpen(true);
+          } // Change to setOpen(true) to open the modal
         }
       >
         <PencilIcon aria-hidden="true" className="h-5 w-5" />
