@@ -14,11 +14,12 @@ import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { useParams } from "react-router";
 import { API } from "../types/api";
-import RouteSideBar from "./route-sidebar";
+import RouteSideBar from "./ui/sidebar/route-sidebar";
 import { useCircuits } from "../features/circuits/api/get-circuits";
 import { useRoutes } from "../features/routes/api/get-routes";
 import { useSets } from "../features/sets/api/get-sets";
 import { useUser } from "../lib/auth";
+import { useSidebarState } from "./ui/sidebar/sidebar-state";
 
 ChartJS.register(
   CategoryScale,
@@ -57,10 +58,7 @@ export default function Profile() {
 
   const [user, setUser] = useState<User | false>(false);
   const [climbs, setClimbs] = useState<Climb[]>([]);
-  const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(
-    undefined
-  );
-
+  const { openSidebar } = useSidebarState();
   const { id } = useParams();
 
   function fetchUser() {
@@ -188,10 +186,10 @@ export default function Profile() {
 
   return (
     <div className="bg-gray-100 min-h-screen p-4 sm:mb-8 mb-14">
-      <RouteSideBar
+      {/* <RouteSideBar
         route={routes[sidebarRoute]}
         closeCallback={() => setSidebarRoute(undefined)}
-      ></RouteSideBar>
+      ></RouteSideBar> */}
 
       <div className="max-w-3xl mx-auto bg-white rounded-t-xl relative">
         {/* <img className="max-h-56 w-full object-cover shadow-lg rounded-t-xl  border-4 border-white" src={`https://www.abcwalls.co.uk/wp-content/uploads/2024/01/DepotClimbingSocialUse-178-USE.jpg`} alt="Profile" /> */}
@@ -285,7 +283,7 @@ export default function Profile() {
                       circuits={circuits}
                       sets={sets}
                       climb={climb}
-                      setSidebarRoute={setSidebarRoute}
+                      setSidebarRoute={() => openSidebar(routes[climb.route])}
                     />
                   ))}
               </div>
@@ -306,7 +304,7 @@ export function RouteCardProfile(props: {
   circuits: Record<string, Circuit>;
   sets: Record<string, Set>;
   climb: Climb;
-  setSidebarRoute: (route: string) => void;
+  setSidebarRoute: (route: Route) => void;
 }) {
   if (props.route === undefined) {
     return <div></div>;
@@ -328,7 +326,7 @@ export function RouteCardProfile(props: {
   return (
     <div
       className="cursor-pointer w-36 max-w-xs rounded-lg shadow-md bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out"
-      onClick={() => props.setSidebarRoute(props.route.id)}
+      onClick={() => props.setSidebarRoute(props.route)}
     >
       <div className="bg-white relative">
         <img

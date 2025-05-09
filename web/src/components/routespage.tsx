@@ -4,12 +4,13 @@ import { RouteList } from "./route-list";
 import DraggableDotsCanvas from "./map";
 import { colors, colorsBold, colorsFaint, colorsHex } from "../types/colors";
 import { RouteCard } from "./route-card";
-import RouteSideBar from "./route-sidebar";
+import RouteSideBar from "./ui/sidebar/route-sidebar";
 import { useRoutes } from "../features/routes/api/get-routes";
 import { useCircuits } from "../features/circuits/api/get-circuits";
 import { useSets } from "../features/sets/api/get-sets";
 import { useClimbs } from "../features/climbs/api/get-climbs";
 import { useProjects } from "../features/projects/api/get-projects";
+import { useSidebarState } from "./ui/sidebar/sidebar-state";
 
 export function RoutesPage() {
   const routes = useRoutes().data || {};
@@ -19,9 +20,6 @@ export function RoutesPage() {
   const climbs = useClimbs().data ?? [];
   const projects = useProjects().data ?? [];
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
-  const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(
-    undefined
-  );
   const [filterCircuits, setFilterCircuits] = useState<{
     [key: string]: boolean;
   }>(() => {
@@ -35,23 +33,6 @@ export function RoutesPage() {
   const anyFitlered = Object.values(filterCircuits).some(
     (circuit) => circuit == true
   );
-
-  // Hijack the back button to close the sidebar
-  useEffect(() => {
-    const handlePopState = () => {
-      setSidebarRoute(undefined);
-      // window.onpopstate = undefined;
-    };
-
-    if (sidebarRoute) {
-      window.addEventListener("popstate", handlePopState);
-      window.history.pushState(null, "", window.location.href);
-    }
-
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, [sidebarRoute]);
 
   const active_sets = Object.values(sets).reduce((acc, set) => {
     if (
@@ -69,10 +50,6 @@ export function RoutesPage() {
 
   return (
     <div className="sm:mb-8 mb-16">
-      <RouteSideBar
-        route={routes[sidebarRoute] || null}
-        closeCallback={() => setSidebarRoute(undefined)}
-      ></RouteSideBar>
       <div className="">
         <DraggableDotsCanvas
           dots={
@@ -181,13 +158,12 @@ export function RoutesPage() {
           circuits={circuits}
           sets={sets}
           climbs={climbs}
-          setSidebarRoute={setSidebarRoute}
         />
       ) : (
         ""
       )}
 
-      <RouteList setSidebarRoute={setSidebarRoute} />
+      <RouteList />
     </div>
   );
 }

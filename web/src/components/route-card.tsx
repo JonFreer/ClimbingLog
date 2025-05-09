@@ -2,14 +2,16 @@ import { NavLink } from "react-router";
 import { colors, colorsBorder } from "../types/colors";
 import { Circuit, Route, SentBy, Set } from "../types/routes";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
+import { useSidebarState } from "./ui/sidebar/sidebar-state";
+import { set } from "zod";
 
 export function RouteCard(props: {
   route: Route;
   climbs: any[];
   sets: Record<string, Set>;
   circuits: Record<string, Circuit>;
-  setSidebarRoute: (route: string) => void;
 }) {
+  const { openSidebar } = useSidebarState();
   var sent_ids: string[] = [];
   if (props.climbs != undefined) {
     sent_ids = props.climbs
@@ -23,12 +25,17 @@ export function RouteCard(props: {
     <div
       key={props.route.id}
       className="bg-white shadow-sm overflow-hidden sm:rounded-lg mt-2 cursor-pointer"
-      onClick={() => props.setSidebarRoute(props.route.id)}
+      onClick={() => openSidebar(props.route)}
     >
       <div className="px-4 py-5 sm:px-6 flex items-center justify-between">
         <div className="flex items-center">
           <img
-            className={`h-24 rounded-sm border-b-6 ${colorsBorder[props.circuits[props.sets[props.route.set_id]?.circuit_id]?.color]}`}
+            className={`h-24 rounded-sm border-b-6 ${
+              colorsBorder[
+                props.circuits[props.sets[props.route.set_id]?.circuit_id]
+                  ?.color
+              ]
+            }`}
             src={"/api/img_thumb/" + props.route.id + ".webp"}
             alt=""
           ></img>
@@ -62,7 +69,7 @@ export function RouteCard(props: {
             <div className={"w-14"}> </div>
           )}
           <button
-            onClick={() => props.setSidebarRoute(props.route.id)}
+            onClick={() => openSidebar(props.route)}
             className={
               "ml-aut mt-2 text-white text-xs p-2 px-4 rounded-full flex items-center " +
               (circuit

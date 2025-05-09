@@ -15,29 +15,28 @@ import {
   TrashIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
-import { Route, SentBy } from "../types/routes";
-import { colors, colorsBold, colorsPastel } from "../types/colors";
-import { useSets } from "../features/sets/api/get-sets";
-import { useClimbs } from "../features/climbs/api/get-climbs";
-import { useCircuits } from "../features/circuits/api/get-circuits";
-import { useDeleteClimb } from "../features/climbs/api/delete-climb";
-import { useCreateSend } from "../features/climbs/api/create-send";
-import { useCreateAttempt } from "../features/climbs/api/create-attempt";
-import { useProjects } from "../features/projects/api/get-projects";
-import { useCreateProject } from "../features/projects/api/create-project";
-import { useDeleteProject } from "../features/projects/api/delete-project";
+import { Route, SentBy } from "../../../types/routes";
+import { colors, colorsBold, colorsPastel } from "../../../types/colors";
+import { useSets } from "../../../features/sets/api/get-sets";
+import { useClimbs } from "../../../features/climbs/api/get-climbs";
+import { useCircuits } from "../../../features/circuits/api/get-circuits";
+import { useDeleteClimb } from "../../../features/climbs/api/delete-climb";
+import { useCreateSend } from "../../../features/climbs/api/create-send";
+import { useCreateAttempt } from "../../../features/climbs/api/create-attempt";
+import { useProjects } from "../../../features/projects/api/get-projects";
+import { useCreateProject } from "../../../features/projects/api/create-project";
+import { useDeleteProject } from "../../../features/projects/api/delete-project";
+import { useSidebarState } from "./sidebar-state";
 
-export default function RouteSideBar(props: {
-  route: Route | undefined;
-  closeCallback: () => void;
-}) {
+export default function RouteSideBar() {
   const climbs = useClimbs().data ?? [];
   const projects = useProjects().data ?? [];
   const sets = useSets().data ?? {};
   const circuits = useCircuits().data?.data ?? {};
+  const route_state = useSidebarState((state) => state.route);
 
-  console.log("projects", projects);
-  console.log("climbs", climbs);
+  const closeCallback = useSidebarState((state) => state.closeSidebar);
+
   const deleteClimbMutation = useDeleteClimb({
     mutationConfig: {
       onSuccess: () => {},
@@ -72,16 +71,7 @@ export default function RouteSideBar(props: {
 
   const [sentBy, setSentBy] = useState<SentBy>({ users: [], num_users: 0 });
   const [sentByOpen, setSentByOpen] = useState(false);
-
-  function updateSentBy() {
-    if (props.route) {
-      fetch("/api/routes/sent_by/" + props.route.id)
-        .then((response) => response.json())
-        .then((data) => setSentBy(data))
-        .catch((error) => console.error("Error fetching sent_by:", error));
-    }
-  }
-
+  const [justCompleted, setJustCompleted] = useState(false);
   const [route, setRoute] = useState<Route>({
     id: "",
     name: "",
@@ -93,18 +83,26 @@ export default function RouteSideBar(props: {
     grade: "",
   });
 
-  const [justCompleted, setJustCompleted] = useState(false);
+  function updateSentBy() {
+    if (route != null) {
+      console.log("updateSentBy", route);
+      fetch("/api/routes/sent_by/" + route.id)
+        .then((response) => response.json())
+        .then((data) => setSentBy(data))
+        .catch((error) => console.error("Error fetching sent_by:", error));
+    }
+  }
 
   useEffect(() => {
     setJustCompleted(false);
-  }, [props.route?.id]);
+  }, [route?.id]);
 
   useEffect(() => {
-    if (props.route != undefined) {
-      setRoute(props.route);
+    if (route_state != null) {
       updateSentBy();
+      setRoute(route_state);
     }
-  }, [props.route]);
+  }, [route_state]);
 
   const complete = climbs.find(
     (climb) => climb.route == route.id && climb.sent == true
@@ -118,7 +116,7 @@ export default function RouteSideBar(props: {
 
   const circuit = circuits[sets[route.set_id]?.circuit_id];
 
-  const open = props.route != undefined;
+  const open = route_state != null;
 
   const sent_by_imgs = sentBy.users
     .filter((user) => user.has_profile_photo)
@@ -128,8 +126,8 @@ export default function RouteSideBar(props: {
   return (
     <Dialog
       open={open}
-      onClose={() => props.closeCallback()}
-      className="relative z-10"
+      onClose={() => closeCallback()}
+      className="relative z-100"
     >
       <DialogBackdrop
         transition
@@ -147,7 +145,7 @@ export default function RouteSideBar(props: {
                 <div className="absolute left-0 top-0 -ml-8 flex pr-2 pt-4 duration-500 ease-in-out data-closed:opacity-0 sm:-ml-10 sm:pr-4">
                   <button
                     type="button"
-                    onClick={() => props.closeCallback()}
+                    onClick={() => closeCallback()}
                     className="relative rounded-md text-gray-300 hover:text-white focus:outline-hidden focus:ring-2 focus:ring-white"
                   >
                     <span className="absolute -inset-2.5" />

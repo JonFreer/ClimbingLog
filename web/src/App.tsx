@@ -17,6 +17,7 @@ import NavBarBottom from "./components/navbar-bottom";
 import { useUser } from "./lib/auth";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Notifications } from "./components/ui/notifications";
+import RouteSideBar from "./components/ui/sidebar/route-sidebar";
 const ProtectedRoute = ({
   authed,
   children,
@@ -39,6 +40,7 @@ function App() {
       <Notifications />
       <NavBar />
       <NavBarBottom />
+      <RouteSideBar />
       <Routes>
         <Route
           path="/register"

@@ -1,7 +1,7 @@
 import { Climb } from "../types/routes";
 import { useState } from "react";
 import { RouteCardProfile } from "./profile";
-import RouteSideBar from "./route-sidebar";
+import RouteSideBar from "./ui/sidebar/route-sidebar";
 import { colorsPastel } from "../types/colors";
 import { useSets } from "../features/sets/api/get-sets";
 import { useCircuits } from "../features/circuits/api/get-circuits";
@@ -11,11 +11,12 @@ import { useInfiniteActivities } from "../features/activities/api/get-activities
 import { useCreateReaction } from "../features/reactions/api/create-reaction";
 import { useDeleteReaction } from "../features/reactions/api/delete-reaction";
 import { useUser } from "../lib/auth";
+import { useSidebarState } from "./ui/sidebar/sidebar-state";
 
 export default function Feed() {
-  const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(
-    undefined
-  );
+  // const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(
+  //   undefined
+  // );
 
   const user = useUser();
   const routes = useRoutes().data || {};
@@ -23,6 +24,8 @@ export default function Feed() {
   const circuits = useCircuits().data?.data || {};
   const circuitsOrder = useCircuits().data?.order || [];
   const climbs = useAllClimbs().data || [];
+
+  const { openSidebar } = useSidebarState();
   // const activities = useActivities().data || [];
   const activitiesQuery = useInfiniteActivities({});
 
@@ -55,10 +58,10 @@ export default function Feed() {
         <div className="font-semibold text-xl">Send Feed</div>
       </div>
       <div className="bg-gray-100 sm:mb-8 mb-14">
-        <RouteSideBar
+        {/* <RouteSideBar
           route={routes[sidebarRoute] || undefined}
           closeCallback={() => setSidebarRoute(undefined)}
-        ></RouteSideBar>
+        ></RouteSideBar> */}
 
         {activities.map((activity) => (
           <div
@@ -123,7 +126,7 @@ export default function Feed() {
                             circuits={circuits}
                             sets={sets}
                             climb={climb}
-                            setSidebarRoute={setSidebarRoute}
+                            setSidebarRoute={openSidebar}
                           />
                         )
                       );

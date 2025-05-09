@@ -7,15 +7,16 @@ import { useCircuits } from "../features/circuits/api/get-circuits";
 import { useSets } from "../features/sets/api/get-sets";
 import { useClimbs } from "../features/climbs/api/get-climbs";
 import { useProjects } from "../features/projects/api/get-projects";
+import { useSidebarState } from "./ui/sidebar/sidebar-state";
 
-export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
+export function RouteList() {
   const routes = useRoutes().data || {};
   const sets = useSets().data || {};
   const climbs = useClimbs().data ?? [];
   const projects = useProjects().data ?? [];
   const circuits = useCircuits().data?.data ?? {};
   const circuitsOrder = useCircuits().data?.order ?? [];
-
+  const { openSidebar } = useSidebarState();
   // const [openCircuits, setCircuits] = useState<{ [key: string]: boolean }>({});
   const [openCircuits, setCircuits] = useState<{ [key: string]: boolean }>(
     () => {
@@ -97,13 +98,17 @@ export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
                   .map((route) => (
                     <div
                       key={route.id}
-                      onClick={() => props.setSidebarRoute(route.id)}
+                      onClick={() => openSidebar(route)}
                       className="bg-white shadow-sm overflow-hidden sm:rounded-lg mt-2 cursor-pointer hover:bg-slate-50"
                     >
                       <div className="px-4 py-4 sm:px-6 flex items-center justify-between">
                         <div className="flex items-center">
                           <img
-                            className={`h-24 rounded-sm border-b-6 ${colorsBorder[circuits[sets[route.set_id]?.circuit_id]?.color]}`}
+                            className={`h-24 rounded-sm border-b-6 ${
+                              colorsBorder[
+                                circuits[sets[route.set_id]?.circuit_id]?.color
+                              ]
+                            }`}
                             src={"/api/img_thumb/" + route.id + ".webp"}
                             alt=""
                           ></img>
@@ -207,13 +212,18 @@ export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
                         .map((route) => (
                           <div
                             key={route.id}
-                            onClick={() => props.setSidebarRoute(route.id)}
+                            onClick={() => openSidebar(route)}
                             className="bg-white shadow-sm overflow-hidden sm:rounded-lg mt-2 cursor-pointer hover:bg-slate-50"
                           >
                             <div className="px-4 py-4 sm:px-6 flex items-center justify-between">
                               <div className="flex items-center">
                                 <img
-                                  className={`h-24 rounded-sm border-b-6 ${colorsBorder[circuits[sets[route.set_id]?.circuit_id]?.color]}`}
+                                  className={`h-24 rounded-sm border-b-6 ${
+                                    colorsBorder[
+                                      circuits[sets[route.set_id]?.circuit_id]
+                                        ?.color
+                                    ]
+                                  }`}
                                   src={"/api/img_thumb/" + route.id + ".webp"}
                                   alt=""
                                 ></img>

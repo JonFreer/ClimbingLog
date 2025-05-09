@@ -48,6 +48,6 @@ export default defineConfig({
       output: {
         sourcemapExcludeSources: false, // Include original source code in source maps
       },
-    },  
+    },
   },
 });

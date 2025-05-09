@@ -17,7 +17,7 @@ export const getInfiniteActivitiesQueryOptions = () => {
     queryFn: ({ pageParam = 1 }) => {
       return getActivities({ page: pageParam as number });
     },
-    getNextPageParam: (lastPage:{ data: Activity[]; meta: Meta }) => {
+    getNextPageParam: (lastPage: { data: Activity[]; meta: Meta }) => {
       if (lastPage?.meta?.page === lastPage?.meta?.totalPages) return undefined;
       const nextPage = lastPage.meta.page + 1;
       return nextPage;
