@@ -18,6 +18,7 @@ import { useUser } from "./lib/auth";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Notifications } from "./components/ui/notifications";
 import RouteSideBar from "./components/ui/sidebar/route-sidebar";
+import { UserListModal } from "./components/ui/userlist/userlist";
 const ProtectedRoute = ({
   authed,
   children,
@@ -41,6 +42,7 @@ function App() {
       <NavBar />
       <NavBarBottom />
       <RouteSideBar />
+      <UserListModal />
       <Routes>
         <Route
           path="/register"

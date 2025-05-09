@@ -39,7 +39,7 @@ export interface Climb {
   user: string;
 }
 
-export interface SentBy {
+export interface UserList {
   users: { id: string; username: string; has_profile_photo: boolean }[];
   num_users: number;
 }

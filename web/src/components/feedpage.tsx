@@ -12,6 +12,7 @@ import { useCreateReaction } from "../features/reactions/api/create-reaction";
 import { useDeleteReaction } from "../features/reactions/api/delete-reaction";
 import { useUser } from "../lib/auth";
 import { useSidebarState } from "./ui/sidebar/sidebar-state";
+import { useUserListState } from "./ui/userlist/userlist-state";
 
 export default function Feed() {
   // const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(
@@ -26,6 +27,7 @@ export default function Feed() {
   const climbs = useAllClimbs().data || [];
 
   const { openSidebar } = useSidebarState();
+  const { openUserList } = useUserListState();
   // const activities = useActivities().data || [];
   const activitiesQuery = useInfiniteActivities({});
 
@@ -141,7 +143,8 @@ export default function Feed() {
                   Be the first to bump
                 </span>
               ) : (
-                <span className="flex ml-4">
+                <span className="flex ml-4" 
+                onClick={() => {openUserList(activity.reactions)}}>
                   {activity.reactions
                     .filter((user) => user.has_profile_photo)
                     .slice(0, 5)
