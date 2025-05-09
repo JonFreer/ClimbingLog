@@ -1,5 +1,5 @@
 import { NavLink } from "react-router";
-import { colors } from "../types/colors";
+import { colors, colorsBorder } from "../types/colors";
 import { Circuit, Route, SentBy, Set } from "../types/routes";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 
@@ -22,12 +22,13 @@ export function RouteCard(props: {
   return (
     <div
       key={props.route.id}
-      className="bg-white shadow-sm overflow-hidden sm:rounded-lg mt-2"
+      className="bg-white shadow-sm overflow-hidden sm:rounded-lg mt-2 cursor-pointer"
+      onClick={() => props.setSidebarRoute(props.route.id)}
     >
       <div className="px-4 py-5 sm:px-6 flex items-center justify-between">
         <div className="flex items-center">
           <img
-            className="h-24 rounded-sm"
+            className={`h-24 rounded-sm border-b-6 ${colorsBorder[props.circuits[props.sets[props.route.set_id]?.circuit_id]?.color]}`}
             src={"/api/img_thumb/" + props.route.id + ".webp"}
             alt=""
           ></img>

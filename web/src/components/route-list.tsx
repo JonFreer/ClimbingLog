@@ -1,6 +1,6 @@
 import { Set } from "../types/routes";
 import { useEffect, useState } from "react";
-import { colors } from "../types/colors";
+import { colors, colorsBorder, colorsHex } from "../types/colors";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import { useRoutes } from "../features/routes/api/get-routes";
 import { useCircuits } from "../features/circuits/api/get-circuits";
@@ -103,7 +103,7 @@ export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
                       <div className="px-4 py-4 sm:px-6 flex items-center justify-between">
                         <div className="flex items-center">
                           <img
-                            className="h-24 rounded-sm"
+                            className={`h-24 rounded-sm border-b-6 ${colorsBorder[circuits[sets[route.set_id]?.circuit_id]?.color]}`}
                             src={"/api/img_thumb/" + route.id + ".webp"}
                             alt=""
                           ></img>
@@ -213,7 +213,7 @@ export function RouteList(props: { setSidebarRoute: (route: string) => void }) {
                             <div className="px-4 py-4 sm:px-6 flex items-center justify-between">
                               <div className="flex items-center">
                                 <img
-                                  className="h-24 rounded-sm"
+                                  className={`h-24 rounded-sm border-b-6 ${colorsBorder[circuits[sets[route.set_id]?.circuit_id]?.color]}`}
                                   src={"/api/img_thumb/" + route.id + ".webp"}
                                   alt=""
                                 ></img>
