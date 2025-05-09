@@ -19,8 +19,8 @@ export function RouteSettingPage() {
 
   const [openCircuit, setOpenCircuit] = useState<string>("");
   const [selectedSet, setSelectedSet] = useState<string>("");
-  const {openSidebar} = useSidebarState();
-  
+  const { openSidebar } = useSidebarState();
+
   useEffect(() => {
     const savedCircuit = localStorage.getItem("openCircuit");
     if (savedCircuit) {
@@ -123,9 +123,10 @@ export function RouteSettingPage() {
             <div
               key={route.id}
               className="bg-gray-100 p-1 flex rounded-sm mt-1"
-              
             >
-              <span className="p-2 w-full" onClick={() => openSidebar(route)}>{route.name}</span>
+              <span className="p-2 w-full" onClick={() => openSidebar(route)}>
+                {route.name}
+              </span>
 
               <UpdateRoute
                 set_id={selectedSet}

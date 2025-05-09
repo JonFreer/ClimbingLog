@@ -45,7 +45,6 @@ export const UpdateRoute = ({ set_id, circuit_id, route }: EditRouteProps) => {
         className="ml-auto text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md"
         onClick={
           (e) => {
-
             setOpen(true);
           } // Change to setOpen(true) to open the modal
         }

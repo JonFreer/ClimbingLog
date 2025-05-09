@@ -143,8 +143,12 @@ export default function Feed() {
                   Be the first to bump
                 </span>
               ) : (
-                <span className="flex ml-4" 
-                onClick={() => {openUserList(activity.reactions)}}>
+                <span
+                  className="flex ml-4"
+                  onClick={() => {
+                    openUserList(activity.reactions);
+                  }}
+                >
                   {activity.reactions
                     .filter((user) => user.has_profile_photo)
                     .slice(0, 5)

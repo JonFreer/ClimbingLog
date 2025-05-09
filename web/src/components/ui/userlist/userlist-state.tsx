@@ -9,7 +9,7 @@ type userListState = {
 
 export const useUserListState = create<userListState>((set) => ({
   userList: [],
-  
+
   closeUserList: () => {
     set({ userList: [] });
   },

@@ -70,7 +70,7 @@ export default function RouteSideBar() {
     },
   });
 
-  const {openUserList,closeUserList} = useUserListState();
+  const { openUserList, closeUserList } = useUserListState();
 
   const [sentBy, setSentBy] = useState<SentBy>({ users: [], num_users: 0 });
   const [justCompleted, setJustCompleted] = useState(false);
@@ -86,7 +86,7 @@ export default function RouteSideBar() {
   });
 
   function updateSentBy() {
-    if (route != null) {
+    if (route_state != null) {
       console.log("updateSentBy", route);
       fetch("/api/routes/sent_by/" + route.id)
         .then((response) => response.json())
@@ -103,7 +103,7 @@ export default function RouteSideBar() {
     if (route_state != null) {
       updateSentBy();
       setRoute(route_state);
-    }else{
+    } else {
       closeUserList();
     }
   }, [route_state]);
@@ -280,7 +280,7 @@ export default function RouteSideBar() {
                           ></img>
                         ))}
 
-                        <div className="ml-2 flex items-center">
+                        <div className="ml-2 flex items-center flex-wrap">
                           {sentBy.users.length > 0 ? (
                             <a
                               key={sentBy.users[0].id}
