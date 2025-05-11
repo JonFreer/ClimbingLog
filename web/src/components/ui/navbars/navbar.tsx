@@ -17,7 +17,6 @@ function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-//todo: add user type
 export function NavBar() {
   const user = useUser();
   const logout = useLogout({
@@ -162,9 +161,7 @@ export function NavBar() {
                             console.log("Logout success");
                           },
                         });
-                        // window.location.href = "/";
                       }}
-                      // to="/"
                       className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                     >
                       Sign out

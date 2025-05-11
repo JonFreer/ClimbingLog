@@ -1,223 +1,51 @@
-import { useEffect, useRef, useState } from "react";
-import { Circuit, Route, User } from "../types/routes";
 import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
-} from "@headlessui/react";
-import {
-  ExclamationTriangleIcon,
-  TrashIcon,
-  ArrowDownCircleIcon,
   ArrowUpCircleIcon,
-  PencilIcon,
   WrenchIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import { colors } from "../types/colors";
-import DraggableDotsCanvas, { Dot } from "./map";
-import DangerDialog from "./modal-dialogs";
-import { AddCircuit } from "./modals/add_circuit";
+import { DeleteCircuit } from "../features/circuits/components/delete-circuit";
+import { CreateCircuit } from "../features/circuits/components/create-circuit";
+import { useCircuits } from "../features/circuits/api/get-circuits";
+import { useAllUsers } from "../features/admin/api/get-all-users";
+import { usePromoteSuperUser } from "../features/admin/api/promote-super-user";
+import { useDemoteSuperUser } from "../features/admin/api/demote-super-user";
+import { useDemoteRouteSetter } from "../features/admin/api/demote-route-setter";
+import { usePromoteRouteSetter } from "../features/admin/api/promote-route-setter";
 
 export function AdminPage() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [circuits, setCircuits] = useState<Record<string, Circuit>>({});
+  const circuits = useCircuits().data?.data || {};
+  const users = useAllUsers().data || [];
 
-  const [circuiteModalOpen, setCircuitsModalOpen] = useState<boolean>(false);
-  const [deleteCircuitModalOpen, setDeleteCircuitModalOpen] =
-    useState<string>("");
+  const promoteSuperUserMutation = usePromoteSuperUser({
+    mutationConfig: {
+      onSuccess: () => {},
+    },
+  });
 
-  function updateCircuits() {
-    fetch("api/circuits/get_all")
-      .then((response) => response.json())
-      .then((data) => {
-        const circuitsDict = data.reduce(
-          (acc: Record<string, Circuit>, circuit: Circuit) => {
-            acc[circuit.id] = circuit;
-            return acc;
-          },
-          {}
-        );
-        setCircuits(circuitsDict);
-      })
-      .catch((error) => console.error("Error fetching circuits:", error));
-  }
+  const demoteSuperUserMutation = useDemoteSuperUser({
+    mutationConfig: {
+      onSuccess: () => {},
+    },
+  });
 
-  function updateUsers() {
-    fetch("api/admin/users/get_all", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => setUsers(data))
-      .catch((error) => console.error("Error fetching users:", error));
-  }
+  const promoteRouteSetterMutation = usePromoteRouteSetter({
+    mutationConfig: {
+      onSuccess: () => {},
+    },
+  });
 
-  useEffect(() => {
-    updateUsers();
-    updateCircuits();
-  }, []);
-
-  const promoteUser = (user_id: string) => {
-    fetch(`api/admin/users/promote/${user_id}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else if (response.status === 400) {
-          return response.json().then((errorData) => {
-            throw new Error(errorData.detail);
-          });
-        } else {
-          throw new Error("Network response was not ok");
-        }
-      })
-      .then((data) => {
-        console.log("Success:", data);
-        updateUsers();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  const promoteRouteSetter = (user_id: string) => {
-    fetch(`api/admin/users/promote/route_setter/${user_id}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else if (response.status === 400) {
-          return response.json().then((errorData) => {
-            throw new Error(errorData.detail);
-          });
-        } else {
-          throw new Error("Network response was not ok");
-        }
-      })
-      .then((data) => {
-        console.log("Success:", data);
-        updateUsers();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  const demoteRouteSetter = (user_id: string) => {
-    fetch(`api/admin/users/demote/route_setter/${user_id}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else if (response.status === 400) {
-          return response.json().then((errorData) => {
-            throw new Error(errorData.detail);
-          });
-        } else {
-          throw new Error("Network response was not ok");
-        }
-      })
-      .then((data) => {
-        console.log("Success:", data);
-        updateUsers();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  const demoteUser = (user_id: string) => {
-    fetch(`api/admin/users/demote/${user_id}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else if (response.status === 400) {
-          return response.json().then((errorData) => {
-            throw new Error(errorData.detail);
-          });
-        } else {
-          throw new Error("Network response was not ok");
-        }
-      })
-      .then((data) => {
-        console.log("Success:", data);
-        updateUsers();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  const removeCircuit = (circuit_id: string) => {
-    fetch(`api/circuits/remove/${circuit_id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else if (response.status === 400) {
-          return response.json().then((errorData) => {
-            throw new Error(errorData.detail);
-          });
-        } else {
-          throw new Error("Network response was not ok");
-        }
-      })
-      .then((data) => {
-        console.log("Success:", data);
-        updateCircuits();
-        setDeleteCircuitModalOpen("");
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
+  const demoteRouteSetterMutation = useDemoteRouteSetter({
+    mutationConfig: {
+      onSuccess: () => {},
+    },
+  });
 
   return (
     <div className="m-5 sm:mb-8 mb-14">
-      <AddCircuit open={circuiteModalOpen} setOpen={setCircuitsModalOpen} />
-      <DangerDialog
-        title={"Delete circuit"}
-        body={
-          "Are you sure you want to delete this circuit? This circuit will be removed for everybody and all routes belonging to it."
-        }
-        actionCallback={() => removeCircuit(deleteCircuitModalOpen)}
-        cancleCallback={() => setDeleteCircuitModalOpen("")}
-        open={deleteCircuitModalOpen !== ""}
-        action_text="Delete circuit"
-      />
-
       <div className="flex items-center">
         <span className="font-bold text-2xl mt-4">Circuits</span>
-        <button
-          onClick={() => setCircuitsModalOpen(true)}
-          className="ml-auto bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-700 hover:to-blue-900 text-white font-bold py-2 px-4 rounded-sm shadow-lg transform transition-transform duration-300 hover:scale-105"
-        >
-          Add Circuit
-        </button>
+        <CreateCircuit />
       </div>
 
       <div>
@@ -235,12 +63,7 @@ export function AdminPage() {
               {circuit.name}
             </span>
             <span className="p-2">{circuit.name}</span>
-            <button
-              className="mr-2 ml-auto text-gray-400 p-2 hover:text-gray-700 hover:bg-gray-100 rounded-md z-10"
-              onClick={() => setDeleteCircuitModalOpen(circuit.id)}
-            >
-              <TrashIcon aria-hidden="true" className="h-5 w-5" />
-            </button>
+            <DeleteCircuit circuit_id={circuit.id} />
           </div>
         ))}
       </div>
@@ -291,7 +114,7 @@ export function AdminPage() {
               {user.route_setter ? (
                 <button
                   onClick={(e) => {
-                    demoteRouteSetter(user.id);
+                    demoteRouteSetterMutation.mutate({ user_id: user.id });
                     e.preventDefault();
                   }}
                   className="p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-200 rounded-md z-50"
@@ -301,7 +124,7 @@ export function AdminPage() {
               ) : (
                 <button
                   onClick={(e) => {
-                    promoteRouteSetter(user.id);
+                    promoteRouteSetterMutation.mutate({ user_id: user.id });
                     e.preventDefault();
                   }}
                   className="p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-200 rounded-md z-50"
@@ -314,7 +137,7 @@ export function AdminPage() {
                 <button
                   onClick={(e) => {
                     e.preventDefault(); // Prevent the default anchor behavior
-                    demoteUser(user.id);
+                    demoteSuperUserMutation.mutate({ user_id: user.id });
                   }}
                   className="p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-200 rounded-md z-50"
                 >
@@ -323,7 +146,7 @@ export function AdminPage() {
               ) : (
                 <button
                   onClick={(e) => {
-                    promoteUser(user.id);
+                    promoteSuperUserMutation.mutate({ user_id: user.id });
                     e.preventDefault();
                   }}
                   className="p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-200 rounded-md z-50"

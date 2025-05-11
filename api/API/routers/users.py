@@ -116,3 +116,14 @@ async def update_profile_photo(
 )  # Add resposne model
 def get_img(response: Response, user_id: str):
     return "./imgs/profile_photos/" + str(user_id) + ".webp"
+
+
+@router.get("/users/valid_user_name/{username}", response_model=bool, tags=["users"])
+async def valid_user_name(
+    username: str,
+    db: AsyncSession = Depends(get_db),
+):
+    user = await db.execute(select(User).filter(User.username == username))
+    user = user.scalars().first()
+
+    return user is None

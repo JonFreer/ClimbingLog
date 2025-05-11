@@ -1,9 +1,7 @@
-import { NavLink } from "react-router";
 import { colors, colorsBorder } from "../types/colors";
-import { Circuit, Route, SentBy, Set } from "../types/routes";
+import { Circuit, Route, Set } from "../types/routes";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { useSidebarState } from "./ui/sidebar/sidebar-state";
-import { set } from "zod";
 
 export function RouteCard(props: {
   route: Route;

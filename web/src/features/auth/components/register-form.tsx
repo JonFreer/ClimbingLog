@@ -1,6 +1,9 @@
 import { NavLink } from "react-router";
 import { useRegister } from "../../../lib/auth";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { api } from "../../../lib/api-client";
+import { useRef, useState } from "react";
+import { UserNameInput } from "../../../components/ui/form/username";
 
 type RegisterFormProps = {
   onSuccess: () => void;
@@ -10,8 +13,6 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
   const registering = useRegister({
     onSuccess,
   });
-
-  console.log("Registering", registering);
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -58,26 +59,16 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
               Username
             </label>
             <div className="mt-2">
-              <input
-                id="username"
-                name="username"
-                type="text"
-                placeholder="janesmith"
-                required
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-indigo-600"
+              <UserNameInput
+                error={
+                  registering.isError &&
+                  (registering.error as any)?.response?.data?.detail ===
+                    "REGISTER_USERNAME_ALREADY_EXISTS"
+                }
+                defaultValue=""
               />
             </div>
           </div>
-
-          {registering.isError &&
-            (registering.error as any)?.response?.data?.detail ===
-              "REGISTER_USERNAME_ALREADY_EXISTS" && (
-              <div className="flex bg-red-50 p-3 m-2 rounded-md">
-                <div className="text-red-800 text-sm p-2">
-                  A user with this username already exists.
-                </div>
-              </div>
-            )}
 
           <div>
             <label

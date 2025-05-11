@@ -150,18 +150,3 @@ async def generate_activities(
         db.add(climb)
         await db.commit()
         await db.refresh(climb)
-
-
-# @router.get("/admin/users/get_all", response_model=List[schemas.UserRead], tags=["admin"])
-# async def list_users(
-#    db: AsyncSession = Depends(get_user_db),
-# ):
-
-#   users_collection = db["users"]  # `db` is an instance of `AsyncIOMotorDatabase` (just like in the FastAPI Users exampleà
-#   query: Dict[str, Any] = {}  # Start to build a query (empty query means everything in MongoDB)
-
-#   # Perform the query
-#   cursor = users_collection.find(query)  # This an async iterator
-#   results = [User(**obj) async for obj in cursor]  # For each result, MongoDB gives us a raw dictionary that we hydrate back in our Pydantic model
-
-#   return results

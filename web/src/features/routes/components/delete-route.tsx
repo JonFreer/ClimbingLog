@@ -1,5 +1,5 @@
 import { useState } from "react";
-import DangerDialog from "../../../components/modal-dialogs";
+import DangerDialog from "../../../components/ui/modals/modal-dialogs";
 import { useDeleteRoute } from "../api/delete-route";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useNotifications } from "../../../components/ui/notifications";

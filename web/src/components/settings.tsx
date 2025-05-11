@@ -1,9 +1,9 @@
 import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
-import { ChevronDownIcon } from "@heroicons/react/16/solid";
-import { User } from "../types/routes";
 import { useEffect, useState } from "react";
-import { Toast } from "./toast";
 import { useUser } from "../lib/auth";
+import { useUpdateUser } from "../features/user/api/update-user";
+import { useNotifications } from "./ui/notifications";
+import { UserNameInput } from "./ui/form/username";
 
 export default function Settings() {
   const user = useUser();
@@ -12,74 +12,34 @@ export default function Settings() {
     return;
   }
 
-  const [toastOpen, setToastOpen] = useState(false);
-  const [usernameError, setUserNameError] = useState(false);
-  const [formData, setFormData] = useState({
-    username: user.data.username,
-    about: user.data.about,
-    profile_visible: user.data.profile_visible,
-    send_visible: user.data.send_visible,
+  const { addNotification } = useNotifications();
+
+  const updateUserMutation = useUpdateUser({
+    mutationConfig: {
+      onSuccess: () => {
+        addNotification({
+          type: "success",
+          title: "Settings Updated",
+        });
+      },
+    },
   });
 
-  useEffect(() => {
-    setFormData({
-      username: user.data.username,
-      about: user.data.about,
-      profile_visible: user.data.profile_visible,
-      send_visible: user.data.send_visible,
-    });
-  }, [user.data]);
-
-  const handleChange = (
-    e:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    const newValue = e.target.type === "checkbox" ? e.target.checked : value;
-    setFormData({
-      ...formData,
-      [name]: newValue,
-    });
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    setUserNameError(false);
-    e.preventDefault();
-    console.log(formData);
-    fetch("api/users/me", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => {
-        if (response.ok) {
-          setToastOpen(true);
-          return response.json();
-        } else if (response.status === 400) {
-          return response.json().then((errorData) => {
-            if (errorData.detail === "UPDATE_USERNAME_ALREADY_EXISTS") {
-              setUserNameError(true);
-            }
-            throw new Error(errorData.detail);
-          });
-        } else {
-          throw new Error("Network response was not ok");
-        }
-      })
-      .then((data) => {
-        console.log("Success:", data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
   return (
-    <form className="m-8 sm:mb-8 mb-16" onSubmit={handleSubmit}>
+    <form
+      className="m-8 sm:mb-8 mb-16"
+      onSubmit={(e) => {
+        e.preventDefault();
+        updateUserMutation.mutate({
+          data: {
+            username: e.target.username.value,
+            about: e.target.about.value,
+            profile_visible: e.target.profile_visible.checked,
+            send_visible: e.target.send_visible.checked,
+          },
+        });
+      }}
+    >
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base/7 font-semibold text-gray-900">Profile</h2>
@@ -97,29 +57,11 @@ export default function Settings() {
                 Username
               </label>
               <div className="mt-2">
-                <div className="flex items-center rounded-md bg-white pl-3 outline outline-1 -outline-offset-1 outline-gray-300 focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                  @
-                  <div className="shrink-0 select-none text-base text-gray-500 sm:text-sm/6"></div>
-                  <input
-                    onChange={handleChange}
-                    id="username"
-                    name="username"
-                    type="text"
-                    placeholder="janesmith"
-                    defaultValue={user.data.username}
-                    className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6"
-                  />
-                </div>
+                <UserNameInput
+                  error={false}
+                  defaultValue={user.data.username}
+                />
               </div>
-              {usernameError ? (
-                <div className="flex bg-red-50 p-3 m-2 rounded-md">
-                  <div className="text-red-800 text-sm p-2">
-                    A user with this username already exists.
-                  </div>
-                </div>
-              ) : (
-                <></>
-              )}
             </div>
 
             <div className="col-span-full">
@@ -135,7 +77,6 @@ export default function Settings() {
 
               <div className="mt-2">
                 <textarea
-                  onChange={handleChange}
                   id="about"
                   name="about"
                   rows={3}
@@ -192,7 +133,6 @@ export default function Settings() {
                     <div className="group grid size-4 grid-cols-1">
                       <input
                         defaultChecked={user.data.profile_visible}
-                        onChange={handleChange}
                         id="profile_visible"
                         name="profile_visible"
                         type="checkbox"
@@ -238,7 +178,6 @@ export default function Settings() {
                     <div className="group grid size-4 grid-cols-1">
                       <input
                         defaultChecked={user.data.send_visible}
-                        onChange={handleChange}
                         id="send_visible"
                         name="send_visible"
                         type="checkbox"
@@ -285,12 +224,8 @@ export default function Settings() {
           </div>
         </div>
       </div>
-      <Toast open={toastOpen} setToastOpen={(bool) => setToastOpen(bool)} />
 
       <div className="mt-6 flex items-center justify-end gap-x-6">
-        {/* <button type="button" className="text-sm/6 font-semibold text-gray-900">
-          Cancel
-        </button> */}
         <button
           type="submit"
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

@@ -42,7 +42,7 @@ async def create_circuit(
     return new_circuit
 
 
-@router.delete("/circuits/remove/{circuit_id}", response_model=None, tags=["circuits"])
+@router.delete("/circuits/{circuit_id}", response_model=None, tags=["circuits"])
 async def remove_circuit(
     circuit_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
