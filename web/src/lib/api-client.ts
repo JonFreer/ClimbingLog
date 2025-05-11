@@ -21,7 +21,7 @@ api.interceptors.response.use(
     return response.data;
   },
   (error) => {
-    console.error("API error:", error);
+    // console.error("API error:", error);
     const message = error.response?.data?.message || error.message;
 
     if (error.response?.status !== 401) {

@@ -1,24 +1,22 @@
-import { useEffect, useState } from "react";
 import "./App.css";
-import { Register } from "./components/register";
-import { Login } from "./components/login";
-import { NavBar } from "./components/navbar";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { NavBar } from "./components/ui/navbars/navbar";
+import { Navigate, Route, Routes, useNavigate } from "react-router";
 import { User } from "./types/routes";
 import { AdminPage } from "./components/admin";
 import { RoutesPage } from "./components/routespage";
-import { API } from "./types/api";
 import Settings from "./components/settings";
 import { RouteSettingPage } from "./components/route-setting";
 import Profile from "./components/profile";
 import Feed from "./components/feedpage";
 import StorePage from "./components/store";
-import NavBarBottom from "./components/navbar-bottom";
+import NavBarBottom from "./components/ui/navbars/navbar-bottom";
 import { useUser } from "./lib/auth";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Notifications } from "./components/ui/notifications";
+import { Notifications, useNotifications } from "./components/ui/notifications";
 import RouteSideBar from "./components/ui/sidebar/route-sidebar";
 import { UserListModal } from "./components/ui/userlist/userlist";
+import { LoginForm } from "./features/auth/components/login-form";
+import { RegisterForm } from "./features/auth/components/register-form";
 const ProtectedRoute = ({
   authed,
   children,
@@ -34,9 +32,11 @@ const ProtectedRoute = ({
 
 function App() {
   const user = useUser();
+  const navigate = useNavigate();
+  const { addNotification } = useNotifications();
 
   return (
-    <BrowserRouter>
+    <>
       {import.meta.env.DEV && <ReactQueryDevtools />}
       <Notifications />
       <NavBar />
@@ -48,7 +48,16 @@ function App() {
           path="/register"
           element={
             <ProtectedRoute authed={!user.data}>
-              <Register />
+              <RegisterForm
+                onSuccess={() => {
+                  navigate("/login");
+                  addNotification({
+                    type: "success",
+                    title: "Registration Successful",
+                    message: "You can now log in.",
+                  });
+                }}
+              />
             </ProtectedRoute>
           }
         />
@@ -56,7 +65,7 @@ function App() {
           path="/login"
           element={
             <ProtectedRoute authed={!user.data}>
-              <Login />
+              <LoginForm onSuccess={() => {}} />
             </ProtectedRoute>
           }
         />
@@ -106,7 +115,7 @@ function App() {
 
         <Route path="*" element={<RoutesPage />} />
       </Routes>
-    </BrowserRouter>
+    </>
   );
 }
 

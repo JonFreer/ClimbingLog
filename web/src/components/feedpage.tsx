@@ -197,7 +197,7 @@ export default function Feed() {
               <button onClick={() => activitiesQuery.fetchNextPage()}>
                 {activitiesQuery.isFetchingNextPage
                   ? "Loading..."
-                  : "Load More Comments"}
+                  : "Load More Activities"}
               </button>
             </div>
           )}

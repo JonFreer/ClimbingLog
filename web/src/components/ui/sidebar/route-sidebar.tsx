@@ -9,13 +9,8 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import { HeartIcon as HeartIconFill } from "@heroicons/react/24/solid";
-import {
-  XMarkIcon,
-  HeartIcon,
-  TrashIcon,
-  UserCircleIcon,
-} from "@heroicons/react/24/outline";
-import { Route, SentBy } from "../../../types/routes";
+import { XMarkIcon, HeartIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Route, UserList } from "../../../types/routes";
 import { colors, colorsBold, colorsPastel } from "../../../types/colors";
 import { useSets } from "../../../features/sets/api/get-sets";
 import { useClimbs } from "../../../features/climbs/api/get-climbs";
@@ -72,7 +67,7 @@ export default function RouteSideBar() {
 
   const { openUserList, closeUserList } = useUserListState();
 
-  const [sentBy, setSentBy] = useState<SentBy>({ users: [], num_users: 0 });
+  const [sentBy, setSentBy] = useState<UserList>({ users: [], num_users: 0 });
   const [justCompleted, setJustCompleted] = useState(false);
   const [route, setRoute] = useState<Route>({
     id: "",

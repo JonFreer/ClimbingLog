@@ -1,6 +1,6 @@
 import { colors, colorsHex } from "../types/colors";
-import { Circuit, Climb, Projects, Route, Set, User } from "../types/routes";
-import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+import { Circuit, Climb, Route, Set, User } from "../types/routes";
+import { UserCircleIcon } from "@heroicons/react/24/solid";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,7 +14,6 @@ import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { useParams } from "react-router";
 import { API } from "../types/api";
-import RouteSideBar from "./ui/sidebar/route-sidebar";
 import { useCircuits } from "../features/circuits/api/get-circuits";
 import { useRoutes } from "../features/routes/api/get-routes";
 import { useSets } from "../features/sets/api/get-sets";

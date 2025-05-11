@@ -11,7 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { NavLink } from "react-router";
 import { useState } from "react";
-import { useUser } from "../lib/auth";
+import { useUser } from "../../../lib/auth";
 export default function NavBarBottom() {
   const [_path, setPath] = useState<string | undefined>(undefined);
 

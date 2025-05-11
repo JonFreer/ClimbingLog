@@ -2,8 +2,10 @@ import { configureAuth } from "react-query-auth";
 import { AuthResponse, User } from "../../../web/src/types/routes";
 import { api } from "./api-client";
 import { z } from "zod";
+import { useQueryClient } from "@tanstack/react-query";
 // api call definitions for auth (types, schemas, requests):
 // these are not part of features as this is a module shared across features
+const queryClient = useQueryClient();
 
 const getUser = async (): Promise<User> => {
   const response = await api.get("/users/me");
@@ -12,6 +14,7 @@ const getUser = async (): Promise<User> => {
 };
 
 const logout = (): Promise<void> => {
+  queryClient.removeQueries({ queryKey: ["authenticated-user"] });
   return api.post("/auth/jwt/logout");
 };
 

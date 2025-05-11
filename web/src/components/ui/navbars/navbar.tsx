@@ -11,7 +11,7 @@ import { UserCircleIcon } from "@heroicons/react/24/solid";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { NavLink } from "react-router";
-import { useUser } from "../lib/auth";
+import { useLogout, useUser } from "../../../lib/auth";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -20,6 +20,12 @@ function classNames(...classes: any) {
 //todo: add user type
 export function NavBar() {
   const user = useUser();
+  const logout = useLogout({
+    onSuccess: () => {
+      console.log("Logout success");
+    },
+  });
+
   console.log("Navbar user", user.data);
   const navigation = [
     { name: "Dashboard", href: "/", current: false },
@@ -149,17 +155,20 @@ export function NavBar() {
                     </NavLink>
                   </MenuItem>
                   <MenuItem>
-                    <NavLink
+                    <div
                       onClick={() => {
-                        localStorage.removeItem("token");
-                        setPath("/");
+                        logout.mutate(undefined, {
+                          onSuccess: () => {
+                            console.log("Logout success");
+                          },
+                        });
                         // window.location.href = "/";
                       }}
-                      to="/"
+                      // to="/"
                       className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                     >
                       Sign out
-                    </NavLink>
+                    </div>
                   </MenuItem>
                 </MenuItems>
               </Menu>

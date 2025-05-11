@@ -1,14 +1,9 @@
-import { StrictMode, useState } from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
-import {
-  BrowserRouter,
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router";
-import { Login } from "./components/login.tsx";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter } from "react-router";
+import { QueryClient } from "@tanstack/react-query";
 import { queryConfig } from "./lib/react-query.ts";
 
 import {
@@ -20,7 +15,7 @@ import { APP_VERSION } from "./constants/version.ts";
 
 const REACT_QUERY_CACHE_KEY = "react-query-cache-version";
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: queryConfig,
 });
 
@@ -46,7 +41,9 @@ createRoot(document.getElementById("root")!).render(
       client={queryClient}
       persistOptions={{ persister: localStoragePersister }}
     >
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </PersistQueryClientProvider>
   </StrictMode>
 );

@@ -54,7 +54,7 @@ export interface Set {
 }
 
 export type AuthResponse = {
-  jwt: string;
+  access_token: string;
   token_type: string;
 };
 
