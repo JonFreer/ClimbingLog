@@ -1,1 +1,1 @@
-npm --cwd web format
+npm --prefix ./web run format
