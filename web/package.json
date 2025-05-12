@@ -62,7 +62,7 @@
   "lint-staged": {
     "*.+(ts|tsx)": [
       "npm --prefix web run lint",
-      "bash -c 'npm run check-types'"
+      "bash -c 'npm -prefix web run check-types'"
     ]
   }
 }
