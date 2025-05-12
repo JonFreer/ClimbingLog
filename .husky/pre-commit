@@ -1,1 +1,1 @@
-npm --cwd web lint-staged 
+npm --cwd web format
