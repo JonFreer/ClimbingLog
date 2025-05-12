@@ -2,7 +2,6 @@ import { configureAuth } from 'react-query-auth';
 import { AuthResponse, User } from '../types/routes';
 import { api } from './api-client';
 import { z } from 'zod';
-import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { queryClient } from '../main';
 // api call definitions for auth (types, schemas, requests):
 // these are not part of features as this is a module shared across features
@@ -62,7 +61,7 @@ const authConfig = {
     return response;
   },
   registerFn: async (data: RegisterInput) => {
-    const response = await registerWithEmailAndPassword(data);
+    const response = await registerWithEmailAndPassword(data); // eslint-disable-line @typescript-eslint/no-unused-vars
     return null;
   },
   logoutFn: logout,

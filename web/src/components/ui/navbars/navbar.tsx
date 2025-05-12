@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { NavLink } from 'react-router';
 import { useLogout, useUser } from '@/lib/auth';
 
-function classNames(...classes: any) {
+function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
@@ -43,7 +43,7 @@ export function NavBar() {
     });
   }
 
-  const [_path, setPath] = useState<string | undefined>(undefined);
+  const [, setPath] = useState<string | undefined>(undefined);
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -67,7 +67,7 @@ export function NavBar() {
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex shrink-0 items-center">
               <img
-                alt="Your Company"
+                alt="VolumeDB"
                 src="/logo.svg"
                 className="h-8 w-auto" // This will invert the colors and apply a hue shift to the SVG
               />

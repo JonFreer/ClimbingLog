@@ -218,7 +218,7 @@ export default function RouteModal(props: {
                     <DraggableDotsCanvas
                       dots={dots}
                       updateDots={(dots) => setDots(dots)}
-                      setSelected={(_id) => {}}
+                      setSelected={() => {}}
                     />
                     <div>
                       <div className="flex items-center justify-between">

@@ -10,7 +10,10 @@
     "test": "vitest",
     "eject": "react-scripts eject",
     "format": "prettier --write .",
-    "format-check": "prettier --check ."
+    "format-check": "prettier --check .",
+    "prepare": "husky",
+    "lint": "eslint src --ignore-pattern .gitignore",
+    "check-types": "tsc --project tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
@@ -47,11 +50,19 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^16.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.0.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^4.0.17",
     "typescript": "~5.8.0",
     "typescript-eslint": "^8.18.2",
     "vite": "^6.2.2",
     "vite-plugin-pwa": "^1.0.0"
+  },
+  "lint-staged": {
+    "*.+(ts|tsx)": [
+      "npm --prefix web run lint",
+      "bash -c 'npm --prefix web run check-types'"
+    ]
   }
 }

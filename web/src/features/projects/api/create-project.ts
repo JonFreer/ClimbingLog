@@ -7,7 +7,7 @@ export const createProject = ({
   route_id,
 }: {
   route_id: string;
-}): Promise<String> => {
+}): Promise<string> => {
   return api.post(`/projects/me/${route_id}`);
 };
 

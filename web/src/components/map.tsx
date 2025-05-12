@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 export interface Dot {
   x: number;
@@ -18,7 +18,7 @@ const DraggableDotsCanvas = (props: {
   setSelected: (id: string) => void;
 }) => {
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
+  const [isDragging, setIsDragging] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [isPinching, setIsPinching] = useState(false);
   const initialPinchDistanceRef = useRef(0);
   const initialScaleRef = useRef(1);

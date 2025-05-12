@@ -8,7 +8,7 @@
 
       cd traefik/certs
       mkcert -cert-file dev.cert -key-file dev.pem "climbing.localhost" "*.climbing.localhost"
-      
+
 - Create a `.env` file using the `example.env` template:
 
       cp example.env .env
@@ -21,7 +21,7 @@
 - Launch application:
 
       INFRA=dev make up
-      
+
 The infrastructure should now be running at `climbing.localhost`, make sure that
 this resolves to `127.0.0.1`!
 
@@ -30,4 +30,11 @@ this resolves to `127.0.0.1`!
 The api can be found at betterstreets.localhost/api/docs
 
 ## Update user to super-user
+
 `UPDATE "user" SET is_superuser = 't' WHERE id = '{id}';`
+
+## Optional
+
+For git hooks, install husky in the main directory
+
+      npm i
