@@ -9,7 +9,7 @@ from sqlalchemy.sql import func
 
 from .. import schemas
 from ..db import get_db
-from ..models import Activities, Climbs
+from ..models import Activities, Climbs, Reactions
 from ..users import User, current_active_user
 
 router = APIRouter()
@@ -127,12 +127,25 @@ async def remove_climb(
 
     if count == 1:
         # If this is the only activity associated with the climb, delete the activity
+
+
         activity = await db.execute(
             select(Activities).where(Activities.id == climb.activity)
         )
         activity_instance = activity.scalars().first()
+
+        #delete all reactions associated with the activity
+        reactions = await db.execute(
+            select(Reactions).where(Reactions.activity == activity_instance.id)
+        )
+        for reaction in reactions.scalars().all():
+            await db.delete(reaction)
+            await db.commit()
+
         await db.delete(activity_instance)
         await db.commit()
+
+
 
     await db.delete(climb)
     await db.commit()

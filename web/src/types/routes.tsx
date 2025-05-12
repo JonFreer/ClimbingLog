@@ -7,6 +7,7 @@ export interface Route {
   name: string;
   x: number;
   y: number;
+  climb_count: number;
 }
 
 export interface Circuit {

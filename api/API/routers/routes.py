@@ -7,6 +7,7 @@ from fastapi.responses import FileResponse, Response
 from PIL import Image, ImageOps
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy import func
 
 from .. import schemas
 from ..db import get_db
@@ -16,14 +17,36 @@ from ..users import User, current_active_user
 router = APIRouter()
 
 
-@router.get("/routes/get_all", response_model=List[schemas.Route], tags=["routes"])
+@router.get("/routes/get_all", response_model=List[schemas.RouteWithClimbCount], tags=["routes"])
 async def get_all_routes(
     response: Response,
     db: AsyncSession = Depends(get_db),
 ):
-    result = await db.execute(select(Routes))
-    routes = result.scalars().all()
-    return routes
+    # result = await db.execute(select(Routes))
+    # routes = result.scalars().all()
+    # return routes
+    result = await db.execute(
+        select(
+            Routes,
+            func.count(Climbs.id).label("climb_count")
+        ).outerjoin(Climbs, (Climbs.route == Routes.id) & (Climbs.sent == True))
+        .group_by(Routes.id)
+    )
+    routes_with_counts = [
+        {
+            "id": route.id,
+            "name": route.name,
+            "grade": route.grade,
+            "location": route.location,
+            "style": route.style,
+            "set_id": route.set_id,
+            "x": route.x,
+            "y": route.y,
+            "climb_count": climb_count,
+        }
+        for route, climb_count in result.all()
+    ]
+    return routes_with_counts
 
 
 @router.get(

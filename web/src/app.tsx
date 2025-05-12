@@ -20,10 +20,14 @@ const ProtectedRoute = ({
   authed,
   children,
 }: {
-  authed: boolean | undefined | User;
+  authed: null | undefined | User | boolean;
   children: React.ReactNode;
 }) => {
-  if (!authed) {
+  if (
+    authed === null ||
+    authed === undefined ||
+    (typeof authed === 'boolean' && !authed)
+  ) {
     return <Navigate to="/" />;
   }
   return children;

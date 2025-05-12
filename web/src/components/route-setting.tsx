@@ -125,7 +125,7 @@ export function RouteSettingPage() {
               className="bg-gray-100 p-1 flex rounded-sm mt-1"
             >
               <span className="p-2 w-full" onClick={() => openSidebar(route)}>
-                {route.name}
+                <b>{route.name}</b> {route.climb_count} Sends
               </span>
 
               <UpdateRoute

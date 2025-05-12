@@ -19,7 +19,6 @@ class UserRead(schemas.BaseUser[uuid.UUID]):
 class UserCreate(schemas.BaseUserCreate):
     username: str
 
-
 class UserUpdate(schemas.BaseUserUpdate):
     username: Optional[str]
     profile_visible: Optional[bool]
@@ -106,3 +105,10 @@ class Reaction(BaseModel):
     id: uuid.UUID
     user: uuid.UUID
     activity: uuid.UUID
+
+
+class RouteWithClimbCount(Route):
+    climb_count: int
+
+    class Config:
+        orm_mode = True
