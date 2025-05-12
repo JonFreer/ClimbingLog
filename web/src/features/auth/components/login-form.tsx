@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router';
-import { useLogin, loginInputSchema } from '../../../lib/auth';
+import { useLogin, loginInputSchema } from '@/lib/auth';
 
 type LoginFormProps = {
   onSuccess: () => void;

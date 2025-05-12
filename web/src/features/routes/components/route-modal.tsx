@@ -1,17 +1,17 @@
-import { Route, Circuit } from '../../../types/routes';
+import { Route, Circuit } from '@/types/routes';
 import { useEffect, useState } from 'react';
 import { UseMutationResult } from '@tanstack/react-query';
-import { Dot } from '../../../components/map';
+import { Dot } from '@/components/map';
 import {
   Dialog,
   DialogBackdrop,
   DialogPanel,
   DialogTitle,
 } from '@headlessui/react';
-import DraggableDotsCanvas from '../../../components/map';
+import DraggableDotsCanvas from '@/components/map';
 import { CreateRouteInput } from '../api/create-route';
 import { UpdateRouteInput } from '../api/update-route';
-import { colors, colorsBold, colorsHex } from '../../../types/colors';
+import { colors, colorsBold, colorsHex } from '@/types/colors';
 
 export default function RouteModal(props: {
   routes: Record<string, Route>;

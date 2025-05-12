@@ -1,8 +1,8 @@
-import { useNotifications } from '../../../components/ui/notifications';
+import { useNotifications } from '@/components/ui/notifications';
 import { useCreateSet } from '../api/create-set';
 
 import { useCircuits } from '../../circuits/api/get-circuits';
-import { colors } from '../../../types/colors';
+import { colors } from '@/types/colors';
 import { useState } from 'react';
 import {
   Dialog,

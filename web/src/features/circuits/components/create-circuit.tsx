@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNotifications } from '../../../components/ui/notifications';
+import { useNotifications } from '@/components/ui/notifications';
 import { useCreateCircuit } from '../api/create-circuit';
 import {
   Dialog,

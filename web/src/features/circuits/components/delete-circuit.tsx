@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useNotifications } from '../../../components/ui/notifications';
+import { useNotifications } from '@/components/ui/notifications';
 import { useDeleteCircuit } from '../api/delete-circuit';
-import DangerDialog from '../../../components/ui/modals/modal-dialogs';
+import DangerDialog from '@/components/ui/modals/modal-dialogs';
 import { TrashIcon } from '@heroicons/react/24/outline';
 
 type CreateSetProps = {

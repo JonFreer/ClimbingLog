@@ -1,9 +1,9 @@
 import { NavLink } from 'react-router';
-import { useRegister } from '../../../lib/auth';
+import { useRegister } from '@/lib/auth';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import { api } from '../../../lib/api-client';
+import { api } from '@/lib/api-client';
 import { useRef, useState } from 'react';
-import { UserNameInput } from '../../../components/ui/form/username';
+import { UserNameInput } from '@/components/ui/form/username';
 
 type RegisterFormProps = {
   onSuccess: () => void;

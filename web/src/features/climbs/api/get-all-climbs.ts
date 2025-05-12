@@ -1,7 +1,7 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { api } from '../../../lib/api-client';
-import { Climb } from '../../../types/routes';
-import { QueryConfig } from '../../../lib/react-query';
+import { api } from '@/lib/api-client';
+import { Climb } from '@/types/routes';
+import { QueryConfig } from '@/lib/react-query';
 
 export const getAllClimbs = (): Promise<Climb[]> => {
   return api.get(`/api/climbs/get_all`);

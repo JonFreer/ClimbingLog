@@ -1,8 +1,8 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 
-import { api } from '../../../lib/api-client';
-import { Circuit } from '../../../types/routes';
-import { QueryConfig } from '../../../lib/react-query';
+import { api } from '@/lib/api-client';
+import { Circuit } from '@/types/routes';
+import { QueryConfig } from '@/lib/react-query';
 
 export const orderedColors = [
   'Green',

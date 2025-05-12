@@ -1,8 +1,8 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 
-import { api } from '../../../lib/api-client';
-import { Route } from '../../../types/routes';
-import { QueryConfig } from '../../../lib/react-query';
+import { api } from '@/lib/api-client';
+import { Route } from '@/types/routes';
+import { QueryConfig } from '@/lib/react-query';
 
 export const getRoutes = (): Promise<Record<string, Route>> => {
   return api.get(`/api/routes/get_all`).then((response) => {

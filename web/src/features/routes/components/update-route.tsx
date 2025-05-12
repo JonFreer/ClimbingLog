@@ -1,10 +1,10 @@
-import { useNotifications } from '../../../components/ui/notifications';
+import { useNotifications } from '@/components/ui/notifications';
 import { useUpdateRoute } from '../api/update-route';
-import { Route } from '../../../types/routes';
+import { Route } from '@/types/routes';
 import RouteModal from './route-modal';
 import { useRoutes } from '../api/get-routes';
 import { useCircuits } from '../../circuits/api/get-circuits';
-import { colors } from '../../../types/colors';
+import { colors } from '@/types/colors';
 import { useState } from 'react';
 import { PencilIcon } from '@heroicons/react/24/outline';
 type EditRouteProps = {

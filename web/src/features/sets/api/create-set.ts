@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { date, z } from 'zod';
 
-import { api } from '../../../lib/api-client';
-import { MutationConfig } from '../../../lib/react-query';
-import { Set } from '../../../types/routes';
+import { api } from '@/lib/api-client';
+import { MutationConfig } from '@/lib/react-query';
+import { Set } from '@/types/routes';
 
 import { getSetsQueryOptions } from './get-sets';
 

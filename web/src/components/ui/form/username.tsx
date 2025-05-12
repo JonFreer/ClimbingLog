@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
-import { api } from '../../../lib/api-client';
-import { useUser } from '../../../lib/auth';
+import { api } from '@/lib/api-client';
+import { useUser } from '@/lib/auth';
 
 export function UserNameInput({
   error,

@@ -10,17 +10,17 @@ import {
 } from '@headlessui/react';
 import { HeartIcon as HeartIconFill } from '@heroicons/react/24/solid';
 import { XMarkIcon, HeartIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { Route, UserList } from '../../../types/routes';
-import { colors, colorsBold, colorsPastel } from '../../../types/colors';
-import { useSets } from '../../../features/sets/api/get-sets';
-import { useClimbs } from '../../../features/climbs/api/get-climbs';
-import { useCircuits } from '../../../features/circuits/api/get-circuits';
-import { useDeleteClimb } from '../../../features/climbs/api/delete-climb';
-import { useCreateSend } from '../../../features/climbs/api/create-send';
-import { useCreateAttempt } from '../../../features/climbs/api/create-attempt';
-import { useProjects } from '../../../features/projects/api/get-projects';
-import { useCreateProject } from '../../../features/projects/api/create-project';
-import { useDeleteProject } from '../../../features/projects/api/delete-project';
+import { Route, UserList } from '@/types/routes';
+import { colors, colorsBold, colorsPastel } from '@/types/colors';
+import { useSets } from '@/features/sets/api/get-sets';
+import { useClimbs } from '@/features/climbs/api/get-climbs';
+import { useCircuits } from '@/features/circuits/api/get-circuits';
+import { useDeleteClimb } from '@/features/climbs/api/delete-climb';
+import { useCreateSend } from '@/features/climbs/api/create-send';
+import { useCreateAttempt } from '@/features/climbs/api/create-attempt';
+import { useProjects } from '@/features/projects/api/get-projects';
+import { useCreateProject } from '@/features/projects/api/create-project';
+import { useDeleteProject } from '@/features/projects/api/delete-project';
 import { useSidebarState } from './sidebar-state';
 import { useUserListState } from '../userlist/userlist-state';
 

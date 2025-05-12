@@ -1,9 +1,9 @@
-import { useNotifications } from '../../../components/ui/notifications';
+import { useNotifications } from '@/components/ui/notifications';
 import { useCreateRoute } from '../api/create-route';
 import RouteModal from './route-modal';
 import { useRoutes } from '../api/get-routes';
 import { useCircuits } from '../../circuits/api/get-circuits';
-import { colors } from '../../../types/colors';
+import { colors } from '@/types/colors';
 import { useState } from 'react';
 
 type CreateRouteProps = {

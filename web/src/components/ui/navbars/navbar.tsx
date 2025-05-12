@@ -11,7 +11,7 @@ import { UserCircleIcon } from '@heroicons/react/24/solid';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { NavLink } from 'react-router';
-import { useLogout, useUser } from '../../../lib/auth';
+import { useLogout, useUser } from '@/lib/auth';
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ');

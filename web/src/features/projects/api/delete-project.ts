@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '../../../lib/api-client';
-import { MutationConfig } from '../../../lib/react-query';
+import { api } from '@/lib/api-client';
+import { MutationConfig } from '@/lib/react-query';
 import { getProjectsQueryOptions } from './get-projects';
 
 export const deleteProject = ({ route_id }: { route_id: string }) => {

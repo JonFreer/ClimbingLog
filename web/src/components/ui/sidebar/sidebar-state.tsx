@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Route } from '../../../types/routes';
+import { Route } from '@/types/routes';
 
 type SidebarState = {
   route: Route | null;
