@@ -23,6 +23,7 @@ import { useCreateProject } from '@/features/projects/api/create-project';
 import { useDeleteProject } from '@/features/projects/api/delete-project';
 import { useSidebarState } from './sidebar-state';
 import { useUserListState } from '../userlist/userlist-state';
+import { api } from '@/lib/api-client';
 
 export default function RouteSideBar() {
   const climbs = useClimbs().data ?? [];
@@ -80,13 +81,17 @@ export default function RouteSideBar() {
     grade: '',
   });
 
-  function updateSentBy() {
+  async function updateSentBy() {
     if (route_state != null) {
       console.log('updateSentBy', route);
-      fetch('/api/routes/sent_by/' + route.id)
-        .then((response) => response.json())
-        .then((data) => setSentBy(data))
-        .catch((error) => console.error('Error fetching sent_by:', error));
+      try {
+        const res = await api.get<UserList>(
+          '/api/routes/sent_by/' + route_state.id,
+        );
+        setSentBy(res);
+      } catch (error) {
+        console.error('Error fetching sent by data:', error);
+      }
     }
   }
 

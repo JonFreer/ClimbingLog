@@ -13,12 +13,12 @@ import {
 import { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { useParams } from 'react-router';
-import { API } from '../types/api';
 import { useCircuits } from '../features/circuits/api/get-circuits';
 import { useRoutes } from '../features/routes/api/get-routes';
 import { useSets } from '../features/sets/api/get-sets';
 import { useUser } from '../lib/auth';
 import { useSidebarState } from './ui/sidebar/sidebar-state';
+import { api } from '@/lib/api-client';
 
 ChartJS.register(
   CategoryScale,
@@ -61,11 +61,11 @@ export default function Profile() {
   const { id } = useParams();
 
   function fetchUser() {
-    const username = id || user_me.username;
-    API('GET', '/api/users/get_public/' + username)
-      .then((data) => {
-        setUser(data.data);
-        console.log('User Profile', data.data);
+    const username = id || user_me?.username;
+    api
+      .get('/api/users/get_public/' + username)
+      .then((res) => {
+        setUser(res);
       })
       .catch((error) => {
         console.error('Error fetching user:', error);
@@ -73,14 +73,14 @@ export default function Profile() {
   }
 
   function fetchClimbs() {
-    const username = id || user_me.username;
-    API('GET', '/api/users/get_climbs/' + username)
-      .then((data) => {
-        setClimbs(data.data);
-        console.log('User Climbs', data.data);
+    const username = id || user_me?.username;
+    api
+      .get('/api/users/get_climbs/' + username)
+      .then((res) => {
+        setClimbs(res);
       })
       .catch((error) => {
-        console.error('Error fetching climbs:', error);
+        console.error('Error fetching user climbs:', error);
       });
   }
 
@@ -266,7 +266,7 @@ export default function Profile() {
         <div className="m-2">
           <div className="flex flex-col bg-white m-auto p-auto mt-5 relative">
             <div className="flex overflow-x-scroll pb-10 hide-scroll-bar">
-              <div className="flex gap-4 flex-nowrap lg:ml-40 md:ml-20 ml-10">
+              <div className="flex gap-4 flex-nowrap ml-10">
                 {climbs
                   .filter((climb) => climb.sent)
                   .filter((climb) => routes[climb.route])

@@ -25,7 +25,6 @@ export function NavBar() {
     },
   });
 
-  console.log('Navbar user', user.data);
   const navigation = [
     { name: 'Dashboard', href: '/', current: false },
     { name: 'Feed', href: '/feed', current: false },
