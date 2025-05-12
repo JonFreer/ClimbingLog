@@ -101,7 +101,23 @@ export function RouteList() {
               sent_ids={sent_ids}
               routes={Object.values(routes)
                 .filter((route) => route.set_id === active_sets[circuit.id]?.id)
-                .sort((a, b) => a.name.localeCompare(b.name))}
+                .sort((a, b) => {
+                  if (sortType.id == 1) {
+                    return a.name.localeCompare(b.name);
+                  } else if (sortType.id == 2) {
+                    return sent_ids.includes(a.id) ? -1 : 1;
+                  } else if (sortType.id == 3) {
+                    return a.climb_count > b.climb_count ? -1 : 1;
+                  } else if (sortType.id == 4) {
+                    return a.location.localeCompare(b.location);
+                  } else if (sortType.id == 5) {
+                    return a.style
+                      .split(',')[0]
+                      .localeCompare(b.style.split(',')[0]);
+                  }
+
+                  return 0;
+                })}
               key={circuit.id}
               color={colors[circuit.color] || ''}
             />
