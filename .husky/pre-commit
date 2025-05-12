@@ -1,1 +1,2 @@
 npm --prefix ./web run format
+npm --prefix ./web lint-staged
