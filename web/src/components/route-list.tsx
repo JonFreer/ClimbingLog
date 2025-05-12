@@ -1,6 +1,6 @@
 import { Set } from '../types/routes';
 import { useEffect, useState } from 'react';
-import { colors, colorsBorder, colorsHex } from '../types/colors';
+import { colors, colorsBorder } from '../types/colors';
 import { ChevronRightIcon } from '@heroicons/react/24/solid';
 import { useRoutes } from '../features/routes/api/get-routes';
 import { useCircuits } from '../features/circuits/api/get-circuits';
@@ -25,7 +25,11 @@ export function RouteList() {
     },
   );
 
-  var sent_ids: string[] = [];
+  useEffect(() => {
+    localStorage.setItem('openCircuits', JSON.stringify(openCircuits));
+  }, [openCircuits]);
+
+  let sent_ids: string[] = [];
   if (climbs != undefined) {
     sent_ids = climbs
       .filter((climb) => climb.sent == true)
@@ -35,10 +39,6 @@ export function RouteList() {
   if (circuits == undefined) {
     return <div> Loading </div>;
   }
-
-  useEffect(() => {
-    localStorage.setItem('openCircuits', JSON.stringify(openCircuits));
-  }, [openCircuits]);
 
   const active_sets = Object.values(sets).reduce((acc, set) => {
     if (

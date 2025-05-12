@@ -4,7 +4,6 @@ import { Route } from '@/types/routes';
 import RouteModal from './route-modal';
 import { useRoutes } from '../api/get-routes';
 import { useCircuits } from '../../circuits/api/get-circuits';
-import { colors } from '@/types/colors';
 import { useState } from 'react';
 import { PencilIcon } from '@heroicons/react/24/outline';
 type EditRouteProps = {
@@ -43,11 +42,9 @@ export const UpdateRoute = ({ set_id, circuit_id, route }: EditRouteProps) => {
     <>
       <button
         className="ml-auto text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md"
-        onClick={
-          (e) => {
-            setOpen(true);
-          } // Change to setOpen(true) to open the modal
-        }
+        onClick={() => {
+          setOpen(true);
+        }}
       >
         <PencilIcon aria-hidden="true" className="h-5 w-5" />
       </button>

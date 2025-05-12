@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Route, User } from '@/types/routes';
+import { User } from '@/types/routes';
 
 type userListState = {
   userList: User[];

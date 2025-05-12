@@ -1,7 +1,4 @@
-import { Climb } from '../types/routes';
-import { useState } from 'react';
 import { RouteCardProfile } from './profile';
-import RouteSideBar from './ui/sidebar/route-sidebar';
 import { colorsPastel } from '../types/colors';
 import { useSets } from '../features/sets/api/get-sets';
 import { useCircuits } from '../features/circuits/api/get-circuits';

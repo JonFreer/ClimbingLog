@@ -56,7 +56,7 @@ export function RouteSettingPage() {
       </div>
 
       <div className=" flex justify-center gap-2 flex-wrap text-white my-4">
-        {circuitOrder.map((circuit_id, _index, _array) => {
+        {circuitOrder.map((circuit_id) => {
           const circuit = circuits[circuit_id];
           return (
             <button
@@ -64,7 +64,7 @@ export function RouteSettingPage() {
               className={
                 'p-2 font-bold rounded-sm uppercase ' +
                 (openCircuit == circuit.id
-                  ? `${colors[circuit.color]} shadow-sm` || ''
+                  ? `${colors[circuit.color]} shadow-sm`
                   : `${colorsFaint[circuit.color]} `)
               }
               onClick={() => setOpenCircuit(circuit.id)}

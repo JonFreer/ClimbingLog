@@ -7,13 +7,7 @@ import { UserNameInput } from './ui/form/username';
 
 export default function Settings() {
   const user = useUser();
-
-  if (!user.data) {
-    return;
-  }
-
   const { addNotification } = useNotifications();
-
   const updateUserMutation = useUpdateUser({
     mutationConfig: {
       onSuccess: () => {
@@ -24,6 +18,10 @@ export default function Settings() {
       },
     },
   });
+
+  if (!user.data) {
+    return;
+  }
 
   return (
     <form
