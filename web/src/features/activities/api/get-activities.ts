@@ -1,7 +1,6 @@
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import { Activity, Meta } from '@/types/routes';
-import { QueryConfig } from '@/lib/react-query';
 
 export const getActivities = ({
   page = 1,
@@ -26,12 +25,7 @@ export const getInfiniteActivitiesQueryOptions = () => {
   });
 };
 
-type UseActivitiesOptions = {
-  queryConfig?: QueryConfig<typeof getActivities>;
-  page?: number;
-};
-
-export const useInfiniteActivities = ({}: UseActivitiesOptions) => {
+export const useInfiniteActivities = () => {
   return useInfiniteQuery({
     ...getInfiniteActivitiesQueryOptions(),
   });

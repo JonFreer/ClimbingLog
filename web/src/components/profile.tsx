@@ -315,7 +315,7 @@ export function RouteCardProfile(props: {
   );
   const days_since = today - climb_day;
 
-  var day_text =
+  const day_text =
     days_since === 0
       ? 'Today'
       : days_since === 1

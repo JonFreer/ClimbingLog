@@ -4,13 +4,11 @@ import { RouteList } from './route-list';
 import DraggableDotsCanvas from './map';
 import { colors, colorsBold, colorsFaint, colorsHex } from '../types/colors';
 import { RouteCard } from './route-card';
-import RouteSideBar from './ui/sidebar/route-sidebar';
 import { useRoutes } from '../features/routes/api/get-routes';
 import { useCircuits } from '../features/circuits/api/get-circuits';
 import { useSets } from '../features/sets/api/get-sets';
 import { useClimbs } from '../features/climbs/api/get-climbs';
 import { useProjects } from '../features/projects/api/get-projects';
-import { useSidebarState } from './ui/sidebar/sidebar-state';
 
 export function RoutesPage() {
   const routes = useRoutes().data || {};
@@ -82,7 +80,7 @@ export function RoutesPage() {
               })) || []
           }
           selected_id={selectedRoute}
-          updateDots={(_dots) => {}}
+          updateDots={() => {}}
           setSelected={setSelectedRoute}
         />
       </div>

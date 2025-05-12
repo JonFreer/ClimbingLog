@@ -1,0 +1,2 @@
+npm --prefix ./web run format
+npx --prefix ./web lint-staged

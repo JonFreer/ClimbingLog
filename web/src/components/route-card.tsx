@@ -10,7 +10,7 @@ export function RouteCard(props: {
   circuits: Record<string, Circuit>;
 }) {
   const { openSidebar } = useSidebarState();
-  var sent_ids: string[] = [];
+  let sent_ids: string[] = [];
   if (props.climbs != undefined) {
     sent_ids = props.climbs
       .filter((climb) => climb.sent == true)

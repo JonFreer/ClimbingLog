@@ -7,7 +7,7 @@ export const createReaction = ({
   activity_id,
 }: {
   activity_id: string;
-}): Promise<String> => {
+}): Promise<string> => {
   return api.post(`/reactions/${activity_id}`);
 };
 
