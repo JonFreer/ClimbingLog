@@ -1,9 +1,9 @@
 export async function checkAuth() {
-  const response = await fetch("/api/users/me", {
-    method: "GET",
+  const response = await fetch('/api/users/me', {
+    method: 'GET',
     headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
   });
 

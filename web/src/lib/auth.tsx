@@ -1,23 +1,23 @@
-import { configureAuth } from "react-query-auth";
-import { AuthResponse, User } from "../types/routes";
-import { api } from "./api-client";
-import { z } from "zod";
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
-import { queryClient } from "../main";
+import { configureAuth } from 'react-query-auth';
+import { AuthResponse, User } from '../types/routes';
+import { api } from './api-client';
+import { z } from 'zod';
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
+import { queryClient } from '../main';
 // api call definitions for auth (types, schemas, requests):
 // these are not part of features as this is a module shared across features
 
 const getUser = async (): Promise<User> => {
-  const response = await api.get("/users/me");
-  console.log("getUser response", response);
+  const response = await api.get('/users/me');
+  console.log('getUser response', response);
   return response;
 };
 
 const logout = (): Promise<void> => {
-  console.log("logout, remove climbs");
-  localStorage.removeItem("token");
-  queryClient.resetQueries({ queryKey: ["climbs"], exact: true });
-  queryClient.refetchQueries({ queryKey: ["climbs"], exact: true });
+  console.log('logout, remove climbs');
+  localStorage.removeItem('token');
+  queryClient.resetQueries({ queryKey: ['climbs'], exact: true });
+  queryClient.refetchQueries({ queryKey: ['climbs'], exact: true });
 
   return new Promise((resolve) => {
     resolve();
@@ -25,36 +25,36 @@ const logout = (): Promise<void> => {
 };
 
 export const loginInputSchema = z.object({
-  username: z.string().min(1, "Required").email("Invalid email"),
-  password: z.string().min(5, "Required"),
+  username: z.string().min(1, 'Required').email('Invalid email'),
+  password: z.string().min(5, 'Required'),
 });
 
 export type LoginInput = z.infer<typeof loginInputSchema>;
 const loginWithEmailAndPassword = (data: LoginInput): Promise<AuthResponse> => {
-  return api.post("/auth/jwt/login", data, {
+  return api.post('/auth/jwt/login', data, {
     headers: {
-      "Content-Type": "multipart/form-data",
+      'Content-Type': 'multipart/form-data',
     },
   });
 };
 
 export const registerInputSchema = z.object({
-  username: z.string().min(1, "Required"),
-  email: z.string().min(1, "Required"),
-  password: z.string().min(5, "Required"),
+  username: z.string().min(1, 'Required'),
+  email: z.string().min(1, 'Required'),
+  password: z.string().min(5, 'Required'),
 });
 
 export type RegisterInput = z.infer<typeof registerInputSchema>;
 
 const registerWithEmailAndPassword = (data: RegisterInput): Promise<User> => {
-  return api.post("/auth/register", data);
+  return api.post('/auth/register', data);
 };
 
 const authConfig = {
   userFn: getUser,
   loginFn: async (data: LoginInput) => {
     const login_response = await loginWithEmailAndPassword(data);
-    localStorage.setItem("token", login_response.access_token);
+    localStorage.setItem('token', login_response.access_token);
     // await queryClient.invalidateQueries({
     //   queryKey: ["authenticated-user"],
     // });

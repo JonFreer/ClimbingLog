@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "../../../lib/api-client";
-import { MutationConfig } from "../../../lib/react-query";
-import { getInfiniteActivitiesQueryOptions } from "../../activities/api/get-activities";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '../../../lib/api-client';
+import { MutationConfig } from '../../../lib/react-query';
+import { getInfiniteActivitiesQueryOptions } from '../../activities/api/get-activities';
 
 export const createReaction = ({
   activity_id,

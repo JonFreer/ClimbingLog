@@ -1,28 +1,28 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { date, z } from "zod";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { date, z } from 'zod';
 
-import { api } from "../../../lib/api-client";
-import { MutationConfig } from "../../../lib/react-query";
-import { Set } from "../../../types/routes";
+import { api } from '../../../lib/api-client';
+import { MutationConfig } from '../../../lib/react-query';
+import { Set } from '../../../types/routes';
 
-import { getSetsQueryOptions } from "./get-sets";
+import { getSetsQueryOptions } from './get-sets';
 
 export const createSetInputSchema = z.object({
-  name: z.string().min(1, "Required"),
-  circuit_id: z.string().min(1, "Required"),
-  date: z.string().min(1, "Required"),
+  name: z.string().min(1, 'Required'),
+  circuit_id: z.string().min(1, 'Required'),
+  date: z.string().min(1, 'Required'),
 });
 
 export type CreateSetInput = z.infer<typeof createSetInputSchema>;
 
 export const createSet = ({ data }: { data: CreateSetInput }): Promise<Set> => {
   const formData = new FormData();
-  formData.append("name", data.name);
-  formData.append("circuit_id", data.circuit_id);
-  formData.append("date", data.date);
-  return api.post("/sets/create", formData, {
+  formData.append('name', data.name);
+  formData.append('circuit_id', data.circuit_id);
+  formData.append('date', data.date);
+  return api.post('/sets/create', formData, {
     headers: {
-      "Content-Type": "multipart/form-data",
+      'Content-Type': 'multipart/form-data',
     },
   });
 };

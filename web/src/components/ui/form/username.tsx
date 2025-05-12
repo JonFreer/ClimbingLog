@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
-import { api } from "../../../lib/api-client";
-import { useUser } from "../../../lib/auth";
+import { useRef, useState } from 'react';
+import { api } from '../../../lib/api-client';
+import { useUser } from '../../../lib/auth';
 
 export function UserNameInput({
   error,
@@ -9,7 +9,7 @@ export function UserNameInput({
   error: boolean;
   defaultValue: string;
 }) {
-  const currentInput = useRef("");
+  const currentInput = useRef('');
   const user = useUser();
   const [usernameAvailable, setUsernameAvailable] = useState(true);
 

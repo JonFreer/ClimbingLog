@@ -1,4 +1,4 @@
-import { CheckCircleIcon, XMarkIcon } from "@heroicons/react/16/solid";
+import { CheckCircleIcon, XMarkIcon } from '@heroicons/react/16/solid';
 
 export function Toast(props: {
   open: boolean;

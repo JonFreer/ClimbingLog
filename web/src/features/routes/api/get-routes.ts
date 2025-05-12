@@ -1,8 +1,8 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from '@tanstack/react-query';
 
-import { api } from "../../../lib/api-client";
-import { Route } from "../../../types/routes";
-import { QueryConfig } from "../../../lib/react-query";
+import { api } from '../../../lib/api-client';
+import { Route } from '../../../types/routes';
+import { QueryConfig } from '../../../lib/react-query';
 
 export const getRoutes = (): Promise<Record<string, Route>> => {
   return api.get(`/api/routes/get_all`).then((response) => {
@@ -12,7 +12,7 @@ export const getRoutes = (): Promise<Record<string, Route>> => {
         dict[set.id] = set; // Use `id` as the key
         return dict;
       },
-      {} as Record<string, Route>
+      {} as Record<string, Route>,
     );
     return routeDict;
   });
@@ -20,7 +20,7 @@ export const getRoutes = (): Promise<Record<string, Route>> => {
 
 export const getRoutesQueryOptions = () => {
   return queryOptions({
-    queryKey: ["routes"],
+    queryKey: ['routes'],
     queryFn: () => getRoutes(),
     placeholderData: {},
   });

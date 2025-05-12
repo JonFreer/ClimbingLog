@@ -1,10 +1,10 @@
-import Axios, { InternalAxiosRequestConfig } from "axios";
-import { useNotifications } from "../components/ui/notifications";
+import Axios, { InternalAxiosRequestConfig } from 'axios';
+import { useNotifications } from '../components/ui/notifications';
 
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
   if (config.headers) {
-    config.headers.Accept = "application/json";
-    config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
+    config.headers.Accept = 'application/json';
+    config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
   }
 
   config.withCredentials = true;
@@ -12,7 +12,7 @@ function authRequestInterceptor(config: InternalAxiosRequestConfig) {
 }
 
 export const api = Axios.create({
-  baseURL: "/api",
+  baseURL: '/api',
 });
 
 api.interceptors.request.use(authRequestInterceptor);
@@ -26,8 +26,8 @@ api.interceptors.response.use(
 
     if (error.response?.status !== 401) {
       useNotifications.getState().addNotification({
-        type: "error",
-        title: "Error",
+        type: 'error',
+        title: 'Error',
         message,
       });
     }
@@ -40,5 +40,5 @@ api.interceptors.response.use(
     // }
 
     return Promise.reject(error);
-  }
+  },
 );

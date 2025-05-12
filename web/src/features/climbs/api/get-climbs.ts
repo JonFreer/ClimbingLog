@@ -1,7 +1,7 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
-import { api } from "../../../lib/api-client";
-import { Climb } from "../../../types/routes";
-import { QueryConfig } from "../../../lib/react-query";
+import { queryOptions, useQuery } from '@tanstack/react-query';
+import { api } from '../../../lib/api-client';
+import { Climb } from '../../../types/routes';
+import { QueryConfig } from '../../../lib/react-query';
 
 export const getClimbs = (): Promise<Climb[]> => {
   return api.get(`/api/climbs/me`);
@@ -9,7 +9,7 @@ export const getClimbs = (): Promise<Climb[]> => {
 
 export const getClimbsQueryOptions = () => {
   return queryOptions({
-    queryKey: ["climbs"],
+    queryKey: ['climbs'],
     queryFn: () => getClimbs(),
     placeholderData: [],
   });

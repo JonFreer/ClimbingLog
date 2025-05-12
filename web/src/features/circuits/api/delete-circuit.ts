@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "../../../lib/api-client";
-import { MutationConfig } from "../../../lib/react-query";
-import { getCircuitsQueryOptions } from "./get-circuits";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '../../../lib/api-client';
+import { MutationConfig } from '../../../lib/react-query';
+import { getCircuitsQueryOptions } from './get-circuits';
 
 export const deleteCircuit = ({ circuit_id }: { circuit_id: string }) => {
   return api.delete(`/circuits/${circuit_id}`);

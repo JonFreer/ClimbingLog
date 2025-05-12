@@ -1,15 +1,15 @@
-import { useNotifications } from "../../../components/ui/notifications";
-import { useCreateSet } from "../api/create-set";
+import { useNotifications } from '../../../components/ui/notifications';
+import { useCreateSet } from '../api/create-set';
 
-import { useCircuits } from "../../circuits/api/get-circuits";
-import { colors } from "../../../types/colors";
-import { useState } from "react";
+import { useCircuits } from '../../circuits/api/get-circuits';
+import { colors } from '../../../types/colors';
+import { useState } from 'react';
 import {
   Dialog,
   DialogBackdrop,
   DialogPanel,
   DialogTitle,
-} from "@headlessui/react";
+} from '@headlessui/react';
 
 type CreateSetProps = {
   circuit_id: string;
@@ -25,8 +25,8 @@ export const CreateSet = ({ circuit_id }: CreateSetProps) => {
     mutationConfig: {
       onSuccess: () => {
         addNotification({
-          type: "success",
-          title: "Set Created",
+          type: 'success',
+          title: 'Set Created',
         });
         setOpen(false);
       },
@@ -37,8 +37,8 @@ export const CreateSet = ({ circuit_id }: CreateSetProps) => {
     <>
       <span
         className={
-          "ml-2 px-2 text-sm py-2 rounded-lg font-bold text-white cursor-pointer " +
-          (circuits[circuit_id] ? colors[circuits[circuit_id].color] : "")
+          'ml-2 px-2 text-sm py-2 rounded-lg font-bold text-white cursor-pointer ' +
+          (circuits[circuit_id] ? colors[circuits[circuit_id].color] : '')
         }
         onClick={() => {
           setOpen(true);
@@ -68,7 +68,7 @@ export const CreateSet = ({ circuit_id }: CreateSetProps) => {
                   e.preventDefault();
                   const formData = new FormData(e.target as HTMLFormElement);
                   const data = Object.fromEntries(formData.entries());
-                  console.log("Create Set Values", data);
+                  console.log('Create Set Values', data);
                   createSetMutation.mutate({
                     data: {
                       name: data.name as string,
@@ -124,7 +124,7 @@ export const CreateSet = ({ circuit_id }: CreateSetProps) => {
                             name="date"
                             type="date"
                             defaultValue={
-                              new Date().toISOString().split("T")[0]
+                              new Date().toISOString().split('T')[0]
                             }
                             required
                             className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"

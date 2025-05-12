@@ -1,21 +1,20 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import "./index.css";
-import App from "./App.tsx";
-import { BrowserRouter } from "react-router";
-import { QueryClient } from "@tanstack/react-query";
-import { queryConfig } from "./lib/react-query.ts";
-import { ErrorBoundary } from "react-error-boundary";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.css';
+import App from './App.tsx';
+import { BrowserRouter } from 'react-router';
+import { QueryClient } from '@tanstack/react-query';
+import { queryConfig } from './lib/react-query.ts';
+import { ErrorBoundary } from 'react-error-boundary';
 import {
   persistQueryClient,
   PersistQueryClientProvider,
-} from "@tanstack/react-query-persist-client";
-import fred from "fred";
-import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
-import { APP_VERSION } from "./constants/version.ts";
-import { MainErrorFallback } from "./components/errors/main.tsx";
+} from '@tanstack/react-query-persist-client';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { APP_VERSION } from './constants/version.ts';
+import { MainErrorFallback } from './components/errors/main.tsx';
 
-const REACT_QUERY_CACHE_KEY = "react-query-cache-version";
+const REACT_QUERY_CACHE_KEY = 'react-query-cache-version';
 
 export const queryClient = new QueryClient({
   defaultOptions: queryConfig,
@@ -37,7 +36,7 @@ persistQueryClient({
   persister: localStoragePersister,
 });
 
-createRoot(document.getElementById("root")!).render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary FallbackComponent={MainErrorFallback}>
       <PersistQueryClientProvider
@@ -49,5 +48,5 @@ createRoot(document.getElementById("root")!).render(
         </BrowserRouter>
       </PersistQueryClientProvider>
     </ErrorBoundary>
-  </StrictMode>
+  </StrictMode>,
 );

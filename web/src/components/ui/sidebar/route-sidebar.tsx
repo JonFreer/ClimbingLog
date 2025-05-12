@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogBackdrop,
   DialogPanel,
   DialogTitle,
   TransitionChild,
-} from "@headlessui/react";
-import { HeartIcon as HeartIconFill } from "@heroicons/react/24/solid";
-import { XMarkIcon, HeartIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Route, UserList } from "../../../types/routes";
-import { colors, colorsBold, colorsPastel } from "../../../types/colors";
-import { useSets } from "../../../features/sets/api/get-sets";
-import { useClimbs } from "../../../features/climbs/api/get-climbs";
-import { useCircuits } from "../../../features/circuits/api/get-circuits";
-import { useDeleteClimb } from "../../../features/climbs/api/delete-climb";
-import { useCreateSend } from "../../../features/climbs/api/create-send";
-import { useCreateAttempt } from "../../../features/climbs/api/create-attempt";
-import { useProjects } from "../../../features/projects/api/get-projects";
-import { useCreateProject } from "../../../features/projects/api/create-project";
-import { useDeleteProject } from "../../../features/projects/api/delete-project";
-import { useSidebarState } from "./sidebar-state";
-import { useUserListState } from "../userlist/userlist-state";
+} from '@headlessui/react';
+import { HeartIcon as HeartIconFill } from '@heroicons/react/24/solid';
+import { XMarkIcon, HeartIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { Route, UserList } from '../../../types/routes';
+import { colors, colorsBold, colorsPastel } from '../../../types/colors';
+import { useSets } from '../../../features/sets/api/get-sets';
+import { useClimbs } from '../../../features/climbs/api/get-climbs';
+import { useCircuits } from '../../../features/circuits/api/get-circuits';
+import { useDeleteClimb } from '../../../features/climbs/api/delete-climb';
+import { useCreateSend } from '../../../features/climbs/api/create-send';
+import { useCreateAttempt } from '../../../features/climbs/api/create-attempt';
+import { useProjects } from '../../../features/projects/api/get-projects';
+import { useCreateProject } from '../../../features/projects/api/create-project';
+import { useDeleteProject } from '../../../features/projects/api/delete-project';
+import { useSidebarState } from './sidebar-state';
+import { useUserListState } from '../userlist/userlist-state';
 
 export default function RouteSideBar() {
   const climbs = useClimbs().data ?? [];
@@ -70,23 +70,23 @@ export default function RouteSideBar() {
   const [sentBy, setSentBy] = useState<UserList>({ users: [], num_users: 0 });
   const [justCompleted, setJustCompleted] = useState(false);
   const [route, setRoute] = useState<Route>({
-    id: "",
-    name: "",
-    location: "",
-    style: "",
-    set_id: "",
+    id: '',
+    name: '',
+    location: '',
+    style: '',
+    set_id: '',
     x: 0,
     y: 0,
-    grade: "",
+    grade: '',
   });
 
   function updateSentBy() {
     if (route_state != null) {
-      console.log("updateSentBy", route);
-      fetch("/api/routes/sent_by/" + route.id)
+      console.log('updateSentBy', route);
+      fetch('/api/routes/sent_by/' + route.id)
         .then((response) => response.json())
         .then((data) => setSentBy(data))
-        .catch((error) => console.error("Error fetching sent_by:", error));
+        .catch((error) => console.error('Error fetching sent_by:', error));
     }
   }
 
@@ -104,13 +104,13 @@ export default function RouteSideBar() {
   }, [route_state]);
 
   const complete = climbs.find(
-    (climb) => climb.route == route.id && climb.sent == true
+    (climb) => climb.route == route.id && climb.sent == true,
   );
   const attempts = climbs.filter(
-    (climb) => climb.route == route.id && climb.sent == false
+    (climb) => climb.route == route.id && climb.sent == false,
   );
   const sends = climbs.filter(
-    (climb) => climb.route == route.id && climb.sent == true
+    (climb) => climb.route == route.id && climb.sent == true,
   );
 
   const circuit = circuits[sets[route.set_id]?.circuit_id];
@@ -158,8 +158,8 @@ export default function RouteSideBar() {
                 <div className="relative flex-1 ">
                   <div
                     className={
-                      "relative p-4 flex justify-center items-center " +
-                      (circuit ? colorsPastel[circuit.color] || "" : "")
+                      'relative p-4 flex justify-center items-center ' +
+                      (circuit ? colorsPastel[circuit.color] || '' : '')
                     }
                   >
                     <div className="relative inline-block m-auto rounded-xl bg-white">
@@ -168,15 +168,15 @@ export default function RouteSideBar() {
                           Sent
                         </div>
                       ) : (
-                        ""
+                        ''
                       )}
 
                       <img
                         className={
-                          "max-h-96 rounded-xl " +
-                          (justCompleted ? "shimmer" : "")
+                          'max-h-96 rounded-xl ' +
+                          (justCompleted ? 'shimmer' : '')
                         }
-                        src={"/api/img/" + route.id + ".webp"}
+                        src={'/api/img/' + route.id + '.webp'}
                       ></img>
                     </div>
                   </div>
@@ -244,12 +244,12 @@ export default function RouteSideBar() {
                         createSendMutation.mutate({ route_id: route.id });
                       }}
                       className={
-                        "rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2  " +
-                        (circuit ? colors[circuit.color] || "" : "") +
-                        " " +
+                        'rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2  ' +
+                        (circuit ? colors[circuit.color] || '' : '') +
+                        ' ' +
                         (circuit
-                          ? "hover:" + colorsBold[circuit.color] || ""
-                          : "")
+                          ? 'hover:' + colorsBold[circuit.color] || ''
+                          : '')
                       }
                     >
                       Add Send
@@ -271,7 +271,7 @@ export default function RouteSideBar() {
                           <img
                             key={id}
                             className="w-10 h-10 rounded-full -ml-5 border-2 border-white shadow-sm"
-                            src={"/api/profile_photo/" + id}
+                            src={'/api/profile_photo/' + id}
                           ></img>
                         ))}
 
@@ -294,10 +294,10 @@ export default function RouteSideBar() {
                           ) : null}
                           {sentBy.users.length > 1 && sentBy.num_users > 2 && (
                             <span className="ml-1">
-                              and{" "}
+                              and{' '}
                               <span className="font-semibold">
-                                {sentBy.num_users - 2}{" "}
-                                {sentBy.num_users - 2 == 1 ? "other" : "others"}
+                                {sentBy.num_users - 2}{' '}
+                                {sentBy.num_users - 2 == 1 ? 'other' : 'others'}
                               </span>
                             </span>
                           )}
@@ -322,20 +322,20 @@ export default function RouteSideBar() {
                             className="flex items-center justify-between p-2 bg-white "
                           >
                             <div className="text-sm text-gray-600">
-                              {new Date(climb.time).toLocaleString("en-GB", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "2-digit",
+                              {new Date(climb.time).toLocaleString('en-GB', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: '2-digit',
                               })}
                             </div>
                             <div
                               className={`text-sm font-semibold ${
-                                climb.sent ? "text-green-600" : "text-gray-600"
+                                climb.sent ? 'text-green-600' : 'text-gray-600'
                               }`}
                             >
-                              {climb.sent ? "Send" : "Attempt"}
+                              {climb.sent ? 'Send' : 'Attempt'}
                             </div>
                             <button
                               className="text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md"

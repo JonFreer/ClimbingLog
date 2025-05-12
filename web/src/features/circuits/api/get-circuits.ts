@@ -1,19 +1,19 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from '@tanstack/react-query';
 
-import { api } from "../../../lib/api-client";
-import { Circuit } from "../../../types/routes";
-import { QueryConfig } from "../../../lib/react-query";
+import { api } from '../../../lib/api-client';
+import { Circuit } from '../../../types/routes';
+import { QueryConfig } from '../../../lib/react-query';
 
 export const orderedColors = [
-  "Green",
-  "White",
-  "Blue",
-  "Black",
-  "Pink",
-  "Red",
-  "Purple",
-  "Yellow",
-  "Orange",
+  'Green',
+  'White',
+  'Blue',
+  'Black',
+  'Pink',
+  'Red',
+  'Purple',
+  'Yellow',
+  'Orange',
 ];
 
 export const getCircuits = (): Promise<{
@@ -27,7 +27,7 @@ export const getCircuits = (): Promise<{
         dict[circuit.id] = circuit; // Use `id` as the key
         return dict;
       },
-      {} as Record<string, Circuit>
+      {} as Record<string, Circuit>,
     );
 
     const order = circuitsArray
@@ -42,7 +42,7 @@ export const getCircuits = (): Promise<{
       .sort((a, b) => a.order - b.order)
       .map((circuit: Circuit) => circuit.id);
 
-    console.log("Circuits order", order);
+    console.log('Circuits order', order);
 
     return { data: circuitsDict, order: order };
   });
@@ -50,7 +50,7 @@ export const getCircuits = (): Promise<{
 
 export const getCircuitsQueryOptions = () => {
   return queryOptions({
-    queryKey: ["circuits"],
+    queryKey: ['circuits'],
     queryFn: () => getCircuits(),
     placeholderData: { data: {}, order: [] },
     // select: (response) => response,

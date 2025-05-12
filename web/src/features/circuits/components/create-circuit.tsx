@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { useNotifications } from "../../../components/ui/notifications";
-import { useCreateCircuit } from "../api/create-circuit";
+import { useState } from 'react';
+import { useNotifications } from '../../../components/ui/notifications';
+import { useCreateCircuit } from '../api/create-circuit';
 import {
   Dialog,
   DialogBackdrop,
   DialogPanel,
   DialogTitle,
-} from "@headlessui/react";
+} from '@headlessui/react';
 
 export const CreateCircuit = () => {
   const [open, setOpen] = useState(false);
@@ -17,8 +17,8 @@ export const CreateCircuit = () => {
     mutationConfig: {
       onSuccess: () => {
         addNotification({
-          type: "success",
-          title: "Circuit Created",
+          type: 'success',
+          title: 'Circuit Created',
         });
         setOpen(false);
       },

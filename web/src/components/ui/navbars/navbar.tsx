@@ -6,39 +6,39 @@ import {
   MenuButton,
   MenuItem,
   MenuItems,
-} from "@headlessui/react";
-import { UserCircleIcon } from "@heroicons/react/24/solid";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
-import { NavLink } from "react-router";
-import { useLogout, useUser } from "../../../lib/auth";
+} from '@headlessui/react';
+import { UserCircleIcon } from '@heroicons/react/24/solid';
+import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
+import { NavLink } from 'react-router';
+import { useLogout, useUser } from '../../../lib/auth';
 
 function classNames(...classes: any) {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(' ');
 }
 
 export function NavBar() {
   const user = useUser();
   const logout = useLogout({
     onSuccess: () => {
-      console.log("Logout success");
+      console.log('Logout success');
     },
   });
 
-  console.log("Navbar user", user.data);
+  console.log('Navbar user', user.data);
   const navigation = [
-    { name: "Dashboard", href: "/", current: false },
-    { name: "Feed", href: "/feed", current: false },
+    { name: 'Dashboard', href: '/', current: false },
+    { name: 'Feed', href: '/feed', current: false },
   ];
 
   if (user.data && user.data.is_superuser) {
-    navigation.push({ name: "Admin", href: "/admin", current: false });
+    navigation.push({ name: 'Admin', href: '/admin', current: false });
   }
 
   if (user.data && user.data.route_setter) {
     navigation.push({
-      name: "Route Setting",
-      href: "/route_setting",
+      name: 'Route Setting',
+      href: '/route_setting',
       current: false,
     });
   }
@@ -80,15 +80,15 @@ export function NavBar() {
                     to={item.href}
                     aria-current={
                       item.href === window.location.pathname
-                        ? "page"
+                        ? 'page'
                         : undefined
                     }
                     onClick={() => setPath(item.href)}
                     className={classNames(
                       item.href === window.location.pathname
-                        ? "bg-gray-900 text-white"
-                        : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                      "rounded-md px-3 py-2 text-sm font-medium"
+                        ? 'bg-gray-900 text-white'
+                        : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                      'rounded-md px-3 py-2 text-sm font-medium',
                     )}
                   >
                     {item.name}
@@ -119,7 +119,7 @@ export function NavBar() {
                       <img
                         className="rounded-full size-8"
                         onError={(e) =>
-                          (e.currentTarget.style.display = "none")
+                          (e.currentTarget.style.display = 'none')
                         }
                         src={`/api/profile_photo/${user.data.id}`}
                       />
@@ -137,7 +137,7 @@ export function NavBar() {
                 >
                   <MenuItem>
                     <NavLink
-                      onClick={() => setPath("/profile")}
+                      onClick={() => setPath('/profile')}
                       to="/profile"
                       className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                     >
@@ -146,7 +146,7 @@ export function NavBar() {
                   </MenuItem>
                   <MenuItem>
                     <NavLink
-                      onClick={() => setPath("/settings")}
+                      onClick={() => setPath('/settings')}
                       to="/settings"
                       className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                     >
@@ -158,7 +158,7 @@ export function NavBar() {
                       onClick={() => {
                         logout.mutate(undefined, {
                           onSuccess: () => {
-                            console.log("Logout success");
+                            console.log('Logout success');
                           },
                         });
                       }}
@@ -173,11 +173,11 @@ export function NavBar() {
           ) : (
             <div className="absolute inset-y-0 top-3 right-0">
               <NavLink
-                onClick={() => setPath("/login")}
-                to={"/login"}
+                onClick={() => setPath('/login')}
+                to={'/login'}
                 // aria-current={item.current ? 'page' : undefined}
                 className={classNames(
-                  "inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-700 sm:ml-3 sm:w-auto"
+                  'inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-700 sm:ml-3 sm:w-auto',
                 )}
               >
                 + Login
@@ -195,13 +195,13 @@ export function NavBar() {
               key={item.name}
               to={item.href}
               aria-current={
-                item.href === window.location.pathname ? "page" : undefined
+                item.href === window.location.pathname ? 'page' : undefined
               }
               className={classNames(
                 item.href === window.location.pathname
-                  ? "bg-gray-900 text-white"
-                  : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                "block rounded-md px-3 py-2 text-base font-medium"
+                  ? 'bg-gray-900 text-white'
+                  : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                'block rounded-md px-3 py-2 text-base font-medium',
               )}
             >
               {item.name}

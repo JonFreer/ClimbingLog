@@ -1,12 +1,12 @@
-import { useNotifications } from "../../../components/ui/notifications";
-import { useUpdateRoute } from "../api/update-route";
-import { Route } from "../../../types/routes";
-import RouteModal from "./route-modal";
-import { useRoutes } from "../api/get-routes";
-import { useCircuits } from "../../circuits/api/get-circuits";
-import { colors } from "../../../types/colors";
-import { useState } from "react";
-import { PencilIcon } from "@heroicons/react/24/outline";
+import { useNotifications } from '../../../components/ui/notifications';
+import { useUpdateRoute } from '../api/update-route';
+import { Route } from '../../../types/routes';
+import RouteModal from './route-modal';
+import { useRoutes } from '../api/get-routes';
+import { useCircuits } from '../../circuits/api/get-circuits';
+import { colors } from '../../../types/colors';
+import { useState } from 'react';
+import { PencilIcon } from '@heroicons/react/24/outline';
 type EditRouteProps = {
   set_id: string;
   circuit_id: string;
@@ -24,15 +24,15 @@ export const UpdateRoute = ({ set_id, circuit_id, route }: EditRouteProps) => {
     mutationConfig: {
       onSuccess: () => {
         addNotification({
-          type: "success",
-          title: "Route Updated",
+          type: 'success',
+          title: 'Route Updated',
         });
         setOpen(false);
       },
       onError: (error) => {
         addNotification({
-          type: "error",
-          title: "Route Update Failed",
+          type: 'error',
+          title: 'Route Update Failed',
           message: error.message,
         });
       },

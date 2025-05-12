@@ -1,5 +1,5 @@
-import { NavLink } from "react-router";
-import { useLogin, loginInputSchema } from "../../../lib/auth";
+import { NavLink } from 'react-router';
+import { useLogin, loginInputSchema } from '../../../lib/auth';
 
 type LoginFormProps = {
   onSuccess: () => void;
@@ -28,8 +28,8 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
             event.preventDefault();
             const formData = new FormData(event.currentTarget);
             const values = {
-              username: formData.get("username") as string,
-              password: formData.get("password") as string,
+              username: formData.get('username') as string,
+              password: formData.get('password') as string,
             };
             login.mutate(values);
           }}
@@ -85,7 +85,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
 
           {login.isError &&
             (login.error as any)?.response?.data?.detail ===
-              "LOGIN_BAD_CREDENTIALS" && (
+              'LOGIN_BAD_CREDENTIALS' && (
               <div className="flex bg-red-50 p-3 m-2 rounded-md">
                 <div className="text-red-800 text-sm p-2">
                   The password or email entered is invalid.
@@ -104,7 +104,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
         </form>
 
         <p className="mt-10 text-center text-sm/6 text-gray-500">
-          Don't have an account?{" "}
+          Don't have an account?{' '}
           <NavLink
             to="/register"
             className="font-semibold text-indigo-600 hover:text-indigo-500"

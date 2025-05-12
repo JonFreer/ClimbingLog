@@ -1,17 +1,17 @@
-import { Route, Circuit } from "../../../types/routes";
-import { useEffect, useState } from "react";
-import { UseMutationResult } from "@tanstack/react-query";
-import { Dot } from "../../../components/map";
+import { Route, Circuit } from '../../../types/routes';
+import { useEffect, useState } from 'react';
+import { UseMutationResult } from '@tanstack/react-query';
+import { Dot } from '../../../components/map';
 import {
   Dialog,
   DialogBackdrop,
   DialogPanel,
   DialogTitle,
-} from "@headlessui/react";
-import DraggableDotsCanvas from "../../../components/map";
-import { CreateRouteInput } from "../api/create-route";
-import { UpdateRouteInput } from "../api/update-route";
-import { colors, colorsBold, colorsHex } from "../../../types/colors";
+} from '@headlessui/react';
+import DraggableDotsCanvas from '../../../components/map';
+import { CreateRouteInput } from '../api/create-route';
+import { UpdateRouteInput } from '../api/update-route';
+import { colors, colorsBold, colorsHex } from '../../../types/colors';
 
 export default function RouteModal(props: {
   routes: Record<string, Route>;
@@ -31,49 +31,49 @@ export default function RouteModal(props: {
   setOpen: (bool: boolean) => void;
 }) {
   const locations = [
-    "Smol Slab",
-    "Slab",
-    "Skip",
-    "Cave",
-    "Shutter Right",
-    "Shutter Left",
-    "Comp Wall",
-    "Comp Overhang",
-    "Fire Escape",
-    "Island N",
-    "Island S",
-    "Island E",
-    "Island W",
-    "Ondra",
+    'Smol Slab',
+    'Slab',
+    'Skip',
+    'Cave',
+    'Shutter Right',
+    'Shutter Left',
+    'Comp Wall',
+    'Comp Overhang',
+    'Fire Escape',
+    'Island N',
+    'Island S',
+    'Island E',
+    'Island W',
+    'Ondra',
   ];
   const styles_list = [
-    "Slab",
-    "Vertical",
-    "Overhang",
-    "Arete",
-    "Crack",
-    "Mantle",
-    "Dyno",
-    "Jump",
-    "Compression",
-    "Pinch",
-    "Crimp",
-    "Jug",
-    "Pocket",
-    "Sloper",
-    "Undercling",
-    "Gaston",
-    "Heel Hook",
-    "Toe Hook",
-    "Knee Bar",
-    "Match",
-    "Cross Through",
-    "Drop Knee",
-    "Lock Off",
-    "Deadpoint",
-    "Campus",
+    'Slab',
+    'Vertical',
+    'Overhang',
+    'Arete',
+    'Crack',
+    'Mantle',
+    'Dyno',
+    'Jump',
+    'Compression',
+    'Pinch',
+    'Crimp',
+    'Jug',
+    'Pocket',
+    'Sloper',
+    'Undercling',
+    'Gaston',
+    'Heel Hook',
+    'Toe Hook',
+    'Knee Bar',
+    'Match',
+    'Cross Through',
+    'Drop Knee',
+    'Lock Off',
+    'Deadpoint',
+    'Campus',
   ];
-  const [location, setLocation] = useState<string>("");
+  const [location, setLocation] = useState<string>('');
   const [styles, setStyles] = useState<string[]>([]);
 
   const [dots, setDots] = useState<Dot[]>([
@@ -85,14 +85,14 @@ export default function RouteModal(props: {
       radius: 6,
       draggable: true,
       color: colorsHex[props.circuits[props.circuit_id]?.color],
-      id: "",
+      id: '',
     },
   ]);
 
-  const circuite_name = props.circuits[props.circuit_id]?.name || "";
+  const circuite_name = props.circuits[props.circuit_id]?.name || '';
 
   const num_routes_in_set = Object.values(props.routes).filter(
-    (route) => route.set_id === props.set_id
+    (route) => route.set_id === props.set_id,
   ).length;
 
   const [formData, setFormData] = useState<{
@@ -103,24 +103,24 @@ export default function RouteModal(props: {
     name: props.route
       ? props.route.name
       : circuite_name[0] + (num_routes_in_set + 1),
-    grade: props.route ? props.route.name : "",
+    grade: props.route ? props.route.name : '',
     img: null,
   });
 
   useEffect(() => {
-    const circuite_name = props.circuits[props.circuit_id]?.name || "";
+    const circuite_name = props.circuits[props.circuit_id]?.name || '';
     const num_routes_in_set = Object.values(props.routes).filter(
-      (route) => route.set_id === props.set_id
+      (route) => route.set_id === props.set_id,
     ).length;
-    console.log("Circuit name: ", circuite_name);
-    console.log("Number of routes in set: ", num_routes_in_set);
-    setLocation(props.route ? props.route.location : "");
-    setStyles(props.route ? props.route.style.split(",") : []);
+    console.log('Circuit name: ', circuite_name);
+    console.log('Number of routes in set: ', num_routes_in_set);
+    setLocation(props.route ? props.route.location : '');
+    setStyles(props.route ? props.route.style.split(',') : []);
     setFormData({
       name: props.route
         ? props.route.name
         : circuite_name[0] + (num_routes_in_set + 1),
-      grade: props.route ? props.route.name : "",
+      grade: props.route ? props.route.name : '',
       img: null,
     });
     setDots([
@@ -132,7 +132,7 @@ export default function RouteModal(props: {
         radius: 6,
         draggable: true,
         color: colorsHex[props.circuits[props.circuit_id]?.color],
-        id: "",
+        id: '',
       },
     ]);
   }, [props.route, props.set_id, props.open]);
@@ -150,11 +150,11 @@ export default function RouteModal(props: {
 
     props.setRoute.mutate({
       data: {
-        route_id: props.route ? props.route.id : "",
+        route_id: props.route ? props.route.id : '',
         name: formData.name,
         location: location,
         grade: formData.grade,
-        style: styles.join(","),
+        style: styles.join(','),
         set_id: props.set_id,
         x: dots[0].x.toString(),
         y: dots[0].y.toString(),
@@ -196,13 +196,13 @@ export default function RouteModal(props: {
                       as="h3"
                       className="text-base font-semibold text-gray-900"
                     >
-                      {props.route ? "Edit Route" : "Add a new route"}
+                      {props.route ? 'Edit Route' : 'Add a new route'}
                     </DialogTitle>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500 ">
                         {props.route
-                          ? "Update properties for existing route"
-                          : "Add a new route to the circuit"}
+                          ? 'Update properties for existing route'
+                          : 'Add a new route to the circuit'}
                       </p>
                     </div>
 
@@ -263,7 +263,7 @@ export default function RouteModal(props: {
                               setLocation(loc);
                             }}
                             className={
-                              "justify-center rounded-md  px-3 py-2 text-sm shadow-md sm:w-auto mb-1 cursor-pointer select-none " +
+                              'justify-center rounded-md  px-3 py-2 text-sm shadow-md sm:w-auto mb-1 cursor-pointer select-none ' +
                               (location === loc
                                 ? `${
                                     colors[
@@ -274,7 +274,7 @@ export default function RouteModal(props: {
                                       props.circuits[props.circuit_id].color
                                     ]
                                   } text-white`
-                                : "bg-white hover:bg-gray-100 text-gray-500")
+                                : 'bg-white hover:bg-gray-100 text-gray-500')
                             }
                             key={loc}
                           >
@@ -300,11 +300,11 @@ export default function RouteModal(props: {
                               setStyles((prevStyles) =>
                                 prevStyles.includes(loc)
                                   ? prevStyles.filter((style) => style !== loc)
-                                  : [...prevStyles, loc]
+                                  : [...prevStyles, loc],
                               )
                             }
                             className={
-                              "justify-center rounded-md  px-3 py-2 text-sm shadow-md sm:w-auto mb-1 cursor-pointer select-none " +
+                              'justify-center rounded-md  px-3 py-2 text-sm shadow-md sm:w-auto mb-1 cursor-pointer select-none ' +
                               (styles.includes(loc)
                                 ? `${
                                     colors[
@@ -315,7 +315,7 @@ export default function RouteModal(props: {
                                       props.circuits[props.circuit_id].color
                                     ]
                                   } text-white`
-                                : "bg-white hover:bg-gray-100 text-gray-500")
+                                : 'bg-white hover:bg-gray-100 text-gray-500')
                             }
                             key={loc}
                           >
@@ -331,8 +331,8 @@ export default function RouteModal(props: {
                         }}
                         defaultUrl={
                           props.route
-                            ? "/api/img/" + props.route.id + ".webp"
-                            : ""
+                            ? '/api/img/' + props.route.id + '.webp'
+                            : ''
                         }
                       ></ImageUpload>
                     </div>
@@ -346,7 +346,7 @@ export default function RouteModal(props: {
                   type="submit"
                   className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500 sm:ml-3 sm:w-auto disabled:bg-gray-300"
                 >
-                  {props.route ? "Update Route" : "Add Route"}
+                  {props.route ? 'Update Route' : 'Add Route'}
                 </button>
                 <button
                   type="button"
@@ -384,8 +384,8 @@ function ImageUpload(props: {
         img.src = reader.result as string;
         //scale and compress the image bbefore sending it to the server
         img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
 
           const maxHeight = 1920;
           let { width, height } = img;
@@ -403,16 +403,16 @@ function ImageUpload(props: {
           canvas.toBlob(
             (blob) => {
               if (blob) {
-                const webpFile = new File([blob], "image.webp", {
-                  type: "image/webp",
+                const webpFile = new File([blob], 'image.webp', {
+                  type: 'image/webp',
                 });
                 console.log(`WebP file size: ${webpFile.size} bytes`);
                 setPreview(URL.createObjectURL(webpFile));
                 props.imageCallback(webpFile);
               }
             },
-            "image/webp",
-            0.8 // Compression quality
+            'image/webp',
+            0.8, // Compression quality
           );
         };
       };
@@ -456,7 +456,7 @@ function ImageUpload(props: {
                 Upload picture
               </h5>
               <p className="font-normal text-sm text-gray-400 md:px-6">
-                Choose photo size should be less than{" "}
+                Choose photo size should be less than{' '}
                 <b className="text-gray-600">2mb</b>
               </p>
 

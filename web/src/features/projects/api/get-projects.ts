@@ -1,7 +1,7 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
-import { api } from "../../../lib/api-client";
-import { Projects } from "../../../types/routes";
-import { QueryConfig } from "../../../lib/react-query";
+import { queryOptions, useQuery } from '@tanstack/react-query';
+import { api } from '../../../lib/api-client';
+import { Projects } from '../../../types/routes';
+import { QueryConfig } from '../../../lib/react-query';
 
 export const getProjects = (): Promise<Projects> => {
   return api.get(`/api/projects/me`);
@@ -9,7 +9,7 @@ export const getProjects = (): Promise<Projects> => {
 
 export const getProjectsQueryOptions = () => {
   return queryOptions({
-    queryKey: ["projects"],
+    queryKey: ['projects'],
     queryFn: () => getProjects(),
     placeholderData: [],
   });

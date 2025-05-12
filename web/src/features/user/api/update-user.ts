@@ -1,12 +1,12 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
 
-import { api } from "../../../lib/api-client";
-import { MutationConfig } from "../../../lib/react-query";
-import { User } from "../../../types/routes";
+import { api } from '../../../lib/api-client';
+import { MutationConfig } from '../../../lib/react-query';
+import { User } from '../../../types/routes';
 
 export const updateUserInputSchema = z.object({
-  username: z.string().min(1, "Required"),
+  username: z.string().min(1, 'Required'),
   about: z.string(),
   profile_visible: z.boolean(),
   send_visible: z.boolean(),
@@ -19,7 +19,7 @@ export const updateUser = ({
 }: {
   data: UpdateUserInput;
 }): Promise<User> => {
-  return api.patch("/users/me", data);
+  return api.patch('/users/me', data);
 };
 
 type UseUpdateUserOptions = {
@@ -34,7 +34,7 @@ export const useUpdateUser = ({ mutationConfig }: UseUpdateUserOptions) => {
   return useMutation({
     onSuccess: (...args) => {
       queryClient.invalidateQueries({
-        queryKey: ["authenticated-user"],
+        queryKey: ['authenticated-user'],
       });
       onSuccess?.(...args);
     },

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from 'react';
 
 export interface Dot {
   x: number;
@@ -33,11 +33,11 @@ const DraggableDotsCanvas = (props: {
   const svgImageRef = useRef<HTMLImageElement | null>(null);
 
   useEffect(() => {
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
     handleResize();
 
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener('resize', handleResize);
     };
   }, [props]);
 
@@ -61,7 +61,7 @@ const DraggableDotsCanvas = (props: {
 
     // Load SVG
     const img = new Image();
-    img.src = "depot.svg";
+    img.src = 'depot.svg';
     img.onload = () => {
       svgImageRef.current = img;
       drawCanvas();
@@ -98,21 +98,21 @@ const DraggableDotsCanvas = (props: {
   useEffect(() => {
     // Load SVG
     const img = new Image();
-    img.src = "depot.svg";
+    img.src = 'depot.svg';
     img.onload = () => {
-      console.log("svg loaded", img.width, img.height);
+      console.log('svg loaded', img.width, img.height);
       svgImageRef.current = img;
       drawCanvas();
     };
   }, []);
 
   function drawCanvas() {
-    const ctx = canvasRef.current?.getContext("2d");
+    const ctx = canvasRef.current?.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
 
     if (ctx) {
       ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "high";
+      ctx.imageSmoothingQuality = 'high';
       const { width, height } = ctx.canvas;
 
       ctx.clearRect(0, 0, width, height);
@@ -120,17 +120,17 @@ const DraggableDotsCanvas = (props: {
 
       ctx.translate(
         transformRef.current.translateX * dpr,
-        transformRef.current.translateY * dpr
+        transformRef.current.translateY * dpr,
       );
 
       ctx.scale(
         transformRef.current.scale * dpr,
-        transformRef.current.scale * dpr
+        transformRef.current.scale * dpr,
       );
 
       // Draw grid
       const gridSize = 10;
-      ctx.strokeStyle = "#e0e0e050";
+      ctx.strokeStyle = '#e0e0e050';
       ctx.lineWidth = 0.5; // Set the stroke width
 
       for (let x = -width; x < width; x += gridSize) {
@@ -157,14 +157,14 @@ const DraggableDotsCanvas = (props: {
         if (dot.id === props.selected_id) {
           ctx.beginPath();
           ctx.arc(dot.x, dot.y, dot.radius + 2, 0, 2 * Math.PI);
-          ctx.fillStyle = dot.complete ? dot.color + "5e" : dot.color + "5e";
+          ctx.fillStyle = dot.complete ? dot.color + '5e' : dot.color + '5e';
           ctx.fill();
           ctx.closePath();
         }
 
         ctx.beginPath();
         ctx.arc(dot.x, dot.y, dot.radius, 0, 2 * Math.PI);
-        ctx.fillStyle = dot.complete ? dot.color : dot.color + "5e";
+        ctx.fillStyle = dot.complete ? dot.color : dot.color + '5e';
         ctx.fill();
         ctx.closePath();
       });
@@ -193,7 +193,7 @@ const DraggableDotsCanvas = (props: {
         (e.clientY - rect.top - transformRef.current.translateY) /
         transformRef.current.scale;
       props.updateDots(
-        props.dots.map((dot) => (dot.isDragging ? { ...dot, x, y } : dot))
+        props.dots.map((dot) => (dot.isDragging ? { ...dot, x, y } : dot)),
       );
     }
 
@@ -306,7 +306,7 @@ const DraggableDotsCanvas = (props: {
         (touch.clientY - rect.top - transformRef.current.translateY) /
         transformRef.current.scale;
       props.updateDots(
-        props.dots.map((dot) => (dot.isDragging ? { ...dot, x, y } : dot))
+        props.dots.map((dot) => (dot.isDragging ? { ...dot, x, y } : dot)),
       );
     }
 
@@ -330,7 +330,7 @@ const DraggableDotsCanvas = (props: {
       props.dots.map((dot) => ({
         ...dot,
         isDragging: false,
-      }))
+      })),
     );
   }
 
@@ -341,7 +341,7 @@ const DraggableDotsCanvas = (props: {
   };
 
   const handleClick = (e) => {
-    console.log("click", e);
+    console.log('click', e);
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -367,8 +367,8 @@ const DraggableDotsCanvas = (props: {
       if (dot.draggable && Math.hypot(dot.x - x, dot.y - y) < dot.radius + 1) {
         props.updateDots(
           props.dots.map((d) =>
-            d.x === dot.x && d.y === dot.y ? { ...d, isDragging: true } : d
-          )
+            d.x === dot.x && d.y === dot.y ? { ...d, isDragging: true } : d,
+          ),
         );
         return true;
       }

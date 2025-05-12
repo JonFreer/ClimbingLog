@@ -1,8 +1,8 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from '@tanstack/react-query';
 
-import { api } from "../../../lib/api-client";
-import { Set } from "../../../types/routes";
-import { QueryConfig } from "../../../lib/react-query";
+import { api } from '../../../lib/api-client';
+import { Set } from '../../../types/routes';
+import { QueryConfig } from '../../../lib/react-query';
 
 export const getSets = (): Promise<{ data: Record<string, Set> }> => {
   return api.get(`/api/sets/get_all`).then((response) => {
@@ -17,7 +17,7 @@ export const getSets = (): Promise<{ data: Record<string, Set> }> => {
 
 export const getSetsQueryOptions = () => {
   return queryOptions({
-    queryKey: ["sets"],
+    queryKey: ['sets'],
     queryFn: () => getSets(),
     placeholderData: { data: {} },
     select: (response) => response?.data,

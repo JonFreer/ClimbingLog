@@ -1,13 +1,13 @@
-import { Set } from "../types/routes";
-import { useEffect, useState } from "react";
-import { colors, colorsBorder, colorsHex } from "../types/colors";
-import { ChevronRightIcon } from "@heroicons/react/24/solid";
-import { useRoutes } from "../features/routes/api/get-routes";
-import { useCircuits } from "../features/circuits/api/get-circuits";
-import { useSets } from "../features/sets/api/get-sets";
-import { useClimbs } from "../features/climbs/api/get-climbs";
-import { useProjects } from "../features/projects/api/get-projects";
-import { useSidebarState } from "./ui/sidebar/sidebar-state";
+import { Set } from '../types/routes';
+import { useEffect, useState } from 'react';
+import { colors, colorsBorder, colorsHex } from '../types/colors';
+import { ChevronRightIcon } from '@heroicons/react/24/solid';
+import { useRoutes } from '../features/routes/api/get-routes';
+import { useCircuits } from '../features/circuits/api/get-circuits';
+import { useSets } from '../features/sets/api/get-sets';
+import { useClimbs } from '../features/climbs/api/get-climbs';
+import { useProjects } from '../features/projects/api/get-projects';
+import { useSidebarState } from './ui/sidebar/sidebar-state';
 
 export function RouteList() {
   const routes = useRoutes().data || {};
@@ -20,9 +20,9 @@ export function RouteList() {
   // const [openCircuits, setCircuits] = useState<{ [key: string]: boolean }>({});
   const [openCircuits, setCircuits] = useState<{ [key: string]: boolean }>(
     () => {
-      const savedOpenCircuits = localStorage.getItem("openCircuits");
+      const savedOpenCircuits = localStorage.getItem('openCircuits');
       return savedOpenCircuits ? JSON.parse(savedOpenCircuits) : {};
-    }
+    },
   );
 
   var sent_ids: string[] = [];
@@ -37,7 +37,7 @@ export function RouteList() {
   }
 
   useEffect(() => {
-    localStorage.setItem("openCircuits", JSON.stringify(openCircuits));
+    localStorage.setItem('openCircuits', JSON.stringify(openCircuits));
   }, [openCircuits]);
 
   const active_sets = Object.values(sets).reduce((acc, set) => {
@@ -54,13 +54,13 @@ export function RouteList() {
     <>
       {projects.length > 0 ? (
         <>
-          <div key={"projects"} className="mt-8 mx-4">
+          <div key={'projects'} className="mt-8 mx-4">
             <button
               className="bg-white hover:bg-gray-50 text-gray-900 font-medium  rounded-lg shadow-xs w-full text-left flex justify-between items-center"
               onClick={() => {
                 setCircuits((prev) => ({
                   ...prev,
-                  projects: !prev["projects"],
+                  projects: !prev['projects'],
                 }));
               }}
             >
@@ -68,31 +68,31 @@ export function RouteList() {
                 <span className="text-lg font-bold text-white uppercase px-4 py-2 pr-10 min-w-52 rounded-l-lg bg-linear-to-r from-indigo-500 from-10% via-sky-500 via-40% to-emerald-500 to-100% clip-path">
                   Your Projects
                 </span>
-                <span className={"font-bold ml-auto mr-2"}>
+                <span className={'font-bold ml-auto mr-2'}>
                   {
                     Object.values(routes).filter(
                       (route) =>
                         projects.includes(route.id) &&
-                        sent_ids.includes(route.id)
+                        sent_ids.includes(route.id),
                     ).length
-                  }{" "}
-                  /{" "}
+                  }{' '}
+                  /{' '}
                   {
                     Object.values(routes).filter((route) =>
-                      projects.includes(route.id)
+                      projects.includes(route.id),
                     ).length
-                  }{" "}
+                  }{' '}
                   Routes
                 </span>
               </div>
               <ChevronRightIcon
                 className={`h-5 w-5 mr-3 transform transition-transform ${
-                  openCircuits["projects"] ? "rotate-90" : ""
+                  openCircuits['projects'] ? 'rotate-90' : ''
                 }`}
               />
             </button>
-            {openCircuits["projects"] && (
-              <div className="ml mt-2" key={"projects"}>
+            {openCircuits['projects'] && (
+              <div className="ml mt-2" key={'projects'}>
                 {Object.values(routes)
                   .filter((route) => projects.includes(route.id))
                   .map((route) => (
@@ -109,7 +109,7 @@ export function RouteList() {
                                 circuits[sets[route.set_id]?.circuit_id]?.color
                               ]
                             }`}
-                            src={"/api/img_thumb/" + route.id + ".webp"}
+                            src={'/api/img_thumb/' + route.id + '.webp'}
                             alt=""
                           ></img>
                           <div className="ml-4">
@@ -120,7 +120,7 @@ export function RouteList() {
                               {route.location}
                             </p>
                             <div className="flex gap-2 mt-1">
-                              {route.style.split(",").map((style) => (
+                              {route.style.split(',').map((style) => (
                                 <span className="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-gray-600">
                                   {style}
                                 </span>
@@ -132,17 +132,17 @@ export function RouteList() {
                           {sent_ids.includes(route.id) ? (
                             <span
                               className={
-                                "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white " +
+                                'inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white ' +
                                 (colors[
                                   circuits[sets[route.set_id]?.circuit_id]
-                                    ?.color || ""
-                                ] || "")
+                                    ?.color || ''
+                                ] || '')
                               }
                             >
                               Sent
                             </span>
                           ) : (
-                            <div className={"w-14"}> </div>
+                            <div className={'w-14'}> </div>
                           )}
                         </div>
                       </div>
@@ -154,7 +154,7 @@ export function RouteList() {
         </>
       ) : null}
 
-      <div className={"mx-4 mb-8"}>
+      <div className={'mx-4 mb-8'}>
         {circuitsOrder
           .map((circuit_id) => circuits[circuit_id])
           .map((circuit) => (
@@ -173,33 +173,33 @@ export function RouteList() {
                     <div className="flex items-center w-full">
                       <span
                         className={
-                          "text-lg font-bold text-white uppercase px-4 py-2 pr-10 w-52 rounded-l-lg clip-path truncate " +
-                          (colors[circuit.color] || "")
+                          'text-lg font-bold text-white uppercase px-4 py-2 pr-10 w-52 rounded-l-lg clip-path truncate ' +
+                          (colors[circuit.color] || '')
                         }
                       >
                         {circuit.name}
                       </span>
-                      <div className={"font-bold ml-auto mr-2"}>
+                      <div className={'font-bold ml-auto mr-2'}>
                         {
                           Object.values(routes).filter(
                             (route) =>
                               route.set_id == active_sets[circuit.id].id &&
-                              sent_ids.includes(route.id)
+                              sent_ids.includes(route.id),
                           ).length
-                        }{" "}
-                        /{" "}
+                        }{' '}
+                        /{' '}
                         {
                           Object.values(routes).filter(
                             (route) =>
-                              route.set_id === active_sets[circuit.id].id
+                              route.set_id === active_sets[circuit.id].id,
                           ).length
-                        }{" "}
+                        }{' '}
                         Routes
                       </div>
                     </div>
                     <ChevronRightIcon
                       className={`h-5 w-5 mr-3 transform transition-transform ${
-                        openCircuits[circuit.id] ? "rotate-90" : ""
+                        openCircuits[circuit.id] ? 'rotate-90' : ''
                       }`}
                     />
                   </button>
@@ -207,7 +207,8 @@ export function RouteList() {
                     <div className="ml mt-2" key={circuit.id}>
                       {Object.values(routes)
                         .filter(
-                          (route) => route.set_id === active_sets[circuit.id].id
+                          (route) =>
+                            route.set_id === active_sets[circuit.id].id,
                         )
                         .map((route) => (
                           <div
@@ -224,7 +225,7 @@ export function RouteList() {
                                         ?.color
                                     ]
                                   }`}
-                                  src={"/api/img_thumb/" + route.id + ".webp"}
+                                  src={'/api/img_thumb/' + route.id + '.webp'}
                                   alt=""
                                 ></img>
                                 <div className="ml-4">
@@ -235,7 +236,7 @@ export function RouteList() {
                                     {route.location}
                                   </p>
                                   <div className="flex gap-2 mt-1">
-                                    {route.style.split(",").map((style) => (
+                                    {route.style.split(',').map((style) => (
                                       <span className="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-gray-600">
                                         {style}
                                       </span>
@@ -247,14 +248,14 @@ export function RouteList() {
                                 {sent_ids.includes(route.id) ? (
                                   <span
                                     className={
-                                      "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white " +
-                                      (colors[circuit.color] || "")
+                                      'inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white ' +
+                                      (colors[circuit.color] || '')
                                     }
                                   >
                                     Sent
                                   </span>
                                 ) : (
-                                  <div className={"w-14"}> </div>
+                                  <div className={'w-14'}> </div>
                                 )}
                               </div>
                             </div>

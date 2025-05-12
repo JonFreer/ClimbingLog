@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
-import { Set } from "../types/routes";
-import { RouteList } from "./route-list";
-import DraggableDotsCanvas from "./map";
-import { colors, colorsBold, colorsFaint, colorsHex } from "../types/colors";
-import { RouteCard } from "./route-card";
-import RouteSideBar from "./ui/sidebar/route-sidebar";
-import { useRoutes } from "../features/routes/api/get-routes";
-import { useCircuits } from "../features/circuits/api/get-circuits";
-import { useSets } from "../features/sets/api/get-sets";
-import { useClimbs } from "../features/climbs/api/get-climbs";
-import { useProjects } from "../features/projects/api/get-projects";
-import { useSidebarState } from "./ui/sidebar/sidebar-state";
+import { useEffect, useState } from 'react';
+import { Set } from '../types/routes';
+import { RouteList } from './route-list';
+import DraggableDotsCanvas from './map';
+import { colors, colorsBold, colorsFaint, colorsHex } from '../types/colors';
+import { RouteCard } from './route-card';
+import RouteSideBar from './ui/sidebar/route-sidebar';
+import { useRoutes } from '../features/routes/api/get-routes';
+import { useCircuits } from '../features/circuits/api/get-circuits';
+import { useSets } from '../features/sets/api/get-sets';
+import { useClimbs } from '../features/climbs/api/get-climbs';
+import { useProjects } from '../features/projects/api/get-projects';
+import { useSidebarState } from './ui/sidebar/sidebar-state';
 
 export function RoutesPage() {
   const routes = useRoutes().data || {};
@@ -23,15 +23,15 @@ export function RoutesPage() {
   const [filterCircuits, setFilterCircuits] = useState<{
     [key: string]: boolean;
   }>(() => {
-    const filterCircuits = localStorage.getItem("filterCircuits");
+    const filterCircuits = localStorage.getItem('filterCircuits');
     return filterCircuits ? JSON.parse(filterCircuits) : {};
   });
   useEffect(() => {
-    localStorage.setItem("filterCircuits", JSON.stringify(filterCircuits));
+    localStorage.setItem('filterCircuits', JSON.stringify(filterCircuits));
   }, [filterCircuits]);
 
   const anyFitlered = Object.values(filterCircuits).some(
-    (circuit) => circuit == true
+    (circuit) => circuit == true,
   );
 
   const active_sets = Object.values(sets).reduce((acc, set) => {
@@ -44,7 +44,7 @@ export function RoutesPage() {
     return acc;
   }, {} as Record<string, Set>);
 
-  console.log("active_sets", active_sets);
+  console.log('active_sets', active_sets);
 
   const selectedRouteData = routes[selectedRoute] || null;
 
@@ -61,8 +61,8 @@ export function RoutesPage() {
                     route.set_id &&
                   (filterCircuits[sets[route.set_id].circuit_id] ||
                     !anyFitlered ||
-                    (filterCircuits["projects"] &&
-                      projects.some((project) => project === route.id)))
+                    (filterCircuits['projects'] &&
+                      projects.some((project) => project === route.id))),
               )
               .map((route) => ({
                 id: route.id,
@@ -71,13 +71,13 @@ export function RoutesPage() {
                 isDragging: false,
                 complete:
                   climbs.filter(
-                    (climb) => climb.route === route.id && climb.sent
+                    (climb) => climb.route === route.id && climb.sent,
                   ).length == 0,
                 radius: 4,
                 draggable: false,
                 color:
                   colorsHex[
-                    circuits[sets[route.set_id].circuit_id]?.color || "black"
+                    circuits[sets[route.set_id].circuit_id]?.color || 'black'
                   ],
               })) || []
           }
@@ -95,10 +95,10 @@ export function RoutesPage() {
               <button
                 key={circuit.id}
                 className={
-                  "cursor-pointer rounded-full px-3 py-1 font-semibold text-sm text-white " +
-                  (colors[circuit.color] || "") +
-                  " hover:" +
-                  (colorsBold[circuit.color] || "")
+                  'cursor-pointer rounded-full px-3 py-1 font-semibold text-sm text-white ' +
+                  (colors[circuit.color] || '') +
+                  ' hover:' +
+                  (colorsBold[circuit.color] || '')
                 }
                 onClick={() =>
                   setFilterCircuits((prev) => ({
@@ -113,8 +113,8 @@ export function RoutesPage() {
               <button
                 key={circuit.id}
                 className={
-                  "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold text-gray-700  " +
-                  (colorsFaint[circuit.color] || "")
+                  'cursor-pointer rounded-full px-3 py-1 text-sm font-semibold text-gray-700  ' +
+                  (colorsFaint[circuit.color] || '')
                 }
                 onClick={() =>
                   setFilterCircuits((prev) => ({ ...prev, [circuit.id]: true }))
@@ -122,15 +122,15 @@ export function RoutesPage() {
               >
                 {circuit.name}
               </button>
-            )
+            ),
           )}
 
         <button
-          key={"projects"}
+          key={'projects'}
           className={
-            filterCircuits["projects"]
-              ? "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold text-white bg-linear-to-r from-indigo-500 from-10% via-sky-500 via-40% to-emerald-500 to-100%"
-              : "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold text-gray-700 bg-linear-to-r from-indigo-200 from-10% via-sky-200 via-40% to-emerald-200 to-100%"
+            filterCircuits['projects']
+              ? 'cursor-pointer rounded-full px-3 py-1 text-sm font-semibold text-white bg-linear-to-r from-indigo-500 from-10% via-sky-500 via-40% to-emerald-500 to-100%'
+              : 'cursor-pointer rounded-full px-3 py-1 text-sm font-semibold text-gray-700 bg-linear-to-r from-indigo-200 from-10% via-sky-200 via-40% to-emerald-200 to-100%'
           }
           onClick={() => {
             // if (!filterCircuits["projects"]) {
@@ -144,7 +144,7 @@ export function RoutesPage() {
             // }
             setFilterCircuits((prev) => ({
               ...prev,
-              ["projects"]: !filterCircuits["projects"],
+              ['projects']: !filterCircuits['projects'],
             }));
           }}
         >
@@ -160,7 +160,7 @@ export function RoutesPage() {
           climbs={climbs}
         />
       ) : (
-        ""
+        ''
       )}
 
       <RouteList />

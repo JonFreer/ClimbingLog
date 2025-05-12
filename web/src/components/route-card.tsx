@@ -1,7 +1,7 @@
-import { colors, colorsBorder } from "../types/colors";
-import { Circuit, Route, Set } from "../types/routes";
-import { ChevronRightIcon } from "@heroicons/react/20/solid";
-import { useSidebarState } from "./ui/sidebar/sidebar-state";
+import { colors, colorsBorder } from '../types/colors';
+import { Circuit, Route, Set } from '../types/routes';
+import { ChevronRightIcon } from '@heroicons/react/20/solid';
+import { useSidebarState } from './ui/sidebar/sidebar-state';
 
 export function RouteCard(props: {
   route: Route;
@@ -34,7 +34,7 @@ export function RouteCard(props: {
                   ?.color
               ]
             }`}
-            src={"/api/img_thumb/" + props.route.id + ".webp"}
+            src={'/api/img_thumb/' + props.route.id + '.webp'}
             alt=""
           ></img>
           <div className="ml-4">
@@ -45,7 +45,7 @@ export function RouteCard(props: {
               {props.route.location}
             </p>
             <div className="flex gap-2 mt-1">
-              {props.route.style.split(",").map((style) => (
+              {props.route.style.split(',').map((style) => (
                 <span className="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-gray-600">
                   {style}
                 </span>
@@ -57,22 +57,22 @@ export function RouteCard(props: {
           {sent_ids.includes(props.route.id) ? (
             <span
               className={
-                "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white " +
-                (circuit ? colors[circuit.color] || "" : "")
+                'inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white ' +
+                (circuit ? colors[circuit.color] || '' : '')
               }
             >
               Sent
             </span>
           ) : (
-            <div className={"w-14"}> </div>
+            <div className={'w-14'}> </div>
           )}
           <button
             onClick={() => openSidebar(props.route)}
             className={
-              "ml-aut mt-2 text-white text-xs p-2 px-4 rounded-full flex items-center " +
+              'ml-aut mt-2 text-white text-xs p-2 px-4 rounded-full flex items-center ' +
               (circuit
-                ? colors[circuit.color] || ""
-                : "bg-turquoise-500 hover:bg-turquoise-600")
+                ? colors[circuit.color] || ''
+                : 'bg-turquoise-500 hover:bg-turquoise-600')
             }
           >
             <ChevronRightIcon className="h-5 w-5" />

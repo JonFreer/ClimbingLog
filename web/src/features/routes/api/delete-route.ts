@@ -1,11 +1,11 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { api } from "../../../lib/api-client";
-import { Route } from "../../../types/routes";
+import { api } from '../../../lib/api-client';
+import { Route } from '../../../types/routes';
 
-import { MutationConfig } from "../../../lib/react-query";
+import { MutationConfig } from '../../../lib/react-query';
 
-import { getRoutesQueryOptions } from "./get-routes";
+import { getRoutesQueryOptions } from './get-routes';
 
 export const deleteRoute = ({ routeId }: { routeId: string }) => {
   return api.delete(`/routes/${routeId}`);

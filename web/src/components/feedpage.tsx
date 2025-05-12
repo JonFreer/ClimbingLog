@@ -1,18 +1,18 @@
-import { Climb } from "../types/routes";
-import { useState } from "react";
-import { RouteCardProfile } from "./profile";
-import RouteSideBar from "./ui/sidebar/route-sidebar";
-import { colorsPastel } from "../types/colors";
-import { useSets } from "../features/sets/api/get-sets";
-import { useCircuits } from "../features/circuits/api/get-circuits";
-import { useRoutes } from "../features/routes/api/get-routes";
-import { useAllClimbs } from "../features/climbs/api/get-all-climbs";
-import { useInfiniteActivities } from "../features/activities/api/get-activities";
-import { useCreateReaction } from "../features/reactions/api/create-reaction";
-import { useDeleteReaction } from "../features/reactions/api/delete-reaction";
-import { useUser } from "../lib/auth";
-import { useSidebarState } from "./ui/sidebar/sidebar-state";
-import { useUserListState } from "./ui/userlist/userlist-state";
+import { Climb } from '../types/routes';
+import { useState } from 'react';
+import { RouteCardProfile } from './profile';
+import RouteSideBar from './ui/sidebar/route-sidebar';
+import { colorsPastel } from '../types/colors';
+import { useSets } from '../features/sets/api/get-sets';
+import { useCircuits } from '../features/circuits/api/get-circuits';
+import { useRoutes } from '../features/routes/api/get-routes';
+import { useAllClimbs } from '../features/climbs/api/get-all-climbs';
+import { useInfiniteActivities } from '../features/activities/api/get-activities';
+import { useCreateReaction } from '../features/reactions/api/create-reaction';
+import { useDeleteReaction } from '../features/reactions/api/delete-reaction';
+import { useUser } from '../lib/auth';
+import { useSidebarState } from './ui/sidebar/sidebar-state';
+import { useUserListState } from './ui/userlist/userlist-state';
 
 export default function Feed() {
   // const [sidebarRoute, setSidebarRoute] = useState<string | undefined>(
@@ -79,7 +79,7 @@ export default function Feed() {
               ) : null}
               <a href={`/profile/${activity.username}`} className="ml-3">
                 {activity.username}
-              </a>{" "}
+              </a>{' '}
               <div className="ml-auto font-normal text-sm">
                 {new Date(activity.time).toDateString()}
               </div>
@@ -96,7 +96,7 @@ export default function Feed() {
                           routes[
                             climbs.find((climb) => climb.id === climbId)?.route
                           ]?.set_id
-                        ]?.circuit_id === circuit.id
+                        ]?.circuit_id === circuit.id,
                     ).length;
 
                     return (
@@ -104,12 +104,12 @@ export default function Feed() {
                         <div
                           key={circuit.id}
                           className={
-                            "p-1 px-3 rounded-full text-white " +
+                            'p-1 px-3 rounded-full text-white ' +
                             colorsPastel[circuits[circuit.id].color]
                           }
                         >
-                          {circuitClimbCount}{" "}
-                          {circuitClimbCount > 1 ? "sends" : "send"}
+                          {circuitClimbCount}{' '}
+                          {circuitClimbCount > 1 ? 'sends' : 'send'}
                         </div>
                       )
                     );
@@ -162,13 +162,13 @@ export default function Feed() {
                   <span className="text-gray-400 text-sm font py-2 ml-2">
                     {activity.reactions.length}
 
-                    {activity.reactions.length == 1 ? " bump" : " bumps"}
+                    {activity.reactions.length == 1 ? ' bump' : ' bumps'}
                   </span>
                 </span>
               )}
 
               {!activity.reactions.find(
-                (react) => react.username === user.data?.username
+                (react) => react.username === user.data?.username,
               ) ? (
                 <button
                   onClick={() => {
@@ -196,8 +196,8 @@ export default function Feed() {
             <div className="flex items-center justify-center py-4">
               <button onClick={() => activitiesQuery.fetchNextPage()}>
                 {activitiesQuery.isFetchingNextPage
-                  ? "Loading..."
-                  : "Load More Activities"}
+                  ? 'Loading...'
+                  : 'Load More Activities'}
               </button>
             </div>
           )}

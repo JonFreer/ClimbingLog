@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { useNotifications } from "../../../components/ui/notifications";
-import { useDeleteCircuit } from "../api/delete-circuit";
-import DangerDialog from "../../../components/ui/modals/modal-dialogs";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { useState } from 'react';
+import { useNotifications } from '../../../components/ui/notifications';
+import { useDeleteCircuit } from '../api/delete-circuit';
+import DangerDialog from '../../../components/ui/modals/modal-dialogs';
+import { TrashIcon } from '@heroicons/react/24/outline';
 
 type CreateSetProps = {
   circuit_id: string;
@@ -17,8 +17,8 @@ export const DeleteCircuit = ({ circuit_id }: CreateSetProps) => {
     mutationConfig: {
       onSuccess: () => {
         addNotification({
-          type: "success",
-          title: "Circuit Deleted",
+          type: 'success',
+          title: 'Circuit Deleted',
         });
         setOpen(false);
       },
@@ -34,9 +34,9 @@ export const DeleteCircuit = ({ circuit_id }: CreateSetProps) => {
         <TrashIcon aria-hidden="true" className="h-5 w-5" />
       </button>
       <DangerDialog
-        title={"Delete circuit"}
+        title={'Delete circuit'}
         body={
-          "Are you sure you want to delete this circuit? This circuit will be removed for everybody and all routes belonging to it."
+          'Are you sure you want to delete this circuit? This circuit will be removed for everybody and all routes belonging to it.'
         }
         actionCallback={() =>
           deleteCircuitMutation.mutate({ circuit_id: circuit_id })

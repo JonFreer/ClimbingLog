@@ -1,9 +1,9 @@
-import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
-import { useEffect, useState } from "react";
-import { useUser } from "../lib/auth";
-import { useUpdateUser } from "../features/user/api/update-user";
-import { useNotifications } from "./ui/notifications";
-import { UserNameInput } from "./ui/form/username";
+import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid';
+import { useEffect, useState } from 'react';
+import { useUser } from '../lib/auth';
+import { useUpdateUser } from '../features/user/api/update-user';
+import { useNotifications } from './ui/notifications';
+import { UserNameInput } from './ui/form/username';
 
 export default function Settings() {
   const user = useUser();
@@ -18,8 +18,8 @@ export default function Settings() {
     mutationConfig: {
       onSuccess: () => {
         addNotification({
-          type: "success",
-          title: "Settings Updated",
+          type: 'success',
+          title: 'Settings Updated',
         });
       },
     },
@@ -95,7 +95,7 @@ export default function Settings() {
               </label>
               <ImageUploadProfilePic
                 imageCallback={(image) => console.log(image)}
-                defaultUrl={""}
+                defaultUrl={''}
               />
             </div>
 
@@ -108,7 +108,7 @@ export default function Settings() {
               </label>
               <ImageUpload
                 imageCallback={(image) => console.log(image)}
-                defaultUrl={""}
+                defaultUrl={''}
               />
             </div>
           </div>
@@ -256,8 +256,8 @@ function ImageUpload(props: {
         img.src = reader.result as string;
         //scale and compress the image bbefore sending it to the server
         img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
 
           const maxHeight = 1920;
           let { width, height } = img;
@@ -275,8 +275,8 @@ function ImageUpload(props: {
           canvas.toBlob(
             (blob) => {
               if (blob) {
-                const webpFile = new File([blob], "image.webp", {
-                  type: "image/webp",
+                const webpFile = new File([blob], 'image.webp', {
+                  type: 'image/webp',
                 });
                 console.log(`WebP file size: ${webpFile.size} bytes`);
                 setPreview(URL.createObjectURL(webpFile));
@@ -285,26 +285,26 @@ function ImageUpload(props: {
                 //send the request
 
                 const formData = new FormData();
-                formData.append("file", webpFile);
+                formData.append('file', webpFile);
 
-                fetch("/api/users/me/update_cover_photo", {
-                  method: "POST",
+                fetch('/api/users/me/update_cover_photo', {
+                  method: 'POST',
                   body: formData,
                   headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
                   },
                 })
                   .then((response) => response.json())
                   .then((data) => {
-                    console.log("Success cover photo:", data);
+                    console.log('Success cover photo:', data);
                   })
                   .catch((error) => {
-                    console.error("Error cover photo:", error);
+                    console.error('Error cover photo:', error);
                   });
               }
             },
-            "image/webp",
-            0.8 // Compression quality
+            'image/webp',
+            0.8, // Compression quality
           );
         };
       };
@@ -381,8 +381,8 @@ function ImageUploadProfilePic(props: {
         img.src = reader.result as string;
         //scale and compress the image before sending it to the server
         img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
 
           const maxHeight = 1920;
           let { width, height } = img;
@@ -400,8 +400,8 @@ function ImageUploadProfilePic(props: {
           canvas.toBlob(
             (blob) => {
               if (blob) {
-                const webpFile = new File([blob], "image.webp", {
-                  type: "image/webp",
+                const webpFile = new File([blob], 'image.webp', {
+                  type: 'image/webp',
                 });
                 console.log(`WebP file size: ${webpFile.size} bytes`);
                 setPreview(URL.createObjectURL(webpFile));
@@ -410,26 +410,26 @@ function ImageUploadProfilePic(props: {
                 //send the request
 
                 const formData = new FormData();
-                formData.append("file", webpFile);
+                formData.append('file', webpFile);
 
-                fetch("/api/users/me/update_profile_photo", {
-                  method: "POST",
+                fetch('/api/users/me/update_profile_photo', {
+                  method: 'POST',
                   body: formData,
                   headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
                   },
                 })
                   .then((response) => response.json())
                   .then((data) => {
-                    console.log("Success profile photo:", data);
+                    console.log('Success profile photo:', data);
                   })
                   .catch((error) => {
-                    console.error("Error profile photo:", error);
+                    console.error('Error profile photo:', error);
                   });
               }
             },
-            "image/webp",
-            0.8 // Compression quality
+            'image/webp',
+            0.8, // Compression quality
           );
         };
       };
@@ -439,7 +439,7 @@ function ImageUploadProfilePic(props: {
 
   const triggerFileInput = () => {
     const fileInput = document.getElementById(
-      "upload-profile-pic"
+      'upload-profile-pic',
     ) as HTMLInputElement;
     if (fileInput) {
       fileInput.click();

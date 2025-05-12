@@ -1,15 +1,15 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { date, z } from "zod";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { date, z } from 'zod';
 
-import { api } from "../../../lib/api-client";
-import { MutationConfig } from "../../../lib/react-query";
-import { Set } from "../../../types/routes";
+import { api } from '../../../lib/api-client';
+import { MutationConfig } from '../../../lib/react-query';
+import { Set } from '../../../types/routes';
 
-import { getCircuitsQueryOptions } from "./get-circuits";
+import { getCircuitsQueryOptions } from './get-circuits';
 
 export const createCircuitInputSchema = z.object({
-  name: z.string().min(1, "Required"),
-  color: z.string().min(1, "Required"),
+  name: z.string().min(1, 'Required'),
+  color: z.string().min(1, 'Required'),
 });
 
 export type CreateCircuitInput = z.infer<typeof createCircuitInputSchema>;
@@ -20,11 +20,11 @@ export const createCircuit = ({
   data: CreateCircuitInput;
 }): Promise<Set> => {
   const formData = new FormData();
-  formData.append("name", data.name);
-  formData.append("color", data.color);
-  return api.post("/circuits/create", formData, {
+  formData.append('name', data.name);
+  formData.append('color', data.color);
+  return api.post('/circuits/create', formData, {
     headers: {
-      "Content-Type": "multipart/form-data",
+      'Content-Type': 'multipart/form-data',
     },
   });
 };

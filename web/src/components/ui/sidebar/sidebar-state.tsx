@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { Route } from "../../../types/routes";
+import { create } from 'zustand';
+import { Route } from '../../../types/routes';
 
 type SidebarState = {
   route: Route | null;
@@ -15,8 +15,8 @@ export const useSidebarState = create<SidebarState>((set) => ({
   openSidebar: (route: Route) => {
     set((state) => {
       if (state.route == null) {
-        window.addEventListener("popstate", () => set({ route: null }));
-        window.history.pushState(null, "", window.location.href);
+        window.addEventListener('popstate', () => set({ route: null }));
+        window.history.pushState(null, '', window.location.href);
       }
       return { route };
     });

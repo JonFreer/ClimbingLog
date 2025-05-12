@@ -1,7 +1,7 @@
-import { infiniteQueryOptions, useInfiniteQuery } from "@tanstack/react-query";
-import { api } from "../../../lib/api-client";
-import { Activity, Meta } from "../../../types/routes";
-import { QueryConfig } from "../../../lib/react-query";
+import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
+import { api } from '../../../lib/api-client';
+import { Activity, Meta } from '../../../types/routes';
+import { QueryConfig } from '../../../lib/react-query';
 
 export const getActivities = ({
   page = 1,
@@ -13,7 +13,7 @@ export const getActivities = ({
 
 export const getInfiniteActivitiesQueryOptions = () => {
   return infiniteQueryOptions({
-    queryKey: ["activities"],
+    queryKey: ['activities'],
     queryFn: ({ pageParam = 1 }) => {
       return getActivities({ page: pageParam as number });
     },

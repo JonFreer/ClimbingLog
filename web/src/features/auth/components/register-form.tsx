@@ -1,9 +1,9 @@
-import { NavLink } from "react-router";
-import { useRegister } from "../../../lib/auth";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import { api } from "../../../lib/api-client";
-import { useRef, useState } from "react";
-import { UserNameInput } from "../../../components/ui/form/username";
+import { NavLink } from 'react-router';
+import { useRegister } from '../../../lib/auth';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { api } from '../../../lib/api-client';
+import { useRef, useState } from 'react';
+import { UserNameInput } from '../../../components/ui/form/username';
 
 type RegisterFormProps = {
   onSuccess: () => void;
@@ -34,7 +34,7 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
           </div>
           <div className="ml-2 text-yellow-800 text-sm p-2">
             Warning! This app is still under development. Your data may be
-            deleted at any point and you will have to reregister.{" "}
+            deleted at any point and you will have to reregister.{' '}
           </div>
         </div>
 
@@ -63,7 +63,7 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
                 error={
                   registering.isError &&
                   (registering.error as any)?.response?.data?.detail ===
-                    "REGISTER_USERNAME_ALREADY_EXISTS"
+                    'REGISTER_USERNAME_ALREADY_EXISTS'
                 }
                 defaultValue=""
               />
@@ -90,7 +90,7 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
 
           {registering.isError &&
             (registering.error as any)?.response?.data?.detail ===
-              "REGISTER_USER_ALREADY_EXISTS" && (
+              'REGISTER_USER_ALREADY_EXISTS' && (
               <div className="flex bg-red-50 p-3 m-2 rounded-md">
                 <div className="text-red-800 text-sm p-2">
                   A user with this email already exists.
@@ -118,7 +118,7 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
 
           {registering.isError &&
             (registering.error as any)?.response?.data?.detail?.code ===
-              "REGISTER_INVALID_PASSWORD" && (
+              'REGISTER_INVALID_PASSWORD' && (
               <div className="flex bg-red-50 p-3 m-2 rounded-md">
                 <div className="text-red-800 text-sm p-2">
                   {(registering.error as any)?.response?.data?.detail?.reason}
@@ -137,7 +137,7 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
         </form>
 
         <p className="mt-10 text-center text-sm/6 text-gray-500">
-          Already have an account?{" "}
+          Already have an account?{' '}
           <NavLink
             to="/login"
             className="font-semibold text-indigo-600 hover:text-indigo-500"

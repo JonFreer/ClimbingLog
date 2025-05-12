@@ -3,8 +3,8 @@ import {
   ExclamationCircleIcon,
   InformationCircleIcon,
   XCircleIcon,
-} from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
+} from '@heroicons/react/24/outline';
+import { useEffect, useState } from 'react';
 const icons = {
   info: (
     <InformationCircleIcon

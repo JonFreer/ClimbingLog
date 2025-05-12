@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { colors, colorsFaint } from "../types/colors";
-import { useRoutes } from "../features/routes/api/get-routes";
-import { DeleteRoute } from "../features/routes/components/delete-route";
-import { CreateRoute } from "../features/routes/components/create-route";
-import { useCircuits } from "../features/circuits/api/get-circuits";
-import { UpdateRoute } from "../features/routes/components/update-route";
-import { useSets } from "../features/sets/api/get-sets";
-import { CreateSet } from "../features/sets/components/create-set";
-import { useSidebarState } from "./ui/sidebar/sidebar-state";
+import { useEffect, useState } from 'react';
+import { colors, colorsFaint } from '../types/colors';
+import { useRoutes } from '../features/routes/api/get-routes';
+import { DeleteRoute } from '../features/routes/components/delete-route';
+import { CreateRoute } from '../features/routes/components/create-route';
+import { useCircuits } from '../features/circuits/api/get-circuits';
+import { UpdateRoute } from '../features/routes/components/update-route';
+import { useSets } from '../features/sets/api/get-sets';
+import { CreateSet } from '../features/sets/components/create-set';
+import { useSidebarState } from './ui/sidebar/sidebar-state';
 
 export function RouteSettingPage() {
   const routes = useRoutes().data || {};
@@ -17,12 +17,12 @@ export function RouteSettingPage() {
   const circuitOrder = useCircuits()?.data?.order || [];
   const sets = useSets().data || {};
 
-  const [openCircuit, setOpenCircuit] = useState<string>("");
-  const [selectedSet, setSelectedSet] = useState<string>("");
+  const [openCircuit, setOpenCircuit] = useState<string>('');
+  const [selectedSet, setSelectedSet] = useState<string>('');
   const { openSidebar } = useSidebarState();
 
   useEffect(() => {
-    const savedCircuit = localStorage.getItem("openCircuit");
+    const savedCircuit = localStorage.getItem('openCircuit');
     if (savedCircuit) {
       setOpenCircuit(savedCircuit);
     }
@@ -30,7 +30,7 @@ export function RouteSettingPage() {
 
   useEffect(() => {
     if (openCircuit) {
-      localStorage.setItem("openCircuit", openCircuit);
+      localStorage.setItem('openCircuit', openCircuit);
     }
   }, [openCircuit]);
 
@@ -39,12 +39,12 @@ export function RouteSettingPage() {
       const recentSet = Object.values(sets)
         .filter((set) => set.circuit_id === openCircuit)
         .sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
         )[0];
       if (recentSet) {
         setSelectedSet(recentSet.id);
       } else {
-        setSelectedSet("");
+        setSelectedSet('');
       }
     }
   }, [openCircuit, sets]);
@@ -62,9 +62,9 @@ export function RouteSettingPage() {
             <button
               key={circuit.id}
               className={
-                "p-2 font-bold rounded-sm uppercase " +
+                'p-2 font-bold rounded-sm uppercase ' +
                 (openCircuit == circuit.id
-                  ? `${colors[circuit.color]} shadow-sm` || ""
+                  ? `${colors[circuit.color]} shadow-sm` || ''
                   : `${colorsFaint[circuit.color]} `)
               }
               onClick={() => setOpenCircuit(circuit.id)}
@@ -78,8 +78,8 @@ export function RouteSettingPage() {
       {openCircuit && (
         <div className="flex m-2">
           <span className={`font-bold text-lg rounded-lg text-gray-900`}>
-            {" "}
-            {openCircuit && circuits[openCircuit]?.name}{" "}
+            {' '}
+            {openCircuit && circuits[openCircuit]?.name}{' '}
           </span>
           <span className="ml-auto flex">
             <span className="flex items-center mr-2 ">Set: </span>
@@ -92,9 +92,9 @@ export function RouteSettingPage() {
                 .filter((set) => set.circuit_id === openCircuit)
                 .map((set) => (
                   <option key={set.id} value={set.id}>
-                    {new Date(set.date).toLocaleString("default", {
-                      month: "long",
-                      year: "numeric",
+                    {new Date(set.date).toLocaleString('default', {
+                      month: 'long',
+                      year: 'numeric',
                     })}
                   </option>
                 ))}
@@ -104,19 +104,19 @@ export function RouteSettingPage() {
         </div>
       )}
 
-      {selectedSet != "" && (
+      {selectedSet != '' && (
         <div className="m-2 flex items-center justify-between">
           <span>
-            {new Date(sets[selectedSet]?.date || "").toLocaleString("default", {
-              month: "long",
-              year: "numeric",
+            {new Date(sets[selectedSet]?.date || '').toLocaleString('default', {
+              month: 'long',
+              year: 'numeric',
             })}
           </span>
           <CreateRoute set_id={selectedSet} circuit_id={openCircuit} />
         </div>
       )}
 
-      {selectedSet != "" &&
+      {selectedSet != '' &&
         Object.values(routes)
           .filter((route) => route.set_id === selectedSet)
           .map((route) => (

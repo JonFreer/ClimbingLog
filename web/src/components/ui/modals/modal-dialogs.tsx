@@ -3,8 +3,8 @@ import {
   DialogBackdrop,
   DialogPanel,
   DialogTitle,
-} from "@headlessui/react";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+} from '@headlessui/react';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 export default function DangerDialog(props: {
   title: string;

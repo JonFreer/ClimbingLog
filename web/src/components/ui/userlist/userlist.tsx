@@ -1,7 +1,7 @@
-import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import { useUserListState } from "./userlist-state";
-import { UserCircleIcon } from "@heroicons/react/24/outline";
-import { useState, useEffect } from "react";
+import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
+import { useUserListState } from './userlist-state';
+import { UserCircleIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect } from 'react';
 
 export function UserListModal() {
   const { userList, closeUserList } = useUserListState();
@@ -42,7 +42,7 @@ export function UserListModal() {
                           {user.has_profile_photo ? (
                             <img
                               className="w-10 h-10 rounded-full"
-                              src={"/api/profile_photo/" + user.id}
+                              src={'/api/profile_photo/' + user.id}
                             ></img>
                           ) : (
                             <UserCircleIcon

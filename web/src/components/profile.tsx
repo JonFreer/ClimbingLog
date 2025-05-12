@@ -1,6 +1,6 @@
-import { colors, colorsHex } from "../types/colors";
-import { Circuit, Climb, Route, Set, User } from "../types/routes";
-import { UserCircleIcon } from "@heroicons/react/24/solid";
+import { colors, colorsHex } from '../types/colors';
+import { Circuit, Climb, Route, Set, User } from '../types/routes';
+import { UserCircleIcon } from '@heroicons/react/24/solid';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,16 +9,16 @@ import {
   Title,
   Tooltip,
   Legend,
-} from "chart.js";
-import { useEffect, useState } from "react";
-import { Bar } from "react-chartjs-2";
-import { useParams } from "react-router";
-import { API } from "../types/api";
-import { useCircuits } from "../features/circuits/api/get-circuits";
-import { useRoutes } from "../features/routes/api/get-routes";
-import { useSets } from "../features/sets/api/get-sets";
-import { useUser } from "../lib/auth";
-import { useSidebarState } from "./ui/sidebar/sidebar-state";
+} from 'chart.js';
+import { useEffect, useState } from 'react';
+import { Bar } from 'react-chartjs-2';
+import { useParams } from 'react-router';
+import { API } from '../types/api';
+import { useCircuits } from '../features/circuits/api/get-circuits';
+import { useRoutes } from '../features/routes/api/get-routes';
+import { useSets } from '../features/sets/api/get-sets';
+import { useUser } from '../lib/auth';
+import { useSidebarState } from './ui/sidebar/sidebar-state';
 
 ChartJS.register(
   CategoryScale,
@@ -26,22 +26,22 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 export const options = {
   responsive: true,
   plugins: {
     legend: {
-      position: "top" as const,
+      position: 'top' as const,
       labels: {
         usePointStyle: true, // Makes the legend use circular markers
-        pointStyle: "roundRect", // Use a rounded rectangle
+        pointStyle: 'roundRect', // Use a rounded rectangle
       },
     },
     title: {
       display: false,
-      text: "Chart.js Bar Chart",
+      text: 'Chart.js Bar Chart',
     },
   },
 };
@@ -62,25 +62,25 @@ export default function Profile() {
 
   function fetchUser() {
     const username = id || user_me.username;
-    API("GET", "/api/users/get_public/" + username)
+    API('GET', '/api/users/get_public/' + username)
       .then((data) => {
         setUser(data.data);
-        console.log("User Profile", data.data);
+        console.log('User Profile', data.data);
       })
       .catch((error) => {
-        console.error("Error fetching user:", error);
+        console.error('Error fetching user:', error);
       });
   }
 
   function fetchClimbs() {
     const username = id || user_me.username;
-    API("GET", "/api/users/get_climbs/" + username)
+    API('GET', '/api/users/get_climbs/' + username)
       .then((data) => {
         setClimbs(data.data);
-        console.log("User Climbs", data.data);
+        console.log('User Climbs', data.data);
       })
       .catch((error) => {
-        console.error("Error fetching climbs:", error);
+        console.error('Error fetching climbs:', error);
       });
   }
 
@@ -93,15 +93,15 @@ export default function Profile() {
 
   const labels = Object.values(sets)
     .map((set) =>
-      new Date(set.date).toLocaleString("default", {
-        month: "long",
-        year: "numeric",
-      })
+      new Date(set.date).toLocaleString('default', {
+        month: 'long',
+        year: 'numeric',
+      }),
     )
     .filter((value, index, self) => self.indexOf(value) === index) // Remove duplicates
     .sort((a, b) => {
-      const [aMonth, aYear] = a.split(" ");
-      const [bMonth, bYear] = b.split(" ");
+      const [aMonth, aYear] = a.split(' ');
+      const [bMonth, bYear] = b.split(' ');
       return (
         new Date(`${aYear}-${aMonth}-01`).getTime() -
         new Date(`${bYear}-${bMonth}-01`).getTime()
@@ -116,12 +116,12 @@ export default function Profile() {
 
   Object.values(sets).forEach((set) => {
     const n_complete = Object.values(routes).filter(
-      (route) => route.set_id === set.id && sent_ids.includes(route.id)
+      (route) => route.set_id === set.id && sent_ids.includes(route.id),
     ).length;
 
-    const date = new Date(set.date).toLocaleString("default", {
-      month: "long",
-      year: "numeric",
+    const date = new Date(set.date).toLocaleString('default', {
+      month: 'long',
+      year: 'numeric',
     });
     const color = circuits[set.circuit_id]?.color;
 
@@ -156,7 +156,7 @@ export default function Profile() {
           acc[location] = (acc[location] || 0) + 1;
         }
         return acc;
-      }, {} as Record<string, number>)
+      }, {} as Record<string, number>),
   )
     .sort((a, b) => b[1] - a[1])
     .reduce((acc, [location, count]) => {
@@ -168,14 +168,14 @@ export default function Profile() {
     climbs
       .filter((climb) => climb.sent)
       .reduce((acc, climb) => {
-        const styles = routes[climb.route]?.style.split(",") || [];
+        const styles = routes[climb.route]?.style.split(',') || [];
         styles.forEach((style) => {
           if (style) {
             acc[style.trim()] = (acc[style.trim()] || 0) + 1;
           }
         });
         return acc;
-      }, {} as Record<string, number>)
+      }, {} as Record<string, number>),
   )
     .sort((a, b) => b[1] - a[1])
     .reduce((acc, [style, count]) => {
@@ -272,7 +272,7 @@ export default function Profile() {
                   .filter((climb) => routes[climb.route])
                   .sort(
                     (a, b) =>
-                      new Date(b.time).getTime() - new Date(a.time).getTime()
+                      new Date(b.time).getTime() - new Date(a.time).getTime(),
                   )
                   .slice(0, 20)
                   .map((climb) => (
@@ -311,16 +311,16 @@ export function RouteCardProfile(props: {
 
   const today = Math.floor(new Date().getTime() / (1000 * 60 * 60 * 24));
   const climb_day = Math.floor(
-    new Date(props.climb.time).getTime() / (1000 * 60 * 60 * 24)
+    new Date(props.climb.time).getTime() / (1000 * 60 * 60 * 24),
   );
   const days_since = today - climb_day;
 
   var day_text =
     days_since === 0
-      ? "Today"
+      ? 'Today'
       : days_since === 1
-      ? "Yesterday"
-      : days_since + " days ago";
+      ? 'Yesterday'
+      : days_since + ' days ago';
 
   return (
     <div
@@ -329,21 +329,21 @@ export function RouteCardProfile(props: {
     >
       <div className="bg-white relative">
         <img
-          className={"rounded-lg"}
-          src={"/api/img_thumb/" + props.route.id + ".webp"}
+          className={'rounded-lg'}
+          src={'/api/img_thumb/' + props.route.id + '.webp'}
         ></img>
         <div
           className={
-            "absolute bottom-1 m-1 p-1 px-3 rounded-sm text-white " +
+            'absolute bottom-1 m-1 p-1 px-3 rounded-sm text-white ' +
             (props.sets[props.route.set_id]
               ? colors[
                   props.circuits[props.sets[props.route.set_id].circuit_id]
                     .color
                 ]
-              : "bg-gray-500")
+              : 'bg-gray-500')
           }
         >
-          {props.route.name}{" "}
+          {props.route.name}{' '}
         </div>
         <div className="absolute text-center -bottom-7 w-full font-normal text-sm  p-1 px-2 rounded-sm text-gray-600">
           {day_text}

@@ -1,65 +1,65 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { StarIcon } from "@heroicons/react/20/solid";
-import { Radio, RadioGroup } from "@headlessui/react";
+import { useState } from 'react';
+import { StarIcon } from '@heroicons/react/20/solid';
+import { Radio, RadioGroup } from '@headlessui/react';
 
 const product = {
-  name: "I Hate Mondays At Depot Tee",
-  price: "£20",
-  href: "#",
+  name: 'I Hate Mondays At Depot Tee',
+  price: '£20',
+  href: '#',
   breadcrumbs: [
-    { id: 1, name: "Men", href: "#" },
-    { id: 2, name: "Clothing", href: "#" },
+    { id: 1, name: 'Men', href: '#' },
+    { id: 2, name: 'Clothing', href: '#' },
   ],
   images: [
     {
-      src: "/shirt.png",
-      alt: "Two each of gray, white, and black shirts laying flat.",
+      src: '/shirt.png',
+      alt: 'Two each of gray, white, and black shirts laying flat.',
     },
     {
-      src: "/shirt2.png",
-      alt: "Model wearing plain black basic tee.",
+      src: '/shirt2.png',
+      alt: 'Model wearing plain black basic tee.',
     },
     {
-      src: "/shirt3.png",
-      alt: "Model wearing plain gray basic tee.",
+      src: '/shirt3.png',
+      alt: 'Model wearing plain gray basic tee.',
     },
     {
-      src: "/shirt4.png",
-      alt: "Model wearing plain white basic tee.",
+      src: '/shirt4.png',
+      alt: 'Model wearing plain white basic tee.',
     },
   ],
   colors: [
-    { name: "White", class: "bg-white", selectedClass: "ring-gray-400" },
-    { name: "Gray", class: "bg-gray-200", selectedClass: "ring-gray-400" },
-    { name: "Black", class: "bg-gray-900", selectedClass: "ring-gray-900" },
+    { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
+    { name: 'Gray', class: 'bg-gray-200', selectedClass: 'ring-gray-400' },
+    { name: 'Black', class: 'bg-gray-900', selectedClass: 'ring-gray-900' },
   ],
   sizes: [
-    { name: "XXS", inStock: false },
-    { name: "XS", inStock: false },
-    { name: "S", inStock: false },
-    { name: "M", inStock: false },
-    { name: "L", inStock: false },
-    { name: "XL", inStock: false },
-    { name: "2XL", inStock: false },
-    { name: "3XL", inStock: true },
+    { name: 'XXS', inStock: false },
+    { name: 'XS', inStock: false },
+    { name: 'S', inStock: false },
+    { name: 'M', inStock: false },
+    { name: 'L', inStock: false },
+    { name: 'XL', inStock: false },
+    { name: '2XL', inStock: false },
+    { name: '3XL', inStock: true },
   ],
   description:
-    "Mondays at Depot got you climbing the walls—literally and figuratively? This tee is your badge of honor for surviving the chaos. Perfect for those who prefer their holds chalky, not crowded, and their Mondays far from the madding crowd.",
+    'Mondays at Depot got you climbing the walls—literally and figuratively? This tee is your badge of honor for surviving the chaos. Perfect for those who prefer their holds chalky, not crowded, and their Mondays far from the madding crowd.',
   highlights: [
-    "Hand designed locally",
-    "Dyed with our proprietary colors",
-    "Pre-washed & pre-shrunk",
-    "Ultra-soft 100% cotton",
+    'Hand designed locally',
+    'Dyed with our proprietary colors',
+    'Pre-washed & pre-shrunk',
+    'Ultra-soft 100% cotton',
   ],
   details:
     'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.',
 };
-const reviews = { href: "#", average: 4, totalCount: 117 };
+const reviews = { href: '#', average: 4, totalCount: 117 };
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(' ');
 }
 
 export default function StorePage() {
@@ -160,9 +160,9 @@ export default function StorePage() {
                       aria-hidden="true"
                       className={classNames(
                         reviews.average > rating
-                          ? "text-gray-900"
-                          : "text-gray-200",
-                        "size-5 shrink-0"
+                          ? 'text-gray-900'
+                          : 'text-gray-200',
+                        'size-5 shrink-0',
                       )}
                     />
                   ))}
@@ -195,14 +195,14 @@ export default function StorePage() {
                         aria-label={color.name}
                         className={classNames(
                           color.selectedClass,
-                          "relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-hidden data-checked:ring-2 data-focus:data-checked:ring-3 data-focus:data-checked:ring-offset-1"
+                          'relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-hidden data-checked:ring-2 data-focus:data-checked:ring-3 data-focus:data-checked:ring-offset-1',
                         )}
                       >
                         <span
                           aria-hidden="true"
                           className={classNames(
                             color.class,
-                            "size-8 rounded-full border border-black/10"
+                            'size-8 rounded-full border border-black/10',
                           )}
                         />
                       </Radio>
@@ -236,9 +236,9 @@ export default function StorePage() {
                         disabled={!size.inStock}
                         className={classNames(
                           size.inStock
-                            ? "cursor-pointer bg-white text-gray-900 shadow-2xs"
-                            : "cursor-not-allowed bg-gray-50 text-gray-200",
-                          "group relative flex items-center justify-center rounded-md border px-4 py-3 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-hidden data-focus:ring-2 data-focus:ring-indigo-500 sm:flex-1 sm:py-6"
+                            ? 'cursor-pointer bg-white text-gray-900 shadow-2xs'
+                            : 'cursor-not-allowed bg-gray-50 text-gray-200',
+                          'group relative flex items-center justify-center rounded-md border px-4 py-3 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-hidden data-focus:ring-2 data-focus:ring-indigo-500 sm:flex-1 sm:py-6',
                         )}
                       >
                         <span>{size.name}</span>
