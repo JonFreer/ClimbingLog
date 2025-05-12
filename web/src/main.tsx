@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import App from './App.tsx';
+import App from './app.tsx';
 import { BrowserRouter } from 'react-router';
 import { QueryClient } from '@tanstack/react-query';
 import { queryConfig } from './lib/react-query.ts';

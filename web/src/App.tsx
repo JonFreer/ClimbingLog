@@ -1,4 +1,3 @@
-import './App.css';
 import { NavBar } from './components/ui/navbars/navbar';
 import { Navigate, Route, Routes, useNavigate } from 'react-router';
 import { User } from './types/routes';
