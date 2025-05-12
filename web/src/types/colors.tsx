@@ -9,6 +9,17 @@ export const colors: { [key: string]: string } = {
   pink: 'bg-pink-600',
 };
 
+export const colorsGradient: { [key: string]: string } = {
+  violet: 'from-violet-600 to-violet-500',
+  red: 'from-red-600 to-red-500',
+  green: 'from-green-600 to-green-500',
+  blue: 'from-blue-600 to-blue-500',
+  yellow: 'from-yellow-600 to-yellow-500',
+  orange: 'from-orange-600 to-orange-500',
+  black: 'from-gray-600 to-gray-500',
+  pink: 'from-pink-600 to-pink-500',
+};
+
 export const colorsBorder: { [key: string]: string } = {
   violet: 'border-violet-500',
   red: 'border-red-500',

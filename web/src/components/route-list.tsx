@@ -1,11 +1,7 @@
 import { Route, Set } from '../types/routes';
 import { useEffect, useState } from 'react';
 import { colors, colorsBorder } from '../types/colors';
-import {
-  CheckIcon,
-  ChevronRightIcon,
-  ChevronUpDownIcon,
-} from '@heroicons/react/24/solid';
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
 import { useRoutes } from '../features/routes/api/get-routes';
 import { useCircuits } from '../features/circuits/api/get-circuits';
 import { useSets } from '../features/sets/api/get-sets';
@@ -59,7 +55,7 @@ export function RouteList() {
   }, {} as Record<string, Set>);
 
   return (
-    <>
+    <div className="bg-gray-50 pt-2">
       <div className="m-6 mb-0">
         <FilterBy selected={sortType} setSelected={setSortType} />
       </div>
@@ -123,7 +119,7 @@ export function RouteList() {
             />
           ))}
       </div>
-    </>
+    </div>
   );
 }
 
@@ -147,12 +143,40 @@ function RouteDropDown({
     <>
       <div key={'projects'} className={'mt-4'}>
         <button
-          className="bg-white hover:bg-gray-50 text-gray-900 font-medium  rounded-lg shadow-xs w-full text-left flex justify-between items-center"
+          className="bg-white hover:bg-gray-50 text-gray-700 font-medium shadow-lg text-sm  rounded-lg w-full text-left justify-between items-center p-4"
           onClick={() => {
             setOpen((prev) => !prev);
           }}
         >
-          <div className="flex items-center w-full">
+          <div className="flex">
+            <div className="uppercase font-semibold">{name}</div>
+            <div className="ml-auto">
+              {' '}
+              {
+                Object.values(routes).filter((route) =>
+                  sent_ids.includes(route.id),
+                ).length
+              }{' '}
+              / {Object.values(routes).length}
+            </div>
+          </div>
+          <div className="flex mt-2">
+            <div className="w-full bg-gray-200 rounded-full h-5 dark:bg-gray-300">
+              <div
+                className={` h-5 rounded-full bg-linear-to-r  ${color}`}
+                style={{
+                  width: `${
+                    (Object.values(routes).filter((route) =>
+                      sent_ids.includes(route.id),
+                    ).length /
+                      Object.values(routes).length) *
+                    100
+                  }%`,
+                }}
+              ></div>
+            </div>
+          </div>
+          {/* <div className="flex items-center w-full">
             <span
               className={`text-lg font-bold text-white uppercase px-4 py-2 pr-10 min-w-52 rounded-l-lg clip-path ${color}`}
             >
@@ -171,7 +195,7 @@ function RouteDropDown({
             className={`h-5 w-5 mr-3 transform transition-transform ${
               open ? 'rotate-90' : ''
             }`}
-          />
+          /> */}
         </button>
         {open && (
           <div className="ml mt-2" key={'projects'}>
@@ -179,7 +203,7 @@ function RouteDropDown({
               <div
                 key={route.id}
                 onClick={() => openSidebar(route)}
-                className="bg-white shadow-sm overflow-hidden sm:rounded-lg mt-2 cursor-pointer hover:bg-slate-50"
+                className="bg-white shadow-lg overflow-hidden sm:rounded-lg mt-2 cursor-pointer hover:bg-slate-50"
               >
                 <div className="px-4 py-4 sm:px-6 flex items-center justify-between">
                   <div className="flex items-center">
@@ -193,9 +217,26 @@ function RouteDropDown({
                       alt=""
                     ></img>
                     <div className="ml-4">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
-                        {route.name}
-                      </h3>
+                      <div className="flex">
+                        <h3 className="text-lg leading-6 font-medium text-gray-900">
+                          {route.name}
+                        </h3>
+                        {sent_ids.includes(route.id) ? (
+                          <span
+                            className={
+                              'ml-auto inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white ' +
+                              (colors[
+                                circuits[sets[route.set_id]?.circuit_id]
+                                  ?.color || ''
+                              ] || '')
+                            }
+                          >
+                            Sent
+                          </span>
+                        ) : (
+                          <div className={''}> </div>
+                        )}
+                      </div>
                       <p className="mt-1 max-w-2xl text-sm text-gray-500">
                         {route.location}
                       </p>
@@ -207,23 +248,6 @@ function RouteDropDown({
                         ))}
                       </div>
                     </div>
-                  </div>
-                  <div>
-                    {sent_ids.includes(route.id) ? (
-                      <span
-                        className={
-                          'inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white ' +
-                          (colors[
-                            circuits[sets[route.set_id]?.circuit_id]?.color ||
-                              ''
-                          ] || '')
-                        }
-                      >
-                        Sent
-                      </span>
-                    ) : (
-                      <div className={'w-14'}> </div>
-                    )}
                   </div>
                 </div>
               </div>
@@ -280,7 +304,7 @@ export function FilterBy({
         <Label className="block py-1 text-sm/6 font-medium text-gray-900">
           Sort by
         </Label>
-        <ListboxButton className="grid ml-auto cursor-default grid-cols-1 rounded-xl bg-white py-1 pr-1 pl-2 text-left text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 text-sm/6">
+        <ListboxButton className="grid ml-auto cursor-default grid-cols-1 rounded-xl bg-white py-1 pr-1 pl-2 text-left text-gray-900  focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 text-sm/6">
           <span className="col-start-1 row-start-1 flex items-center gap-3 pr-6">
             {/* <img
               alt=""
