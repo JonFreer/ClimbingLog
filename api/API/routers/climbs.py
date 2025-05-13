@@ -34,7 +34,6 @@ async def get_all_climbs(
     )
     routes = result.all()  # Changed from scalars().all() to all()
 
-    print(routes)
     return routes
 
 
@@ -45,7 +44,6 @@ async def get_all_climbs(
 ):
     result = await db.execute(select(Climbs).where(Climbs.user == user.id))
     routes = result.scalars().all()
-    print(routes)
     return routes
 
 
