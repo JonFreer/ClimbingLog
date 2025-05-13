@@ -63,6 +63,7 @@ export default function Profile() {
 
   function fetchUser() {
     const username = id || user_me?.username;
+    console.log('Fetching user:', username);
     api
       .get('/users/get_public/' + username)
       .then((res) => {
@@ -75,6 +76,7 @@ export default function Profile() {
 
   function fetchClimbs() {
     const username = id || user_me?.username;
+    console.log('Fetching climbs for user:', username);
     api
       .get('/users/get_climbs/' + username)
       .then((res) => {
