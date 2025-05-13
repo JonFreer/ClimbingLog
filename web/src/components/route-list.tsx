@@ -56,7 +56,7 @@ export function RouteList() {
 
   return (
     <div className="bg-gray-50 pt-2">
-      <div className="m-6 mb-0">
+      <div className="mx-6 mb-0">
         <FilterBy selected={sortType} setSelected={setSortType} />
       </div>
 
@@ -276,7 +276,7 @@ const sort_types = [
   },
   {
     id: 3,
-    name: 'Number of sends',
+    name: 'Most sent',
     disabled: false,
   },
   {
