@@ -149,7 +149,11 @@ function RouteDropDown({
           }}
         >
           <div className="flex">
-            <div className="uppercase font-semibold">{name}</div>
+            <div
+              className={`uppercase text-white rounded-xl py-1 px-3 shadow-lg font-semibold ${color}`}
+            >
+              {name}
+            </div>
             <div className="ml-auto">
               {' '}
               {
@@ -160,7 +164,7 @@ function RouteDropDown({
               / {Object.values(routes).length}
             </div>
           </div>
-          <div className="flex mt-2">
+          <div className="flex mt-3">
             <div className="w-full bg-gray-200 rounded-full h-5 dark:bg-gray-300">
               <div
                 className={` h-5 rounded-full bg-linear-to-r  ${color}`}
@@ -203,10 +207,10 @@ function RouteDropDown({
               <div
                 key={route.id}
                 onClick={() => openSidebar(route)}
-                className="bg-white shadow-lg overflow-hidden sm:rounded-lg mt-2 cursor-pointer hover:bg-slate-50"
+                className="bg-white shadow-lg rounded-lg overflow-hidden sm:rounded-lg mt-2 cursor-pointer hover:bg-slate-50"
               >
                 <div className="px-4 py-4 sm:px-6 flex items-center justify-between">
-                  <div className="flex items-center">
+                  <div className="flex w-full items-center">
                     <img
                       className={`h-24 rounded-sm border-b-6 ${
                         colorsBorder[
@@ -216,8 +220,8 @@ function RouteDropDown({
                       src={'/api/img_thumb/' + route.id + '.webp'}
                       alt=""
                     ></img>
-                    <div className="ml-4">
-                      <div className="flex">
+                    <div className="ml-4 w-full overflow-hidden">
+                      <div className="flex w-full">
                         <h3 className="text-lg leading-6 font-medium text-gray-900">
                           {route.name}
                         </h3>
