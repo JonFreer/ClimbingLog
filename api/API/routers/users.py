@@ -64,7 +64,6 @@ async def update_cover_photo(
 ):
     if "image" not in file.content_type:
         raise HTTPException(status_code=500, detail="File type must be an image")
-    print("saving photo")
 
     user.has_cover_photo = True
     db.add(user)
@@ -94,7 +93,6 @@ async def update_profile_photo(
 ):
     if "image" not in file.content_type:
         raise HTTPException(status_code=500, detail="File type must be an image")
-    print("saving photo")
 
     user.has_profile_photo = True
     db.add(user)

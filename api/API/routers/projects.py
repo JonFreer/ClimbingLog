@@ -21,7 +21,6 @@ async def get_all_projects(
         select(Projects.route_id).where(Projects.user_id == user.id)
     )
     projects = result.scalars().all()
-    print(projects)
     return projects
 
 
