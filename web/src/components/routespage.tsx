@@ -205,7 +205,7 @@ function MapFilter({
     <Menu>
       <MenuButton
         className={
-          'absolute top-5 right-5 h-10 w-10 z-10 outline-1 outline-gray-200 rounded-full bg-white shadow-md hover:bg-gray-50 cursor-pointer flex items-center justify-center text-gray-600'
+          'absolute top-5 right-5 h-10 w-10 z-1 outline-1 outline-gray-200 rounded-full bg-white shadow-md hover:bg-gray-50 cursor-pointer flex items-center justify-center text-gray-600'
         }
       >
         <AdjustmentsHorizontalIcon className="size-6 tes" />
@@ -213,7 +213,7 @@ function MapFilter({
       {!filterState.sent ||
       !filterState.attempted ||
       !filterState.notAttempted ? (
-        <div className="absolute top-5  z-10 right-5 h-3 w-3  bg-orange-600 rounded-full"></div>
+        <div className="absolute top-5  z-1 right-5 h-3 w-3  bg-orange-600 rounded-full"></div>
       ) : null}
       <MenuItems
         transition

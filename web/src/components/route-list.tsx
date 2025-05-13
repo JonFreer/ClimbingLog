@@ -55,7 +55,7 @@ export function RouteList() {
   }, {} as Record<string, Set>);
 
   return (
-    <div className="bg-gray-50 pt-2">
+    <div className="bg-gray-50 pt-2 max-w-2xl mx-auto">
       <div className="mx-6 mb-0">
         <FilterBy selected={sortType} setSelected={setSortType} />
       </div>
@@ -141,9 +141,9 @@ function RouteDropDown({
 
   return (
     <>
-      <div key={'projects'} className={'mt-4'}>
+      <div key={'projects'} className={'mt-3'}>
         <button
-          className="bg-white hover:bg-gray-50 text-gray-700 font-medium shadow-lg text-sm  rounded-lg w-full text-left justify-between items-center p-4"
+          className="bg-white hover:bg-gray-50 text-gray-700 font-medium shadow-md text-sm  rounded-lg w-full text-left justify-between items-center p-4"
           onClick={() => {
             setOpen((prev) => !prev);
           }}

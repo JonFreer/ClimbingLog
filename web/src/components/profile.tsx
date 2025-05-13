@@ -31,6 +31,7 @@ ChartJS.register(
 
 export const options = {
   responsive: true,
+  maintainAspectRatio: false, // Allows you to set a custom height
   plugins: {
     legend: {
       position: 'top' as const,
@@ -63,7 +64,7 @@ export default function Profile() {
   function fetchUser() {
     const username = id || user_me?.username;
     api
-      .get('/api/users/get_public/' + username)
+      .get('/users/get_public/' + username)
       .then((res) => {
         setUser(res);
       })
@@ -75,7 +76,7 @@ export default function Profile() {
   function fetchClimbs() {
     const username = id || user_me?.username;
     api
-      .get('/api/users/get_climbs/' + username)
+      .get('/users/get_climbs/' + username)
       .then((res) => {
         setClimbs(res);
       })
@@ -225,7 +226,9 @@ export default function Profile() {
 
         <div className="mt-8 m-8 font-bold">
           Total sends: {sent_ids.length}
-          <Bar options={options} data={data} />
+          <div className="h-64">
+            <Bar options={options} data={data} />
+          </div>
           {locationCounts && Object.keys(locationCounts).length > 0 && (
             <div className="mt-4">
               <div className="font-bold">Location Breakdown</div>
@@ -266,7 +269,7 @@ export default function Profile() {
         <div className="m-2">
           <div className="flex flex-col bg-white m-auto p-auto mt-5 relative">
             <div className="flex overflow-x-scroll pb-10 hide-scroll-bar">
-              <div className="flex gap-4 flex-nowrap ml-10">
+              <div className="flex gap-4 flex-nowrap ml-2">
                 {climbs
                   .filter((climb) => climb.sent)
                   .filter((climb) => routes[climb.route])
@@ -287,8 +290,6 @@ export default function Profile() {
                   ))}
               </div>
             </div>
-            <div className="absolute top-0 left-0 h-full w-2 bg-linear-to-r from-white to-transparent pointer-events-none"></div>
-            <div className="absolute top-0 right-0 h-full w-2 bg-linear-to-l from-white to-transparent pointer-events-none"></div>
           </div>
         </div>
 
