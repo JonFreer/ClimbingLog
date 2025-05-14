@@ -15,6 +15,7 @@ import {
   ListboxOption,
   ListboxOptions,
 } from '@headlessui/react';
+import { cmpStringsWithNumbers } from '@/utils/sort';
 
 export function RouteList() {
   const routes = useRoutes().data || {};
@@ -54,54 +55,6 @@ export function RouteList() {
     return acc;
   }, {} as Record<string, Set>);
 
-  function cmpStringsWithNumbers(a, b) {
-    // Get rid of casing issues.
-    a = a.toUpperCase();
-    b = b.toUpperCase();
-
-    // Regular expression to separate the digit string from the non-digit strings.
-    var reParts = /\d+|\D+/g;
-
-    // Regular expression to test if the string has a digit.
-    var reDigit = /\d/;
-
-    // Separates the strings into substrings that have only digits and those
-    // that have no digits.
-    var aParts = a.match(reParts);
-    var bParts = b.match(reParts);
-
-    // Used to determine if aPart and bPart are digits.
-    var isDigitPart;
-
-    // If `a` and `b` are strings with substring parts that match...
-    if(aParts && bParts &&
-        (isDigitPart = reDigit.test(aParts[0])) == reDigit.test(bParts[0])) {
-      // Loop through each substring part to compare the overall strings.
-      var len = Math.min(aParts.length, bParts.length);
-      for(var i = 0; i < len; i++) {
-        var aPart = aParts[i];
-        var bPart = bParts[i];
-
-        // If comparing digits, convert them to numbers (assuming base 10).
-        if(isDigitPart) {
-          aPart = parseInt(aPart, 10);
-          bPart = parseInt(bPart, 10);
-        }
-
-        // If the substrings aren't equal, return either -1 or 1.
-        if(aPart != bPart) {
-          return aPart < bPart ? -1 : 1;
-        }
-
-        // Toggle the value of isDigitPart since the parts will alternate.
-        isDigitPart = !isDigitPart;
-      }
-    }
-
-    // Use normal comparison.
-    return (a >= b) - (a <= b);
-  };
-
   return (
     <div className="bg-gray-50 pt-2 max-w-2xl mx-auto">
       <div className="mx-6 mb-0">
@@ -117,7 +70,7 @@ export function RouteList() {
               .filter((route) => projects.includes(route.id))
               .sort((a, b) => {
                 if (sortType.id == 1) {
-                  return cmpStringsWithNumbers(a.name,b.name);
+                  return cmpStringsWithNumbers(a.name, b.name);
                 } else if (sortType.id == 2) {
                   return sent_ids.includes(a.id) ? -1 : 1;
                 } else if (sortType.id == 3) {
@@ -147,7 +100,7 @@ export function RouteList() {
                 .filter((route) => route.set_id === active_sets[circuit.id]?.id)
                 .sort((a, b) => {
                   if (sortType.id == 1) {
-                    return cmpStringsWithNumbers(a.name,b.name);
+                    return cmpStringsWithNumbers(a.name, b.name);
                   } else if (sortType.id == 2) {
                     return sent_ids.includes(a.id) ? -1 : 1;
                   } else if (sortType.id == 3) {
