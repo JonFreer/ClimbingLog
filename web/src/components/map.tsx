@@ -20,6 +20,7 @@ const DraggableDotsCanvas = (props: {
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
   const [isDragging, setIsDragging] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [isPinching, setIsPinching] = useState(false);
+  const lastPinchCenterRef = useRef({ x: 0, y: 0 });
   const initialPinchDistanceRef = useRef(0);
   const initialScaleRef = useRef(1);
 
@@ -200,8 +201,9 @@ const DraggableDotsCanvas = (props: {
     drawCanvas();
   };
 
-  const handleWheel = (e) => {
+  const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     const scaleAmount = e.deltaY < 0 ? 1.05 : 0.95;
     const newScale = transformRef.current.scale * scaleAmount;
 
@@ -222,6 +224,8 @@ const DraggableDotsCanvas = (props: {
     };
 
     drawCanvas();
+
+    return false;
   };
 
   /////////////////////////// MOVE EVENTS ///////////////////////////
@@ -237,6 +241,12 @@ const DraggableDotsCanvas = (props: {
       setIsPinching(true);
       initialPinchDistanceRef.current = getPinchDistance(e.touches);
       initialScaleRef.current = transformRef.current.scale;
+      const rect = canvasRef.current.getBoundingClientRect();
+      const centerX =
+        (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+      const centerY =
+        (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+      lastPinchCenterRef.current = { x: centerX, y: centerY };
     }
     move(e.touches[0]);
   };
@@ -260,14 +270,19 @@ const DraggableDotsCanvas = (props: {
     e.preventDefault();
     if (isPinching && e.touches.length === 2) {
       const newPinchDistance = getPinchDistance(e.touches);
+
       const scaleAmount = newPinchDistance / initialPinchDistanceRef.current;
       const newScale = initialScaleRef.current * scaleAmount;
 
       const rect = canvasRef.current.getBoundingClientRect();
+
       const centerX =
         (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
       const centerY =
         (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+
+      const dx = centerX - lastPinchCenterRef.current.x;
+      const dy = centerY - lastPinchCenterRef.current.y;
 
       const newTranslateX =
         centerX -
@@ -280,37 +295,37 @@ const DraggableDotsCanvas = (props: {
 
       transformRef.current = {
         scale: newScale,
-        translateX: newTranslateX,
-        translateY: newTranslateY,
+        translateX: newTranslateX + dx,
+        translateY: newTranslateY + dy,
       };
+      lastPinchCenterRef.current = { x: centerX, y: centerY };
+      drawCanvas();
+    } else {
+      const touch = e.touches[0];
+      if (isDraggingCanvas) {
+        const dx = touch.clientX - lastMousePosRef.current.x;
+        const dy = touch.clientY - lastMousePosRef.current.y;
+        transformRef.current = {
+          ...transformRef.current,
+          translateX: transformRef.current.translateX + dx,
+          translateY: transformRef.current.translateY + dy,
+        };
+        lastMousePosRef.current = { x: touch.clientX, y: touch.clientY };
+      } else {
+        const rect = canvasRef.current.getBoundingClientRect();
+        const x =
+          (touch.clientX - rect.left - transformRef.current.translateX) /
+          transformRef.current.scale;
+        const y =
+          (touch.clientY - rect.top - transformRef.current.translateY) /
+          transformRef.current.scale;
+        props.updateDots(
+          props.dots.map((dot) => (dot.isDragging ? { ...dot, x, y } : dot)),
+        );
+      }
 
       drawCanvas();
     }
-
-    const touch = e.touches[0];
-    if (isDraggingCanvas) {
-      const dx = touch.clientX - lastMousePosRef.current.x;
-      const dy = touch.clientY - lastMousePosRef.current.y;
-      transformRef.current = {
-        ...transformRef.current,
-        translateX: transformRef.current.translateX + dx,
-        translateY: transformRef.current.translateY + dy,
-      };
-      lastMousePosRef.current = { x: touch.clientX, y: touch.clientY };
-    } else {
-      const rect = canvasRef.current.getBoundingClientRect();
-      const x =
-        (touch.clientX - rect.left - transformRef.current.translateX) /
-        transformRef.current.scale;
-      const y =
-        (touch.clientY - rect.top - transformRef.current.translateY) /
-        transformRef.current.scale;
-      props.updateDots(
-        props.dots.map((dot) => (dot.isDragging ? { ...dot, x, y } : dot)),
-      );
-    }
-
-    drawCanvas();
   };
 
   /////////////////////////// END MOVE EVENTS ///////////////////////////
