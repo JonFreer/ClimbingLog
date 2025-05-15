@@ -15,6 +15,7 @@ import {
   ListboxOption,
   ListboxOptions,
 } from '@headlessui/react';
+import { cmpStringsWithNumbers } from '@/utils/sort';
 
 export function RouteList() {
   const routes = useRoutes().data || {};
@@ -69,7 +70,7 @@ export function RouteList() {
               .filter((route) => projects.includes(route.id))
               .sort((a, b) => {
                 if (sortType.id == 1) {
-                  return a.name.localeCompare(b.name);
+                  return cmpStringsWithNumbers(a.name, b.name);
                 } else if (sortType.id == 2) {
                   return sent_ids.includes(a.id) ? -1 : 1;
                 } else if (sortType.id == 3) {
@@ -99,7 +100,7 @@ export function RouteList() {
                 .filter((route) => route.set_id === active_sets[circuit.id]?.id)
                 .sort((a, b) => {
                   if (sortType.id == 1) {
-                    return a.name.localeCompare(b.name);
+                    return cmpStringsWithNumbers(a.name, b.name);
                   } else if (sortType.id == 2) {
                     return sent_ids.includes(a.id) ? -1 : 1;
                   } else if (sortType.id == 3) {
