@@ -1,12 +1,10 @@
 from .config import SMTP_FROM_ADDRESS, SMTP_LOGIN, SMTP_PASSWORD, SMTP_PORT, SMTP_SERVER, Domain
 from .models import User
-
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 def send_verify_email(email:str,token:str, user:User):
-    import smtplib
-    from email.mime.text import MIMEText
-    from email.mime.multipart import MIMEMultipart
-
 
     msg = MIMEMultipart("alternative")
 
@@ -87,10 +85,6 @@ def send_verify_email(email:str,token:str, user:User):
 
 
 def send_forgot_password_email(email:str,token:str, user:User):
-    import smtplib
-    from email.mime.text import MIMEText
-    from email.mime.multipart import MIMEMultipart
-
 
     msg = MIMEMultipart("alternative")
 

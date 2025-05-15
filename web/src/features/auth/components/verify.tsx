@@ -9,6 +9,7 @@ export function VerifyPage() {
   const { token } = useParams();
   const { addNotification } = useNotifications();
   const navigate = useNavigate();
+  const user = useUser();
   useEffect(() => {
     if (token) {
       api
@@ -17,11 +18,13 @@ export function VerifyPage() {
         })
         .then((res) => {
           console.log(res);
+
           addNotification({
             title: 'Account verified',
             message: 'Your account has been successfully verified.',
             type: 'success',
           });
+          user.refetch();
           navigate('/login');
         })
         .catch((error) => {
