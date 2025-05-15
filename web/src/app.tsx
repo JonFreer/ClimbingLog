@@ -16,6 +16,11 @@ import RouteSideBar from './components/ui/sidebar/route-sidebar';
 import { UserListModal } from './components/ui/userlist/userlist';
 import { LoginForm } from './features/auth/components/login-form';
 import { RegisterForm } from './features/auth/components/register-form';
+import { VerifyPage, VerifyPrompt } from './features/auth/components/verify';
+import Onboarding from './features/onboarding/components/onboarding';
+import { useJustRegistered } from './features/auth/hooks/just-registered';
+import { RequestPasswordReset } from './features/auth/components/request-password-reset';
+import { PasswordResetForm } from './features/auth/components/password-reset-form';
 const ProtectedRoute = ({
   authed,
   children,
@@ -37,12 +42,14 @@ function App() {
   const user = useUser();
   const navigate = useNavigate();
   const { addNotification } = useNotifications();
+  const { setJustRegistered, justRegistered } = useJustRegistered();
 
   return (
     <>
       {import.meta.env.DEV && <ReactQueryDevtools />}
       <Notifications />
       <NavBar />
+      <VerifyPrompt />
       <NavBarBottom />
       <RouteSideBar />
       <UserListModal />
@@ -54,6 +61,7 @@ function App() {
               <RegisterForm
                 onSuccess={() => {
                   navigate('/login');
+                  setJustRegistered();
                   addNotification({
                     type: 'success',
                     title: 'Registration Successful',
@@ -68,7 +76,31 @@ function App() {
           path="/login"
           element={
             <ProtectedRoute authed={!user.data}>
-              <LoginForm onSuccess={() => {}} />
+              <LoginForm
+                onSuccess={() => {
+                  console.log('Login successful', justRegistered);
+                  if (justRegistered) {
+                    console.log('Navigating to onboarding');
+                    setTimeout(() => navigate('/welcome'), 0);
+                  }
+                }}
+              />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/request-password-reset"
+          element={
+            <ProtectedRoute authed={!user.data}>
+              <RequestPasswordReset />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reset_password/:token"
+          element={
+            <ProtectedRoute authed={!user.data}>
+              <PasswordResetForm />
             </ProtectedRoute>
           }
         />
@@ -80,6 +112,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/welcome" element={<Onboarding />} />
         <Route
           path="/admin"
           element={
@@ -109,6 +142,8 @@ function App() {
         /> */}
 
         <Route path="/profile/:id" element={<Profile />} />
+
+        <Route path="/verify/:token" element={<VerifyPage />} />
 
         <Route path="/store" element={<StorePage />} />
 

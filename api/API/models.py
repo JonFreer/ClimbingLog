@@ -70,7 +70,7 @@ class Climbs(Base):
         UUID(as_uuid=True), ForeignKey("user.id"), index=True, nullable=False
     )
     activity: uuid.UUID = Column(
-        UUID(as_uuid=True), ForeignKey("activities.id"), index=True, nullable=False
+        UUID(as_uuid=True), ForeignKey("activities.id"), index=True, nullable=True
     )
 
 

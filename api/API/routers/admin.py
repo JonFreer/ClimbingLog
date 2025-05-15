@@ -1,6 +1,7 @@
 import uuid
 from typing import List
 
+from ..config import SMTP_FROM_ADDRESS, SMTP_LOGIN, SMTP_PASSWORD, SMTP_PORT, SMTP_SERVER
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -150,3 +151,18 @@ async def generate_activities(
         db.add(climb)
         await db.commit()
         await db.refresh(climb)
+
+@router.post(
+    "/admin/send_email/",
+    response_model=None,
+    tags=["admin"],
+)
+async def generate_activities(
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(current_active_superuser),
+):
+    
+    if not user.is_superuser:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    
+   

@@ -360,7 +360,7 @@ function ImageUpload(props: {
   );
 }
 
-function ImageUploadProfilePic(props: {
+export function ImageUploadProfilePic(props: {
   imageCallback: (image: File) => void;
   defaultUrl: string;
 }) {

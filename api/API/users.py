@@ -1,6 +1,7 @@
 import uuid
 from typing import Optional
 
+from .email import send_verify_email, send_forgot_password_email
 from fastapi import Depends, HTTPException, Request, status
 from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin, models
 from fastapi_users.authentication import (
@@ -28,11 +29,21 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     async def on_after_forgot_password(
         self, user: User, token: str, request: Optional[Request] = None
     ):
+        send_forgot_password_email(
+            email=user.email,
+            token=token,
+            user=user,
+        )
         print(f"User {user.id} has forgot their password. Reset token: {token}")
 
     async def on_after_request_verify(
         self, user: User, token: str, request: Optional[Request] = None
     ):
+        send_verify_email(
+            email=user.email,
+            token=token,
+            user=user,
+        )
         print(f"Verification requested for user {user.id}. Verification token: {token}")
 
     # Override create, injecting some check logic and then call Parent function via super()

@@ -49,8 +49,12 @@ services:
       DOMAIN: "${DOMAIN:-climbing.localhost}"
       DATABASE_URL: "postgresql+asyncpg://${API_DB_USERNAME}:${API_DB_PASSWORD}@climb_db/api"
       SESSION_SECRET: "${SESSION_SECRET}"
-      # VIVACITY_KEY: "${VIVACITY_KEY}"
-      # EXTERNAL_API_TOKEN: "${EXTERNAL_API_TOKEN}"
+      SMTP_SERVER: "${SMTP_SERVER}"
+      SMTP_PORT: "${SMTP_PORT}"
+      SMTP_LOGIN: "${SMTP_LOGIN}"
+      SMTP_PASSWORD: "${SMTP_PASSWORD}"
+      SMTP_FROM_ADDRESS: "${SMTP_FROM_ADDRESS}"
+
     networks:
       - internal_network
       - traefik_web

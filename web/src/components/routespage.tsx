@@ -55,8 +55,6 @@ export function RoutesPage() {
     return acc;
   }, {} as Record<string, Set>);
 
-  console.log('active_sets', active_sets);
-
   const selectedRouteData = routes[selectedRoute] || null;
 
   return (
