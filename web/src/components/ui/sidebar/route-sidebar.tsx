@@ -24,6 +24,9 @@ import { useDeleteProject } from '@/features/projects/api/delete-project';
 import { useSidebarState } from './sidebar-state';
 import { useUserListState } from '../userlist/userlist-state';
 import { api } from '@/lib/api-client';
+import { CreateBeta } from '@/features/videos/components/create-beta';
+import { Beta } from '@/features/videos/components/beta';
+import { useVideos } from '@/features/videos/api/get-videos';
 
 export default function RouteSideBar() {
   const climbs = useClimbs().data ?? [];
@@ -31,9 +34,9 @@ export default function RouteSideBar() {
   const sets = useSets().data ?? {};
   const circuits = useCircuits().data?.data ?? {};
   const route_state = useSidebarState((state) => state.route);
-
+  const videosQuery = useVideos({ route_id: route_state?.id || '' });
+  const videos = videosQuery.data ?? [];
   const closeCallback = useSidebarState((state) => state.closeSidebar);
-
   const deleteClimbMutation = useDeleteClimb({
     mutationConfig: {
       onSuccess: () => {},
@@ -69,6 +72,7 @@ export default function RouteSideBar() {
   const { openUserList, closeUserList } = useUserListState();
 
   const [sentBy, setSentBy] = useState<UserList>({ users: [], num_users: 0 });
+
   const [justCompleted, setJustCompleted] = useState(false);
   const [route, setRoute] = useState<Route>({
     id: '',
@@ -79,7 +83,23 @@ export default function RouteSideBar() {
     x: 0,
     y: 0,
     grade: '',
+    climb_count: 0,
   });
+
+  useEffect(() => {
+    const processingVideo = videos.some((video) => video.processed == false);
+    if (processingVideo && videosQuery.data) {
+      const interval = setInterval(() => {
+        console.log('refetching videos');
+
+        if (videosQuery.data.some((video) => video.processed == false)) {
+          videosQuery.refetch();
+        }
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }
+  }, [videos, route_state]);
 
   async function updateSentBy() {
     if (route_state != null) {
@@ -159,7 +179,7 @@ export default function RouteSideBar() {
                 </div>
               </TransitionChild>
 
-              <div className="flex h-full flex-col overflow-y-scroll bg-white  shadow-xl">
+              <div className="flex h-full flex-col overflow-y-scroll bg-white  shadow-xl overflow-x-hidden">
                 <div className="relative flex-1 ">
                   <div
                     className={
@@ -313,51 +333,70 @@ export default function RouteSideBar() {
                     <></>
                   )}
 
-                  <DialogTitle className="px-10 pt-5 text-base font-semibold text-gray-600">
-                    History
-                  </DialogTitle>
-                  {attempts.length + sends.length > 0 && (
-                    <div className="m-4  mt-0 lg:ml-4 lg:mt-0 rounded-md p-4 max-h-42 divide-y divide-gray-200">
-                      {climbs
-                        .filter((climb) => climb.route == route.id)
-                        .reverse()
-                        .map((climb) => (
-                          <div
-                            key={climb.id}
-                            className="flex items-center justify-between p-2 bg-white "
-                          >
-                            <div className="text-sm text-gray-600">
-                              {new Date(climb.time).toLocaleString('en-GB', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: '2-digit',
-                              })}
-                            </div>
-                            <div
-                              className={`text-sm font-semibold ${
-                                climb.sent ? 'text-green-600' : 'text-gray-600'
-                              }`}
-                            >
-                              {climb.sent ? 'Send' : 'Attempt'}
-                            </div>
-                            <button
-                              className="text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md"
-                              onClick={() =>
-                                deleteClimbMutation.mutate({
-                                  climb_id: climb.id,
-                                })
-                              }
-                            >
-                              <TrashIcon
-                                aria-hidden="true"
-                                className="h-5 w-5"
-                              />
-                            </button>
-                          </div>
-                        ))}
+                  <div className="flex">
+                    <div className="px-10 pt-5 text-base font-semibold text-gray-600">
+                      Beta
                     </div>
+                  </div>
+                  <div className="mx-4 w-full overflow-x-scroll pb-2 hide-scroll-bar">
+                    <div style={{ width: (videos.length + 1) * 45 + '%' }}>
+                      {/*This is a hack, and needs to be fixed. It is to stop the sidebard stretching*/}
+                      {videos.map((video) => (
+                        <Beta video={video} />
+                      ))}
+                      <CreateBeta route_id={route.id} />
+                    </div>
+                  </div>
+
+                  {attempts.length + sends.length > 0 && (
+                    <>
+                      <DialogTitle className="px-10 pt-5 text-base font-semibold text-gray-600">
+                        History
+                      </DialogTitle>
+                      <div className="m-4  mt-0 lg:ml-4 lg:mt-0 rounded-md p-4 max-h-42 divide-y divide-gray-200">
+                        {climbs
+                          .filter((climb) => climb.route == route.id)
+                          .reverse()
+                          .map((climb) => (
+                            <div
+                              key={climb.id}
+                              className="flex items-center justify-between p-2 bg-white "
+                            >
+                              <div className="text-sm text-gray-600">
+                                {new Date(climb.time).toLocaleString('en-GB', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  day: '2-digit',
+                                  month: '2-digit',
+                                  year: '2-digit',
+                                })}
+                              </div>
+                              <div
+                                className={`text-sm font-semibold ${
+                                  climb.sent
+                                    ? 'text-green-600'
+                                    : 'text-gray-600'
+                                }`}
+                              >
+                                {climb.sent ? 'Send' : 'Attempt'}
+                              </div>
+                              <button
+                                className="text-gray-300 p-2 hover:text-gray-700 hover:bg-gray-200 rounded-md"
+                                onClick={() =>
+                                  deleteClimbMutation.mutate({
+                                    climb_id: climb.id,
+                                  })
+                                }
+                              >
+                                <TrashIcon
+                                  aria-hidden="true"
+                                  className="h-5 w-5"
+                                />
+                              </button>
+                            </div>
+                          ))}
+                      </div>
+                    </>
                   )}
                 </div>
               </div>

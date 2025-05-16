@@ -114,3 +114,17 @@ class Reactions(Base):
     activity: uuid.UUID = Column(
         UUID(as_uuid=True), ForeignKey("activities.id"), index=True, nullable=False
     )
+
+class Videos(Base):
+    __tablename__ = "videos"
+    id: uuid.UUID = Column(
+        UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4
+    )
+    user: uuid.UUID = Column(
+        UUID(as_uuid=True), ForeignKey("user.id"), index=True, nullable=False
+    )
+    time: datetime.datetime = Column(DateTime, index=True, nullable=False)
+    route: uuid.UUID = Column(
+        UUID(as_uuid=True), ForeignKey("routes.id"), index=True, nullable=False
+    )
+    processed: bool = Column(Boolean, index=True, nullable=False, default=False)

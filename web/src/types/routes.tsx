@@ -45,6 +45,14 @@ export interface UserList {
   num_users: number;
 }
 
+export interface Video {
+  id: string;
+  user: string;
+  time: string;
+  route: string;
+  processed: boolean;
+}
+
 export type Projects = string[];
 
 export interface Set {

@@ -111,4 +111,11 @@ class RouteWithClimbCount(Route):
     climb_count: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+class Video(BaseModel):
+    id: uuid.UUID
+    user: uuid.UUID
+    route: uuid.UUID
+    processed: bool
+    time: datetime.datetime

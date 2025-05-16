@@ -16,6 +16,7 @@ from .routers import (
     routes,
     sets,
     users,
+    video
 )
 from .schemas import UserCreate, UserRead, UserUpdate
 from .users import auth_backend, current_active_user, fastapi_users
@@ -72,3 +73,4 @@ app.include_router(sets.router)
 app.include_router(users.router)
 app.include_router(activities.router)
 app.include_router(reactions.router)
+app.include_router(video.router)

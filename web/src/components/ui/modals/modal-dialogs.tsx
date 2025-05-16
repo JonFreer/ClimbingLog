@@ -18,7 +18,7 @@ export default function DangerDialog(props: {
     <Dialog
       open={props.open}
       onClose={props.cancleCallback}
-      className="relative z-10"
+      className="relative z-100"
     >
       <DialogBackdrop
         transition
