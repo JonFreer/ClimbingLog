@@ -110,7 +110,9 @@ export default function Feed() {
                         </div>
                       )
                     );
-                  })}
+                  })
+                  .reverse()
+                  }
               </div>
               <div className="flex flex-col bg-white m-auto p-auto mt-5 relative">
                 <div className="flex overflow-x-scroll pb-8 hide-scroll-bar">
@@ -129,7 +131,9 @@ export default function Feed() {
                           />
                         )
                       );
-                    })}
+                    })
+                    .reverse()
+                    }
                   </div>
                 </div>
               </div>
