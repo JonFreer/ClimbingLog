@@ -147,6 +147,33 @@ async def get_route_videos(
     # Return the list of videos
     return videos
 
+@router.get("/videos/", response_model=List[schemas.Video], tags=["video"])
+async def get_videos(
+    response: Response,
+    db: AsyncSession = Depends(get_db),
+):
+    # Fetch the video metadata from the database
+    stmt = select(Videos, User.username, User.has_profile_photo).join(User)
+    result = await db.execute(stmt)
+    videos = [
+        {
+            "id": video.id,
+            "user": video.user,
+            "route": video.route,
+            "processed": video.processed,
+            "time": video.time,
+            "username": user_username,
+            "has_profile_photo": user_has_profile_photo,
+        }
+        for video, user_username, user_has_profile_photo in result.all()
+    ]
+
+    if not videos:
+        return []
+
+    # Return the list of videos
+    return videos
+
 @router.get("/video_thumbnail/{video_id}", tags=["video"])
 async def get_video_thumbnail(
     video_id: uuid.UUID,
