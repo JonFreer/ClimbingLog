@@ -51,6 +51,8 @@ export interface Video {
   time: string;
   route: string;
   processed: boolean;
+  username: string;
+  has_profile_photo: boolean;
 }
 
 export type Projects = string[];

@@ -126,9 +126,20 @@ async def get_route_videos(
     db: AsyncSession = Depends(get_db),
 ):
     # Fetch the video metadata from the database
-    stmt = select(Videos).where(Videos.route == route_id)
+    stmt = select(Videos, User.username, User.has_profile_photo).join(User).where(Videos.route == route_id)
     result = await db.execute(stmt)
-    videos = list(result.scalars())
+    videos = [
+        {
+            "id": video.id,
+            "user": video.user,
+            "route": video.route,
+            "processed": video.processed,
+            "time": video.time,
+            "username": user_username,
+            "has_profile_photo": user_has_profile_photo,
+        }
+        for video, user_username, user_has_profile_photo in result.all()
+    ]
 
     if not videos:
         return []

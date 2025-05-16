@@ -3,10 +3,12 @@ import { Video } from '@/types/routes';
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
 import { useState } from 'react';
 import { DeleteVideo } from './delete-video';
-
+import { NavLink } from 'react-router';
+import { useSidebarState } from '@/components/ui/sidebar/sidebar-state';
 export function Beta({ video }: { video: Video }) {
   const [open, setOpen] = useState(false);
   const user = useUser();
+  const closeCallback = useSidebarState((state) => state.closeSidebar);
   return (
     <>
       {video.processed ? (
@@ -62,6 +64,21 @@ export function Beta({ video }: { video: Video }) {
               transition
               className="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-leave:duration-200 data-enter:ease-out data-leave:ease-in my-auto sm:w-auto sm:max-w-lg sm:data-closed:translate-y-0 sm:data-closed:scale-95"
             >
+              <NavLink
+                className="flex absolute top-0 right-0 p-2 bg-white text-gray-700 font-semibold rounded-tr-lg rounded-bl-lg"
+                to={`/profile/${video.username}`}
+                onClick={() => {
+                  closeCallback();
+                }}
+              >
+                {video.has_profile_photo ? (
+                  <img
+                    src={`/api/profile_photo/${video.user}`}
+                    className="rounded-full h-9 w-9"
+                  />
+                ) : null}{' '}
+                <span className=" p-2">{video.username}</span>
+              </NavLink>
               <video controls autoPlay>
                 <source src={'/api/video/' + video.id} type="video/mp4" />
               </video>

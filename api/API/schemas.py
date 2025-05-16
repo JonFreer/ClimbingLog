@@ -119,3 +119,5 @@ class Video(BaseModel):
     route: uuid.UUID
     processed: bool
     time: datetime.datetime
+    username: str
+    has_profile_photo: bool
