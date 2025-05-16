@@ -11,7 +11,7 @@ export function Beta({ video }: { video: Video }) {
     <>
       {video.processed ? (
         <div className="align-top mr-2 mt-2 max-w-30 w-30 h-30 inline-block relative">
-          {user.data.id == video.user && (
+          {user.data?.id == video.user && (
             <DeleteVideo id={video.id} route_id={video.route} />
           )}
           <img
