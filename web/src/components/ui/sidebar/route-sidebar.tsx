@@ -356,7 +356,7 @@ export default function RouteSideBar() {
                       <div className="m-4  mt-0 lg:ml-4 lg:mt-0 rounded-md p-4 max-h-42 divide-y divide-gray-200">
                         {climbs
                           .filter((climb) => climb.route == route.id)
-                          .reverse()
+                          .sort((a, b) => (a.time > b.time ? -1 : 1))
                           .map((climb) => (
                             <div
                               key={climb.id}
