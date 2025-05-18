@@ -13,6 +13,7 @@ import {
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { APP_VERSION } from './constants/version.ts';
 import { MainErrorFallback } from './components/errors/main.tsx';
+import { PromptToInstallProvider } from './features/install/components/install-provider.tsx';
 
 const REACT_QUERY_CACHE_KEY = 'react-query-cache-version';
 
@@ -38,15 +39,17 @@ persistQueryClient({
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ErrorBoundary FallbackComponent={MainErrorFallback}>
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{ persister: localStoragePersister }}
-      >
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </PersistQueryClientProvider>
-    </ErrorBoundary>
+    <PromptToInstallProvider>
+      <ErrorBoundary FallbackComponent={MainErrorFallback}>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={{ persister: localStoragePersister }}
+        >
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </PersistQueryClientProvider>
+      </ErrorBoundary>
+    </PromptToInstallProvider>
   </StrictMode>,
 );
