@@ -117,7 +117,27 @@ export default function Feed() {
               <div className="flex flex-col bg-white m-auto p-auto mt-5 relative">
                 <div className="flex overflow-x-scroll pb-8 hide-scroll-bar">
                   <div className="flex gap-4 flex-nowrap">
-                    {activity.climb_ids.map((climbId) => {
+                    {activity.climb_ids
+                    /*
+                    .sort((climbid_a, climbid_b) => {
+                      const climb_a = climbs.find((c) => c.id === climbid_a);
+                      const climb_b = climbs.find((c) => c.id === climbid_b);
+                      const routeid_a = climb_a.route;
+                      const routeid_b = climb_b.route;
+                      const route_a = routes.find((r) => r.id === routeid_a);
+                      const route_b = routes.find((r) => r.id === routeid_b);
+                      const setid_a = route_a.set_id;
+                      const setid_b = route_b.set_id;
+                      const set_a = sets.find((s) => s.id === setid_a);
+                      const set_b = sets.find((s) => s.id === setid_b);
+                      const circid_a = set_a.circuit_id;
+                      const circid_b = set_b.circuit_id;
+                      const index_a = circuitsOrder.indexOf(circid_a);
+                      const index_b = circuitsOrder.indexOf(circid_b);
+                      return index_a - index_b;
+                    })
+                    */
+                    .map((climbId) => {
                       const climb = climbs.find((c) => c.id === climbId);
                       return (
                         climb && (
