@@ -58,10 +58,10 @@ export function RoutesPage() {
   const selectedRouteData = routes[selectedRoute] || null;
 
   return (
-    <div className="sm:mb-8 mb-16 bg-gray-50 relative">
+    <div className="sm:mb-8 mb-16 relative px-4">
       <MapFilter filterState={filterState} setFilterState={setFilterState} />
 
-      <div className="shadow-xs z-10 mb-4 bg-white">
+      <div className="shadow-md z-10 mb-4 bg-white -mx-4">
         <DraggableDotsCanvas
           dots={
             Object.values(routes)
@@ -111,7 +111,7 @@ export function RoutesPage() {
         />
       </div>
 
-      <div className="px-4 flex flex-wrap gap-1 justify-center h-full bg-gray-50 z-1">
+      <div className="flex flex-wrap gap-1 justify-center h-full z-1">
         {circuitsOrder
           .map((circuit_id) => circuits[circuit_id])
           .map((circuit) =>

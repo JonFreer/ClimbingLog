@@ -45,7 +45,7 @@ function App() {
   const { setJustRegistered, justRegistered } = useJustRegistered();
 
   return (
-    <>
+    <div className="bg-gray-50">
       {import.meta.env.DEV && <ReactQueryDevtools />}
       <Notifications />
       <NavBar />
@@ -153,7 +153,7 @@ function App() {
 
         <Route path="*" element={<RoutesPage />} />
       </Routes>
-    </>
+    </div>
   );
 }
 

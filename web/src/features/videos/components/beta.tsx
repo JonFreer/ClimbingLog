@@ -5,26 +5,65 @@ import { useState } from 'react';
 import { DeleteVideo } from './delete-video';
 import { NavLink } from 'react-router';
 import { useSidebarState } from '@/components/ui/sidebar/sidebar-state';
-export function Beta({ video }: { video: Video }) {
-  const [open, setOpen] = useState(false);
+import { PlayIcon } from '@heroicons/react/24/solid';
+
+export function BetaVideo({ video }: { video: Video }) {
   const user = useUser();
+  const [open, setOpen] = useState(false);
+  return (
+    <VideoPopup video={video} setOpen={setOpen} open={open}>
+      <div className="align-top mr-2 mt-2 max-w-30 w-30 h-30 inline-block relative">
+        {user.data?.id == video.user && (
+          <DeleteVideo id={video.id} route_id={video.route} />
+        )}
+        <img
+          onClick={() => {
+            setOpen(true);
+            console.log('open');
+          }}
+          className="max-w-30 w-30 h-30 rounded-lg border-2 border-white shadow-sm object-cover cursor-pointer"
+          src={'/api/video_thumbnail/' + video.id}
+        />
+      </div>
+    </VideoPopup>
+  );
+}
+
+export function FeedVideo({ video }: { video: Video }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <VideoPopup video={video} setOpen={setOpen} open={open}>
+      <div className="align-top mr-2 mt-2 max-w-35 w-35 h-45 inline-block relative">
+        <PlayIcon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-white opacity-80" />
+        <img
+          onClick={() => {
+            setOpen(true);
+            console.log('open');
+          }}
+          className="max-w-35 w-35 h-45 rounded-lg shadow-sm object-cover cursor-pointer"
+          src={'/api/video_thumbnail/' + video.id}
+        />
+      </div>
+    </VideoPopup>
+  );
+}
+
+export function VideoPopup({
+  video,
+  children,
+  setOpen,
+  open,
+}: {
+  video: Video;
+  children: React.ReactNode;
+  setOpen: (open: boolean) => void;
+  open: boolean;
+}) {
   const closeCallback = useSidebarState((state) => state.closeSidebar);
   return (
     <>
       {video.processed ? (
-        <div className="align-top mr-2 mt-2 max-w-30 w-30 h-30 inline-block relative">
-          {user.data?.id == video.user && (
-            <DeleteVideo id={video.id} route_id={video.route} />
-          )}
-          <img
-            onClick={() => {
-              setOpen(true);
-              console.log('open');
-            }}
-            className="max-w-30 w-30 h-30 rounded-lg border-2 border-white shadow-sm object-cover cursor-pointer"
-            src={'/api/video_thumbnail/' + video.id}
-          />
-        </div>
+        children
       ) : (
         <div className="inline-block mt-2 mr-2 align-top w-30 h-30 rounded-lg bg-gray-100 border-2 border-white shadow-sm hover:bg-gray-200 cursor-pointer">
           <div className="flex justify-center items-center h-full">

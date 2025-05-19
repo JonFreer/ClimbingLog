@@ -25,7 +25,7 @@ import { useSidebarState } from './sidebar-state';
 import { useUserListState } from '../userlist/userlist-state';
 import { api } from '@/lib/api-client';
 import { CreateBeta } from '@/features/videos/components/create-beta';
-import { Beta } from '@/features/videos/components/beta';
+import { BetaVideo } from '@/features/videos/components/beta';
 import { useVideos } from '@/features/videos/api/get-videos';
 
 export default function RouteSideBar() {
@@ -342,7 +342,7 @@ export default function RouteSideBar() {
                     <div style={{ width: (videos.length + 1) * 45 + '%' }}>
                       {/*This is a hack, and needs to be fixed. It is to stop the sidebard stretching*/}
                       {videos.map((video) => (
-                        <Beta video={video} />
+                        <BetaVideo video={video} />
                       ))}
                       <CreateBeta route_id={route.id} />
                     </div>

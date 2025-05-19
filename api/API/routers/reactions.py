@@ -22,7 +22,7 @@ async def create_reaction(
             Reactions.activity == activity_id, Reactions.user == user.id
         )
     )
-    if existing_reaction.scalars().first():
+    if existing_reaction.scalar():
         raise HTTPException(status_code=400, detail="Reaction already exists")
 
     new_reaction = Reactions(activity=activity_id, user=user.id)
@@ -43,7 +43,7 @@ async def delete_reaction(
             Reactions.activity == activity_id, Reactions.user == user.id
         )
     )
-    reaction = result.scalars().first()
+    reaction = result.scalar()
     if not reaction:
         raise HTTPException(status_code=404, detail="Reaction not found")
 

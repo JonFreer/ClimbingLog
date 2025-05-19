@@ -56,12 +56,12 @@ export function RouteList() {
   }, {} as Record<string, Set>);
 
   return (
-    <div className="bg-gray-50 pt-2 max-w-2xl mx-auto">
-      <div className="mx-6 mb-0">
+    <div className="pt-2 max-w-2xl mx-auto">
+      <div className="mb-0">
         <FilterBy selected={sortType} setSelected={setSortType} />
       </div>
 
-      <div className={'mx-4 mb-8'}>
+      <div className={'mb-8'}>
         {projects.length > 0 ? (
           <RouteDropDown
             name={'Your Projects'}

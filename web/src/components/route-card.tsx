@@ -22,7 +22,7 @@ export function RouteCard(props: {
   return (
     <div
       key={props.route.id}
-      className="bg-white shadow-sm overflow-hidden sm:rounded-lg mt-2 cursor-pointer"
+      className="bg-white shadow-sm overflow-hidden sm:rounded-lg mt-2 cursor-pointer rounded-lg"
       onClick={() => openSidebar(props.route)}
     >
       <div className="px-4 py-5 sm:px-6 flex items-center justify-between">

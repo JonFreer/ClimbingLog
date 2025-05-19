@@ -12,7 +12,7 @@ import { useSidebarState } from './ui/sidebar/sidebar-state';
 import { useUserListState } from './ui/userlist/userlist-state';
 import { useAllVideos } from '@/features/videos/api/get-all-videos';
 import { Activity, Video } from '@/types/routes';
-import { Beta } from '@/features/videos/components/beta';
+import { FeedVideo } from '@/features/videos/components/beta';
 
 export default function Feed() {
   const videos = useAllVideos().data || [];
@@ -100,7 +100,7 @@ function VideoCard({ video }: { video: Video }) {
             New Beta
           </div>
         </div>
-        <Beta video={video}></Beta>
+        <FeedVideo video={video}></FeedVideo>
       </div>
     </div>
   );

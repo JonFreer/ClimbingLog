@@ -129,23 +129,23 @@ const DraggableDotsCanvas = (props: {
         transformRef.current.scale * dpr,
       );
 
-      // Draw grid
-      const gridSize = 10;
-      ctx.strokeStyle = '#e0e0e050';
-      ctx.lineWidth = 0.5; // Set the stroke width
+      // // Draw grid
+      // const gridSize = 10;
+      // ctx.strokeStyle = '#e0e0e050';
+      // ctx.lineWidth = 0.5; // Set the stroke width
 
-      for (let x = -width; x < width; x += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(x, -height);
-        ctx.lineTo(x, height);
-        ctx.stroke();
-      }
-      for (let y = -height; y < height; y += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(-width, y);
-        ctx.lineTo(width, y);
-        ctx.stroke();
-      }
+      // for (let x = -width; x < width; x += gridSize) {
+      //   ctx.beginPath();
+      //   ctx.moveTo(x, -height);
+      //   ctx.lineTo(x, height);
+      //   ctx.stroke();
+      // }
+      // for (let y = -height; y < height; y += gridSize) {
+      //   ctx.beginPath();
+      //   ctx.moveTo(-width, y);
+      //   ctx.lineTo(width, y);
+      //   ctx.stroke();
+      // }
 
       // Draw SVG
       if (svgImageRef.current) {
