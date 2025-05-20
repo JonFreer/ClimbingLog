@@ -33,13 +33,15 @@ export function FeedVideo({ video }: { video: Video }) {
   const [open, setOpen] = useState(false);
   return (
     <VideoPopup video={video} setOpen={setOpen} open={open}>
-      <div className="align-top mr-2 mt-2 max-w-35 w-35 h-45 inline-block relative">
+      <div
+        className="align-top mr-2 mt-2 max-w-35 w-35 h-45 inline-block relative "
+        onClick={() => {
+          setOpen(true);
+          console.log('open');
+        }}
+      >
         <PlayIcon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-white opacity-80" />
         <img
-          onClick={() => {
-            setOpen(true);
-            console.log('open');
-          }}
           className="max-w-35 w-35 h-45 rounded-lg shadow-sm object-cover cursor-pointer"
           src={'/api/video_thumbnail/' + video.id}
         />
@@ -104,7 +106,7 @@ export function VideoPopup({
               className="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-leave:duration-200 data-enter:ease-out data-leave:ease-in my-auto sm:w-auto sm:max-w-lg sm:data-closed:translate-y-0 sm:data-closed:scale-95"
             >
               <NavLink
-                className="flex absolute top-0 right-0 p-2 bg-white text-gray-700 font-semibold rounded-tr-lg rounded-bl-lg"
+                className="flex absolute top-0 right-0 p-2 bg-white text-gray-700 font-semibold rounded-tr-lg rounded-bl-lg z-400"
                 to={`/profile/${video.username}`}
                 onClick={() => {
                   closeCallback();

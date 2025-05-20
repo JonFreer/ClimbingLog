@@ -1,4 +1,8 @@
-import { useNotifications } from '@/components/ui/notifications';
+import {
+  BasicNotification,
+  UploadNotification,
+  useNotifications,
+} from '@/components/ui/notifications';
 import { useState, useRef, useEffect } from 'react';
 import {
   Dialog,
@@ -7,9 +11,10 @@ import {
   DialogTitle,
 } from '@headlessui/react';
 import { useCreateVideo } from '../api/create-beta';
-import { PlusCircleIcon } from '@heroicons/react/24/solid';
+import { PhotoIcon, PlusCircleIcon } from '@heroicons/react/24/solid';
 import { useUser } from '@/lib/auth';
 import { api } from '@/lib/api-client';
+import { nanoid } from 'nanoid';
 
 type CreateBetaProps = {
   route_id: string;
@@ -29,7 +34,7 @@ export const CreateBeta = ({ route_id }: CreateBetaProps) => {
           type: 'success',
           title: 'Video is being processed.',
           message: 'Check back in a few minutes.',
-        });
+        } as BasicNotification);
         setOpen(false);
       },
     },
@@ -40,10 +45,6 @@ export const CreateBeta = ({ route_id }: CreateBetaProps) => {
     const file = event.target.files[0];
     const url = URL.createObjectURL(file);
     setSource(url);
-  };
-
-  const handleChoose = () => {
-    inputRef.current.click();
   };
 
   const { addNotification } = useNotifications();
@@ -92,49 +93,81 @@ export const CreateBeta = ({ route_id }: CreateBetaProps) => {
                       addNotification({
                         type: 'error',
                         title: 'Please select a file',
-                      });
+                      } as BasicNotification);
                       return;
                     }
                     console.log('mutate');
+                    const notificationId = nanoid();
                     createVideoMutation.mutate({
                       data: {
+                        notificationId: notificationId,
                         route_id: route_id,
                         file: inputRef.current.files[0],
                       },
                     });
+                    addNotification({
+                      id: notificationId,
+                      type: 'upload',
+                      title: 'Uploading your video',
+                      mutation: createVideoMutation,
+                    } as UploadNotification);
+                    setOpen(false);
                   }}
                 >
-                  <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                  <div className="bg-white px-4 pt-5 sm:p-6">
                     <div className="sm:flex sm:items-start">
                       <div className="w-full mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                        <DialogTitle
-                          as="h3"
-                          className="text-base font-semibold text-gray-900"
-                        >
-                          Upload video
-                        </DialogTitle>
                         <div className="mt-2 mb-4"></div>
                         <div>
-                          {!source && (
+                          {/* {!source && (
                             <button onClick={handleChoose}>Choose</button>
+                          )} */}
+                          {source ? (
+                            <>
+                              <video
+                                className="m-auto rounded-lg"
+                                width="200px"
+                                controls
+                                src={source}
+                              />
+
+                              <div
+                                className="mt-4 p-2 bg-gray-600 text-white font-semibold rounded-lg cursor-pointer hover:bg-gray-700"
+                                onClick={() => {
+                                  inputRef.current?.click();
+                                }}
+                              >
+                                Choose new video
+                              </div>
+                            </>
+                          ) : (
+                            <div
+                              className="min-w-60 mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 cursor-pointer"
+                              onClick={() => inputRef.current?.click()}
+                            >
+                              <div className="text-center">
+                                <PhotoIcon
+                                  aria-hidden="true"
+                                  className="mx-auto size-12 text-gray-300"
+                                />
+                                <div className="mt-4 flex text-sm/6 text-gray-600">
+                                  <label
+                                    htmlFor="file-upload"
+                                    className="w-full text-center relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-hidden focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                                  >
+                                    <span>Upload a video</span>
+                                  </label>
+                                </div>
+                                <p className="text-xs/5 text-gray-600">
+                                  MOV or MP4
+                                </p>
+                              </div>
+                            </div>
                           )}
-                          {source && (
-                            <video
-                              className="m-auto rounded-lg"
-                              width="200px"
-                              controls
-                              src={source}
-                            />
-                          )}
-                          <label
-                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            htmlFor="multiple_files"
-                          >
-                            Upload multiple files
-                          </label>
                           <input
+                            id="file-upload"
                             ref={inputRef}
-                            className="block w-full p-4 text-sm text-gray-900 rounded-lg cursor-pointer bg-gray-50 focus:outline-none "
+                            className="sr-only"
                             type="file"
                             onChange={handleFileChange}
                             accept=".mov,.mp4"
@@ -150,7 +183,9 @@ export const CreateBeta = ({ route_id }: CreateBetaProps) => {
                       //   onClick={() => props.setOpen("")}
                       className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500 sm:ml-3 sm:w-auto"
                     >
-                      Upload {createVideoMutation.progress}%
+                      {createVideoMutation.progress !== 0
+                        ? `Uploading: ${createVideoMutation.progress}%`
+                        : 'Upload'}
                     </button>
                     <button
                       type="button"
@@ -194,7 +229,7 @@ export const CreateBeta = ({ route_id }: CreateBetaProps) => {
                               message:
                                 'Please check your email for the verification link.',
                               type: 'success',
-                            });
+                            } as BasicNotification);
                             setOpen(false);
                           })
                           .catch((error) => {
@@ -207,7 +242,7 @@ export const CreateBeta = ({ route_id }: CreateBetaProps) => {
                               message:
                                 'There was an error sending the verification email.',
                               type: 'error',
-                            });
+                            } as BasicNotification);
                           });
                       }}
                       className="inline-flex w-full justify-center rounded-md bg-violet-500 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-600 sm:ml-3 sm:w-auto"

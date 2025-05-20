@@ -11,7 +11,11 @@ import StorePage from './components/store';
 import NavBarBottom from './components/ui/navbars/navbar-bottom';
 import { useUser } from './lib/auth';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Notifications, useNotifications } from './components/ui/notifications';
+import {
+  BasicNotification,
+  Notifications,
+  useNotifications,
+} from './components/ui/notifications';
 import RouteSideBar from './components/ui/sidebar/route-sidebar';
 import { UserListModal } from './components/ui/userlist/userlist';
 import { LoginForm } from './features/auth/components/login-form';
@@ -66,7 +70,7 @@ function App() {
                     type: 'success',
                     title: 'Registration Successful',
                     message: 'You can now log in.',
-                  });
+                  } as BasicNotification);
                 }}
               />
             </ProtectedRoute>
