@@ -49,7 +49,6 @@ export const useCreateVideo = ({
   const { updateNotificationProgress } = useNotifications();
 
   const createVideo = ({ data }: { data: CreateVideoInput }): Promise<Set> => {
-    console.log('createVideo', data);
     const formData = new FormData();
     formData.append('route', data.route_id);
     formData.append('file', data.file);

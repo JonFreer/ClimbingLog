@@ -19,7 +19,6 @@ export function BetaVideo({ video }: { video: Video }) {
         <img
           onClick={() => {
             setOpen(true);
-            console.log('open');
           }}
           className="max-w-30 w-30 h-30 rounded-lg border-2 border-white shadow-sm object-cover cursor-pointer"
           src={'/api/video_thumbnail/' + video.id}
@@ -37,7 +36,6 @@ export function FeedVideo({ video }: { video: Video }) {
         className="align-top mr-2 mt-2 max-w-35 w-35 h-45 inline-block relative "
         onClick={() => {
           setOpen(true);
-          console.log('open');
         }}
       >
         <PlayIcon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-white opacity-80" />

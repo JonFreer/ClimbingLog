@@ -42,8 +42,6 @@ export const getCircuits = (): Promise<{
       .sort((a, b) => a.order - b.order)
       .map((circuit: Circuit) => circuit.id);
 
-    console.log("Circuits order", order);
-
     return { data: circuitsDict, order: order };
   });
 };

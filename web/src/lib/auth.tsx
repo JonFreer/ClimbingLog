@@ -8,12 +8,10 @@ import { queryClient } from '../main';
 
 const getUser = async (): Promise<User> => {
   const response = await api.get('/users/me');
-  console.log('getUser response', response);
   return response;
 };
 
 const logout = (): Promise<void> => {
-  console.log('logout, remove climbs');
   localStorage.removeItem('token');
   queryClient.resetQueries({ queryKey: ['climbs'], exact: true });
   queryClient.refetchQueries({ queryKey: ['climbs'], exact: true });

@@ -188,7 +188,6 @@ function ActivityCard({ activity }: { activity: Activity }) {
 
                   if (!climb_a || !climb_b) return 0;
 
-                  console.log(climb_a, climb_b);
                   const index_a = circuitsOrder.indexOf(
                     sets[routes[climb_a.route]?.set_id]?.circuit_id,
                   );

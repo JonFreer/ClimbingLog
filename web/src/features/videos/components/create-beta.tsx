@@ -96,7 +96,6 @@ export const CreateBeta = ({ route_id }: CreateBetaProps) => {
                       } as BasicNotification);
                       return;
                     }
-                    console.log('mutate');
                     const notificationId = nanoid();
                     createVideoMutation.mutate({
                       data: {
