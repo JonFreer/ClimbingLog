@@ -127,12 +127,6 @@ export default function Feed() {
                     })
                     .map((climbId) => {
                       const climb = climbs.find((c) => c.id === climbId);
-                      const index = circuitsOrder.indexOf(
-                        sets[routes[climb
-                          .route]
-                          .set_id]
-                        .circuit_id
-                      );
                       return (
                         climb && (
                           <RouteCardProfile
