@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { colors, colorsFaint } from '../types/colors';
+import { colors, colorsFaint, colorsTextBold } from '../types/colors';
 import { useRoutes } from '../features/routes/api/get-routes';
 import { DeleteRoute } from '../features/routes/components/delete-route';
 import { CreateRoute } from '../features/routes/components/create-route';
@@ -65,7 +65,9 @@ export function RouteSettingPage() {
                 'p-2 font-bold rounded-sm uppercase ' +
                 (openCircuit == circuit.id
                   ? `${colors[circuit.color]} shadow-sm`
-                  : `${colorsFaint[circuit.color]} `)
+                  : `${colorsFaint[circuit.color]} ${
+                      colorsTextBold[circuit.color]
+                    } `)
               }
               onClick={() => setOpenCircuit(circuit.id)}
             >

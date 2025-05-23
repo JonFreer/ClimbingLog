@@ -25,6 +25,8 @@ import Onboarding from './features/onboarding/components/onboarding';
 import { useJustRegistered } from './features/auth/hooks/just-registered';
 import { RequestPasswordReset } from './features/auth/components/request-password-reset';
 import { PasswordResetForm } from './features/auth/components/password-reset-form';
+import 'material-symbols';
+
 const ProtectedRoute = ({
   authed,
   children,

@@ -1,4 +1,4 @@
-FROM python:3.13-alpine as main
+FROM python:3.13-alpine AS main
 
 RUN apk add build-base libpq libpq-dev ffmpeg
 

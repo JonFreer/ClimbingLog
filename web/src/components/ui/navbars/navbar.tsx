@@ -1,14 +1,14 @@
 import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
   Menu,
   MenuButton,
   MenuItem,
   MenuItems,
+  Popover,
+  PopoverBackdrop,
+  PopoverButton,
+  PopoverPanel,
 } from '@headlessui/react';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { NavLink } from 'react-router';
 import { useLogout, useUser } from '@/lib/auth';
@@ -45,23 +45,38 @@ export function NavBar() {
   const [, setPath] = useState<string | undefined>(undefined);
 
   return (
-    <Disclosure as="nav" className="bg-gray-800">
-      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+    <Popover as="nav" className="relative bg-none z-100">
+      <div className="relative mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 z-130">
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
             {/* Mobile menu button*/}
-            <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-white">
-              <span className="absolute -inset-0.5" />
-              <span className="sr-only">Open main menu</span>
-              <Bars3Icon
-                aria-hidden="true"
-                className="block size-6 group-data-open:hidden"
-              />
-              <XMarkIcon
-                aria-hidden="true"
-                className="hidden size-6 group-data-open:block"
-              />
-            </DisclosureButton>
+            <PopoverButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:bg-gray-100 hover:text-gray-800 focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-gray-500">
+              {/* <span className="absolute -inset-0.5" />
+              <span className="sr-only">Open main menu</span> */}
+              {({ open }) => (
+                <>
+                  <span className="absolute -inset-0.5" />
+                  <span className="sr-only">Open main menu</span>
+                  {!open ? (
+                    <span
+                      aria-hidden="true"
+                      style={{ fontVariationSettings: "'FILL' 0" }}
+                      className="material-symbols-rounded text-gray-800"
+                    >
+                      menu
+                    </span>
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      style={{ fontVariationSettings: "'FILL' 0" }}
+                      className="material-symbols-rounded text-gray-800"
+                    >
+                      keyboard_arrow_down
+                    </span>
+                  )}
+                </>
+              )}
+            </PopoverButton>
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex shrink-0 items-center">
@@ -85,8 +100,8 @@ export function NavBar() {
                     onClick={() => setPath(item.href)}
                     className={classNames(
                       item.href === window.location.pathname
-                        ? 'bg-gray-900 text-white'
-                        : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                        ? 'bg-gray-200 text-gray-700'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-700',
                       'rounded-md px-3 py-2 text-sm font-medium',
                     )}
                   >
@@ -99,19 +114,19 @@ export function NavBar() {
 
           {user.data ? (
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              <button
+              {/* <button
                 type="button"
-                className="relative rounded-full bg-gray-800 p-1 text-indigo-200 hover:text-white focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                className="relative rounded-full bg-none p-1 text-indigo-200 hover:text-white focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
               >
                 <span className="absolute -inset-1.5" />
                 <span className="sr-only">View notifications</span>
                 <BellIcon aria-hidden="true" className="size-6" />
-              </button>
+              </button> */}
 
               {/* Profile dropdown */}
               <Menu as="div" className="relative ml-3">
                 <div>
-                  <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                  <MenuButton className="relative flex rounded-full bg-none text-sm focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-500">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
                     {user.data.has_profile_photo ? (
@@ -185,29 +200,37 @@ export function NavBar() {
           )}
         </div>
       </div>
+      <PopoverBackdrop className="fixed inset-0 bg-black/15 z-100" />
 
-      <DisclosurePanel className="sm:hidden">
-        <div className="space-y-1 px-2 pb-3 pt-2">
-          {navigation.map((item) => (
-            <NavLink
-              onClick={() => setPath(item.href)}
-              key={item.name}
-              to={item.href}
-              aria-current={
-                item.href === window.location.pathname ? 'page' : undefined
-              }
-              className={classNames(
-                item.href === window.location.pathname
-                  ? 'bg-gray-900 text-white'
-                  : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                'block rounded-md px-3 py-2 text-base font-medium',
-              )}
-            >
-              {item.name}
-            </NavLink>
-          ))}
-        </div>
-      </DisclosurePanel>
-    </Disclosure>
+      <PopoverPanel
+        transition
+        className="absolute inset-x-0 -top-10 origin-top rounded-b-2xl bg-gray-50 px-6 pt-30 pb-6 shadow-2xl shadow-gray-900/20
+        transition duration-200 ease-out data-closed:scale-95 data-closed:opacity-0 z-120 animate-[bounce-down_0.5s_ease-out]"
+        style={{
+          animation: 'bounce-down 0.4s ease-out',
+        }}
+      >
+        {/* <div className="space-y-1 px-2 pb-3 pt-2"> */}
+        {navigation.map((item) => (
+          <NavLink
+            onClick={() => setPath(item.href)}
+            key={item.name}
+            to={item.href}
+            aria-current={
+              item.href === window.location.pathname ? 'page' : undefined
+            }
+            className={classNames(
+              item.href === window.location.pathname
+                ? 'bg-gray-200 text-gray-700'
+                : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700',
+              'block rounded-md px-3 py-2 text-base font-medium mt-1',
+            )}
+          >
+            {item.name}
+          </NavLink>
+        ))}
+        {/* </div> */}
+      </PopoverPanel>
+    </Popover>
   );
 }

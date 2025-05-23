@@ -15,7 +15,6 @@ import { useCircuits } from '../features/circuits/api/get-circuits';
 import { useSets } from '../features/sets/api/get-sets';
 import { useClimbs } from '../features/climbs/api/get-climbs';
 import { useProjects } from '../features/projects/api/get-projects';
-import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { Checkbox, Menu, MenuButton, MenuItems } from '@headlessui/react';
 
 export function RoutesPage() {
@@ -66,8 +65,7 @@ export function RoutesPage() {
   return (
     <div className="sm:mb-8 mb-16 relative px-4">
       <MapFilter filterState={filterState} setFilterState={setFilterState} />
-
-      <div className="shadow-xl shadow-slate-200/60 z-10 mb-4 bg-white rounded-b-3xl ">
+      <div className="shadow-xl shadow-slate-200/60 z-10 mb-4 bg-white rounded-3xl ">
         <DraggableDotsCanvas
           dots={
             Object.values(routes)
@@ -225,7 +223,15 @@ function MapFilter({
           'absolute top-5 right-8 size-12 z-1 rounded-full bg-white shadow-lg hover:bg-gray-50 cursor-pointer flex items-center justify-center text-gray-600'
         }
       >
-        <AdjustmentsHorizontalIcon className="size-6 tes" />
+        <span className="absolute -inset-1.5" />
+        <span
+          style={{ fontVariationSettings: "'FILL' 1" }}
+          className="material-symbols-rounded"
+        >
+          tune
+        </span>
+
+        {/* <AdjustmentsHorizontalIcon className="size-6 tes" /> */}
       </MenuButton>
       {!filterState.sent ||
       !filterState.attempted ||

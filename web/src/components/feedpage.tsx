@@ -34,7 +34,7 @@ export default function Feed() {
 
   return (
     <>
-      <div className="bg-white p-10 pt-6 pb-2 rounded-lg ">
+      <div className="p-10 pt-2 pb-2 rounded-lg ">
         <div className="font-semibold text-xl">Send Feed</div>
       </div>
       <div className="bg-gray-100 sm:mb-8 mb-14">

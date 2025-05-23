@@ -1,12 +1,6 @@
-import {
-  HomeIcon,
-  Square3Stack3DIcon,
-  Cog6ToothIcon,
-} from '@heroicons/react/24/solid';
+import { Cog6ToothIcon } from '@heroicons/react/24/solid';
 import {
   Cog6ToothIcon as Cog6ToothIcon_Outline,
-  HomeIcon as HomeIcon_Outline,
-  Square3Stack3DIcon as Square3Stack3DIcon_Outine,
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { NavLink } from 'react-router';
@@ -19,37 +13,51 @@ export default function NavBarBottom() {
 
   return (
     <>
-      <div className="sm:hidden px-4 w-full fixed bottom-0 h-14 shadow-[0_5px_10px_rgba(0,0,0,0.25)] flex justify-between items-center bg-white z-20">
+      <div className="sm:hidden px-4 w-full fixed bottom-0 h-14 shadow-[0_5px_10px_rgba(0,0,0,0.25)] flex justify-between items-center bg-white z-20 rounded-t-3xl">
         <NavLink
           to="/"
           onClick={() => setPath('/')}
           className={
-            'hover:bg-gray-100 rounded-full px-4 py-2 cursor-pointer ' +
-            ('/' === window.location.pathname
-              ? 'text-gray-800'
-              : 'text-gray-400')
+            'hover:bg-gray-100 rounded-full px-4 py-2 pt-3 cursor-pointer'
           }
         >
           {'/' === window.location.pathname ? (
-            <HomeIcon className="h-6 w-6" />
+            <span
+              style={{ fontVariationSettings: "'FILL' 1" }}
+              className="material-symbols-rounded text-gray-800"
+            >
+              home
+            </span>
           ) : (
-            <HomeIcon_Outline className="h-6 w-6" />
+            <span
+              style={{ fontVariationSettings: "'FILL' 0" }}
+              className="material-symbols-rounded text-gray-400"
+            >
+              home
+            </span>
           )}
         </NavLink>
         <NavLink
           to="/feed"
           onClick={() => setPath('/feed')}
           className={
-            'hover:bg-gray-100 rounded-full px-4 py-2 cursor-pointer ' +
-            ('/feed' === window.location.pathname
-              ? 'text-gray-800'
-              : 'text-gray-400')
+            'hover:bg-gray-100 rounded-full px-4 py-2 pt-3 cursor-pointer '
           }
         >
           {'/feed' === window.location.pathname ? (
-            <Square3Stack3DIcon className="h-6 w-6" />
+            <span
+              style={{ fontVariationSettings: "'FILL' 1" }}
+              className="material-symbols-rounded text-gray-800"
+            >
+              stacks
+            </span>
           ) : (
-            <Square3Stack3DIcon_Outine className="h-6 w-6" />
+            <span
+              style={{ fontVariationSettings: "'FILL' 0" }}
+              className="material-symbols-rounded text-gray-400"
+            >
+              stacks
+            </span>
           )}
         </NavLink>
         <NavLink
