@@ -7,9 +7,13 @@ export const MainErrorFallback = () => {
       <h2 className="text-lg font-semibold">Ooops, something went wrong :( </h2>
       <button
         className="mt-4"
-        onClick={() => window.location.assign(window.location.origin)}
+        onClick={() => {
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.assign(window.location.origin);
+        }}
       >
-        Refresh
+        Click here to reset the app
       </button>
     </div>
   );
