@@ -1,20 +1,12 @@
 import { Route, Set } from '../types/routes';
 import { useEffect, useState } from 'react';
-import { colors, colorsBorder } from '../types/colors';
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
+import { colors, colorsBorder, colorsPastel } from '../types/colors';
 import { useRoutes } from '../features/routes/api/get-routes';
 import { useCircuits } from '../features/circuits/api/get-circuits';
 import { useSets } from '../features/sets/api/get-sets';
 import { useClimbs } from '../features/climbs/api/get-climbs';
 import { useProjects } from '../features/projects/api/get-projects';
 import { useSidebarState } from './ui/sidebar/sidebar-state';
-import {
-  Label,
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
-} from '@headlessui/react';
 import { cmpStringsWithNumbers } from '@/utils/sort';
 
 export function RouteList() {
@@ -116,7 +108,7 @@ export function RouteList() {
                   return 0;
                 })}
               key={circuit.id}
-              color={colors[circuit.color] || ''}
+              color={colorsPastel[circuit.color] || ''}
             />
           ))}
       </div>
@@ -142,16 +134,16 @@ function RouteDropDown({
 
   return (
     <>
-      <div key={'projects'} className={'mt-3'}>
+      <div key={'projects'} className={'mt-4'}>
         <button
-          className="bg-white hover:bg-gray-50 text-gray-700 font-medium shadow-md text-sm  rounded-lg w-full text-left justify-between items-center p-4"
+          className="bg-white hover:bg-gray-50 text-gray-700 font-medium shadow-lg shadow-gray-200/50 text-sm  rounded-xl w-full text-left justify-between items-center p-4"
           onClick={() => {
             setOpen((prev) => !prev);
           }}
         >
           <div className="flex">
             <div
-              className={`uppercase text-white rounded-xl py-1 px-3 shadow-lg font-semibold ${color}`}
+              className={`uppercase text-white text-sm rounded-full py-1 px-3 font-semibold ${color}`}
             >
               {name}
             </div>
@@ -166,9 +158,9 @@ function RouteDropDown({
             </div>
           </div>
           <div className="flex mt-3">
-            <div className="w-full bg-gray-200 rounded-full h-5 dark:bg-gray-300">
+            <div className="w-full bg-gray-200 rounded-full h-3 dark:bg-gray-300">
               <div
-                className={` h-5 rounded-full bg-linear-to-r  ${color}`}
+                className={` h-3 rounded-full bg-linear-to-r  ${color}`}
                 style={{
                   width: `${
                     (Object.values(routes).filter((route) =>
@@ -304,56 +296,35 @@ export function FilterBy({
   setSelected: (value: { id: number; name: string; disabled: boolean }) => void;
 }) {
   return (
-    <Listbox value={selected} onChange={setSelected}>
-      <div className="flex">
-        <Label className="block py-1 text-sm/6 font-medium text-gray-900">
-          Sort by
-        </Label>
-        <ListboxButton className="grid ml-auto cursor-default grid-cols-1 rounded-xl bg-white py-1 pr-1 pl-2 text-left text-gray-900  focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 text-sm/6">
-          <span className="col-start-1 row-start-1 flex items-center gap-3 pr-6">
-            {/* <img
-              alt=""
-              src={selected.avatar}
-              className="size-5 shrink-0 rounded-full"
-            /> */}
-            <span className="block truncate">{selected.name}</span>
-          </span>
-          <ChevronUpDownIcon
-            aria-hidden="true"
-            className="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-          />
-        </ListboxButton>
-      </div>
-      <div className="relative mt-2">
-        <ListboxOptions
-          transition
-          className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-hidden data-leave:transition data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm"
-        >
-          {sort_types.map((sort_type) => (
-            <ListboxOption
-              disabled={sort_type.disabled}
-              key={sort_type.id}
-              value={sort_type}
-              className="group relative cursor-default py-2 pr-9 pl-3 text-gray-900 select-none data-focus:bg-indigo-600 data-focus:text-white data-focus:outline-hidden  data-disabled:bg-gray-100 data-disabled:text-gray-400"
-            >
-              <div className="flex items-center">
-                {/* <img
-                  alt=""
-                  src={person.avatar}
-                  className="size-5 shrink-0 rounded-full"
-                /> */}
-                <span className="ml-3 block truncate font-normal group-data-selected:font-semibold">
-                  {sort_type.name}
-                </span>
-              </div>
-
-              <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600 group-not-data-selected:hidden group-data-focus:text-white">
-                <CheckIcon aria-hidden="true" className="size-5" />
-              </span>
-            </ListboxOption>
-          ))}
-        </ListboxOptions>
-      </div>
-    </Listbox>
+    <div className="flex px-2">
+      <label
+        htmlFor="sort-by"
+        className="block py-1 text-md font-semibold text-gray-900"
+      >
+        Sort by
+      </label>
+      <select
+        id="sort-by"
+        value={selected.id}
+        onChange={(e) =>
+          setSelected(
+            sort_types.find(
+              (sort_type) => sort_type.id === Number(e.target.value),
+            )!,
+          )
+        }
+        className="ml-auto cursor-pointer font-semibold rounded-xl bg-none py-1 pr-1 pl-2 text-left text-blue-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-200 text-md"
+      >
+        {sort_types.map((sort_type) => (
+          <option
+            key={sort_type.id}
+            value={sort_type.id}
+            disabled={sort_type.disabled}
+          >
+            {sort_type.name}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }

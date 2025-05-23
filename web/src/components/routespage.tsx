@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
-import { Set } from '../types/routes';
+import { Circuit, Set } from '../types/routes';
 import { RouteList } from './route-list';
 import DraggableDotsCanvas from './map';
-import { colors, colorsBold, colorsFaint, colorsHex } from '../types/colors';
+import {
+  colors,
+  colorsBold,
+  colorsFaint,
+  colorsHex,
+  colorsTextBold,
+} from '../types/colors';
 import { RouteCard } from './route-card';
 import { useRoutes } from '../features/routes/api/get-routes';
 import { useCircuits } from '../features/circuits/api/get-circuits';
@@ -61,7 +67,7 @@ export function RoutesPage() {
     <div className="sm:mb-8 mb-16 relative px-4">
       <MapFilter filterState={filterState} setFilterState={setFilterState} />
 
-      <div className="shadow-md z-10 mb-4 bg-white -mx-4">
+      <div className="shadow-xl shadow-slate-200/60 z-10 mb-4 bg-white rounded-b-3xl ">
         <DraggableDotsCanvas
           dots={
             Object.values(routes)
@@ -111,70 +117,12 @@ export function RoutesPage() {
         />
       </div>
 
-      <div className="flex flex-wrap gap-1 justify-center h-full z-1">
-        {circuitsOrder
-          .map((circuit_id) => circuits[circuit_id])
-          .map((circuit) =>
-            filterCircuits[circuit.id] ? (
-              <button
-                key={circuit.id}
-                className={
-                  'cursor-pointer rounded-full px-3 py-1 font-semibold text-sm text-white ' +
-                  (colors[circuit.color] || '') +
-                  ' hover:' +
-                  (colorsBold[circuit.color] || '')
-                }
-                onClick={() =>
-                  setFilterCircuits((prev) => ({
-                    ...prev,
-                    [circuit.id]: false,
-                  }))
-                }
-              >
-                {circuit.name}
-              </button>
-            ) : (
-              <button
-                key={circuit.id}
-                className={
-                  'cursor-pointer rounded-full px-3 py-1 text-sm font-semibold text-gray-700  ' +
-                  (colorsFaint[circuit.color] || '')
-                }
-                onClick={() =>
-                  setFilterCircuits((prev) => ({ ...prev, [circuit.id]: true }))
-                }
-              >
-                {circuit.name}
-              </button>
-            ),
-          )}
-
-        <button
-          key={'projects'}
-          className={
-            filterCircuits['projects']
-              ? 'cursor-pointer rounded-full px-3 py-1 text-sm font-semibold text-white bg-linear-to-r from-indigo-500 from-10% via-sky-500 via-40% to-emerald-500 to-100%'
-              : 'cursor-pointer rounded-full px-3 py-1 text-sm font-semibold text-gray-700 bg-linear-to-r from-indigo-200 from-10% via-sky-200 via-40% to-emerald-200 to-100%'
-          }
-          onClick={() => {
-            // if (!filterCircuits["projects"]) {
-            //   setFilterCircuits((prev) => {
-            //     const updatedFilters = { ...prev };
-            //     Object.keys(updatedFilters).forEach((key) => {
-            //     updatedFilters[key] = false;
-            //     });
-            //     return updatedFilters;
-            //   });
-            // }
-            setFilterCircuits((prev) => ({
-              ...prev,
-              ['projects']: !filterCircuits['projects'],
-            }));
-          }}
-        >
-          Projects
-        </button>
-      </div>
+      <FilterCircuits
+        circuits={circuits}
+        circuitsOrder={circuitsOrder}
+        filterCircuits={filterCircuits}
+        setFilterCircuits={setFilterCircuits}
+      />
 
       {selectedRoute && selectedRouteData ? (
         <RouteCard
@@ -192,6 +140,77 @@ export function RoutesPage() {
   );
 }
 
+function FilterCircuits({
+  circuits,
+  circuitsOrder,
+  filterCircuits,
+  setFilterCircuits,
+}: {
+  circuits: Record<string, Circuit>;
+  circuitsOrder: string[];
+  filterCircuits: { [key: string]: boolean };
+  setFilterCircuits: (prev: any) => any;
+}) {
+  return (
+    <div className="flex flex-wrap gap-2 justify-center h-full z-1">
+      {circuitsOrder
+        .map((circuit_id) => circuits[circuit_id])
+        .map((circuit) =>
+          filterCircuits[circuit.id] ? (
+            <button
+              key={circuit.id}
+              className={
+                'cursor-pointer rounded-full px-3 py-1 font-semibold text-sm text-white ' +
+                (colors[circuit.color] || '') +
+                ' hover:' +
+                (colorsBold[circuit.color] || '')
+              }
+              onClick={() =>
+                setFilterCircuits((prev) => ({
+                  ...prev,
+                  [circuit.id]: false,
+                }))
+              }
+            >
+              {circuit.name}
+            </button>
+          ) : (
+            <button
+              key={circuit.id}
+              className={
+                `cursor-pointer rounded-full px-3 py-1 text-sm font-semibold  ${
+                  colorsTextBold[circuit.color]
+                } ` + (colorsFaint[circuit.color] || '')
+              }
+              onClick={() =>
+                setFilterCircuits((prev) => ({ ...prev, [circuit.id]: true }))
+              }
+            >
+              {circuit.name}
+            </button>
+          ),
+        )}
+
+      <button
+        key={'projects'}
+        className={
+          filterCircuits['projects']
+            ? 'cursor-pointer rounded-full px-3 py-1 text-sm font-semibold text-white bg-linear-to-r from-indigo-500 from-10% via-sky-500 via-40% to-emerald-500 to-100%'
+            : 'cursor-pointer rounded-full px-3 py-1 text-sm font-semibold text-indigo-800 bg-linear-to-r from-indigo-200 from-10% via-sky-200 via-40% to-emerald-200 to-100%'
+        }
+        onClick={() => {
+          setFilterCircuits((prev) => ({
+            ...prev,
+            ['projects']: !filterCircuits['projects'],
+          }));
+        }}
+      >
+        Projects
+      </button>
+    </div>
+  );
+}
+
 function MapFilter({
   filterState,
   setFilterState,
@@ -203,7 +222,7 @@ function MapFilter({
     <Menu>
       <MenuButton
         className={
-          'absolute top-5 right-5 h-10 w-10 z-1 outline-1 outline-gray-200 rounded-full bg-white shadow-md hover:bg-gray-50 cursor-pointer flex items-center justify-center text-gray-600'
+          'absolute top-5 right-8 size-12 z-1 rounded-full bg-white shadow-lg hover:bg-gray-50 cursor-pointer flex items-center justify-center text-gray-600'
         }
       >
         <AdjustmentsHorizontalIcon className="size-6 tes" />

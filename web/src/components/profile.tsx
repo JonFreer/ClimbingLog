@@ -92,8 +92,6 @@ export default function Profile() {
     fetchClimbs();
   }, [id]);
 
-  console.log(`Profile ID: ${id}`);
-
   const labels = Object.values(sets)
     .map((set) =>
       new Date(set.date).toLocaleString('default', {

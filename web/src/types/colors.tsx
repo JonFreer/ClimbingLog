@@ -74,3 +74,14 @@ export const colorsHex: { [key: string]: string } = {
   black: '#4b5563',
   pink: '#db2777',
 };
+
+export const colorsTextBold: { [key: string]: string } = {
+  violet: 'text-violet-700',
+  red: 'text-red-700',
+  green: 'text-green-700',
+  blue: 'text-blue-700',
+  yellow: 'text-yellow-700',
+  orange: 'text-orange-700',
+  black: 'text-gray-700',
+  pink: 'text-pink-700',
+};
