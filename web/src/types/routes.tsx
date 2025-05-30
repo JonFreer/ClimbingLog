@@ -75,11 +75,16 @@ export interface UserNamePair {
   has_profile_photo: boolean;
 }
 
+export interface ClimbSlim {
+  route_id: string;
+  time: string;
+}
+
 export interface Activity {
   id: string;
   user: string;
   time: string;
-  climb_ids: string[];
+  climbs: ClimbSlim[];
   username: string;
   has_profile_photo: boolean;
   reactions: UserNamePair[];

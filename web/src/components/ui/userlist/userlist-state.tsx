@@ -1,9 +1,9 @@
 import { create } from 'zustand';
-import { User } from '@/types/routes';
+import { User, UserNamePair } from '@/types/routes';
 
 type userListState = {
-  userList: User[];
-  openUserList: (route: User[]) => void;
+  userList: User[] | UserNamePair[];
+  openUserList: (route: User[] | UserNamePair[]) => void;
   closeUserList: () => void;
 };
 
@@ -14,7 +14,7 @@ export const useUserListState = create<userListState>((set) => ({
     set({ userList: [] });
   },
 
-  openUserList: (userList: User[]) => {
+  openUserList: (userList: User[] | UserNamePair[]) => {
     set({ userList: userList });
   },
 }));

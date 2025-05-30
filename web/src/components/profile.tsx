@@ -1,5 +1,5 @@
 import { colors, colorsHex } from '../types/colors';
-import { Circuit, Climb, Route, Set, User } from '../types/routes';
+import { Circuit, Climb, ClimbSlim, Route, Set, User } from '../types/routes';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
 import {
   Chart as ChartJS,
@@ -303,7 +303,7 @@ export function RouteCardProfile(props: {
   route: Route;
   circuits: Record<string, Circuit>;
   sets: Record<string, Set>;
-  climb: Climb;
+  climb: Climb | ClimbSlim;
   setSidebarRoute: (route: Route) => void;
 }) {
   if (props.route === undefined) {

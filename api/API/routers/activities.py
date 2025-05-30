@@ -1,3 +1,4 @@
+from operator import and_
 from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends
@@ -49,9 +50,9 @@ async def get_paginated_activities(
 
         routes = {}
         for climb in climbs_result.scalars().all():
-            routes[climb.route] = climb.id
-
-        activity_dict["climb_ids"] = list(routes.values())  # Get the climb IDs
+            routes[climb.route] = {"route_id":climb.route, "time": climb.time}
+        
+        activity_dict["climbs"] = list(routes.values()) 
 
         activities[
             activities.index(activity)
@@ -113,15 +114,15 @@ async def get_all_activities(
 
     for activity in activities:
         climbs_result = await db.execute(
-            select(Climbs).where(Climbs.activity == activity.id)
+            select(Climbs).where(and_(Climbs.activity == activity.id, Climbs.sent == True))
         )
         activity_dict = activity._asdict()  # Convert the Row object to a dictionary
 
         routes = {}
         for climb in climbs_result.scalars().all():
-            routes[climb.route] = climb.id
-
-        activity_dict["climb_ids"] = list(routes.values())  # Get the climb IDs
+            routes[climb.route] = {"route_id":climb.route, "time": climb.time}
+        
+        activity_dict["climbs"] = list(routes.values()) 
 
         activities[
             activities.index(activity)

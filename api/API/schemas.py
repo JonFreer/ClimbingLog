@@ -90,12 +90,15 @@ class ClimbFeed(BaseModel):
     username: str
     has_profile_photo: bool
 
+class ClimbShort(BaseModel):
+    route_id: uuid.UUID
+    time: datetime.datetime
 
 class Activity(BaseModel):
     id: uuid.UUID
     time: datetime.datetime
     user: uuid.UUID
-    climb_ids: list[uuid.UUID]
+    climbs: list[ClimbShort]
     username: str
     has_profile_photo: bool
     reactions: list[UserNamePair]

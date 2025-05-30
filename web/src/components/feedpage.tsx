@@ -3,7 +3,6 @@ import { colorsPastel } from '../types/colors';
 import { useSets } from '../features/sets/api/get-sets';
 import { useCircuits } from '../features/circuits/api/get-circuits';
 import { useRoutes } from '../features/routes/api/get-routes';
-import { useAllClimbs } from '../features/climbs/api/get-all-climbs';
 import { useInfiniteActivities } from '../features/activities/api/get-activities';
 import { useCreateReaction } from '../features/reactions/api/create-reaction';
 import { useDeleteReaction } from '../features/reactions/api/delete-reaction';
@@ -39,7 +38,7 @@ export default function Feed() {
       </div>
       <div className="bg-gray-100 sm:mb-8 mb-14">
         {videos_and_activities.map((activity_or_video) =>
-          'climb_ids' in activity_or_video ? (
+          'climbs' in activity_or_video ? (
             <ActivityCard
               key={activity_or_video.id}
               activity={activity_or_video}
@@ -92,9 +91,9 @@ function VideoCard({ video }: { video: Video }) {
           <div
             className={
               'p-1 px-3 rounded-full text-white ' +
-              colorsPastel[
-                circuits[sets[routes[video.route].set_id].circuit_id].color
-              ]
+                colorsPastel[
+                  circuits[sets[routes[video.route]?.set_id]?.circuit_id]?.color
+                ] || ''
             }
           >
             New Beta
@@ -112,7 +111,6 @@ function ActivityCard({ activity }: { activity: Activity }) {
   const sets = useSets().data || {};
   const circuits = useCircuits().data?.data || {};
   const circuitsOrder = useCircuits().data?.order || [];
-  const climbs = useAllClimbs().data || [];
   const { openSidebar } = useSidebarState();
   const { openUserList } = useUserListState();
 
@@ -153,12 +151,10 @@ function ActivityCard({ activity }: { activity: Activity }) {
           {circuitsOrder
             .map((circuit_id) => circuits[circuit_id])
             .map((circuit) => {
-              const circuitClimbCount = activity.climb_ids.filter(
-                (climbId) =>
-                  sets[
-                    routes[climbs.find((climb) => climb.id === climbId)?.route]
-                      ?.set_id
-                  ]?.circuit_id === circuit.id,
+              const circuitClimbCount = activity.climbs.filter(
+                (climb) =>
+                  sets[routes[climb.route_id]?.set_id]?.circuit_id ===
+                  circuit.id,
               ).length;
 
               return (
@@ -181,28 +177,24 @@ function ActivityCard({ activity }: { activity: Activity }) {
         <div className="flex flex-col bg-white m-auto p-auto mt-5 relative">
           <div className="flex overflow-x-scroll pb-8 hide-scroll-bar">
             <div className="flex gap-4 flex-nowrap">
-              {activity.climb_ids
-                .sort((climbid_a, climbid_b) => {
-                  const climb_a = climbs.find((c) => c.id === climbid_a);
-                  const climb_b = climbs.find((c) => c.id === climbid_b);
-
+              {activity.climbs
+                .sort((climb_a, climb_b) => {
                   if (!climb_a || !climb_b) return 0;
 
                   const index_a = circuitsOrder.indexOf(
-                    sets[routes[climb_a.route]?.set_id]?.circuit_id,
+                    sets[routes[climb_a.route_id]?.set_id]?.circuit_id,
                   );
                   const index_b = circuitsOrder.indexOf(
-                    sets[routes[climb_b.route]?.set_id]?.circuit_id,
+                    sets[routes[climb_b.route_id]?.set_id]?.circuit_id,
                   );
                   return index_b - index_a;
                 })
-                .map((climbId) => {
-                  const climb = climbs.find((c) => c.id === climbId);
+                .map((climb) => {
                   return (
                     climb && (
                       <RouteCardProfile
-                        key={climb.route + climbId}
-                        route={routes[climb.route]}
+                        key={climb.route_id + climb.time}
+                        route={routes[climb.route_id]}
                         circuits={circuits}
                         sets={sets}
                         climb={climb}
