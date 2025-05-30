@@ -24,7 +24,7 @@ async def process_video(video_path: Path, processed_video_path: Path,id: uuid.UU
                     "-i", str(video_path),
                     "-vf", "scale=-2:720",  # Scale height to 720 while maintaining aspect ratio
                     "-c:v", "libx264",  # Convert to AV1 codec
-                    "-crf", "26",
+                    "-crf", "24",
                     str(processed_video_path),
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE
