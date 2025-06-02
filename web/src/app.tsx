@@ -26,6 +26,10 @@ import { useJustRegistered } from './features/auth/hooks/just-registered';
 import { RequestPasswordReset } from './features/auth/components/request-password-reset';
 import { PasswordResetForm } from './features/auth/components/password-reset-form';
 import 'material-symbols/rounded.css';
+import { GymsPage } from './pages/gyms';
+import MapLocation from './components/ui/map/map-location';
+import MapPage from './components/ui/map/map-page';
+import CreateGym from './pages/create-gym';
 
 const ProtectedRoute = ({
   authed,
@@ -124,6 +128,40 @@ function App() {
           element={
             <ProtectedRoute authed={user.data && user.data.is_superuser}>
               <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/gyms"
+          element={
+            <ProtectedRoute authed={user.data && user.data.is_superuser}>
+              <GymsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/create_gym"
+          element={
+            <ProtectedRoute authed={user.data && user.data.is_superuser}>
+              <CreateGym />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/map"
+          element={
+            <ProtectedRoute authed={user.data && user.data.is_superuser}>
+              <MapPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/map-l"
+          element={
+            <ProtectedRoute authed={user.data && user.data.is_superuser}>
+              <MapLocation />
             </ProtectedRoute>
           }
         />

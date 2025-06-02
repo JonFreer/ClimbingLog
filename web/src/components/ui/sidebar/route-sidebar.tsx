@@ -27,12 +27,14 @@ import { api } from '@/lib/api-client';
 import { CreateBeta } from '@/features/videos/components/create-beta';
 import { BetaVideo } from '@/features/videos/components/beta';
 import { useVideos } from '@/features/videos/api/get-videos';
+import { useCurrentGym } from '@/features/gyms/store/current-gym';
 
 export default function RouteSideBar() {
+  const { current_gym } = useCurrentGym();
   const climbs = useClimbs().data ?? [];
   const projects = useProjects().data ?? [];
-  const sets = useSets().data ?? {};
-  const circuits = useCircuits().data?.data ?? {};
+  const sets = useSets({ gym_id: current_gym || '' }).data ?? {};
+  const circuits = useCircuits({ gym_id: current_gym || '' }).data?.data ?? {};
   const route_state = useSidebarState((state) => state.route);
   const videosQuery = useVideos({ route_id: route_state?.id || '' });
   const videos = videosQuery.data ?? [];

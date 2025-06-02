@@ -68,7 +68,7 @@ services:
       - "./data/api/imgs/routes/full:/app/imgs/routes/full"
       - "./data/api/imgs/routes/thumb:/app/imgs/routes/thumb"
       - "./data/api/imgs/cover_photos:/app/imgs/cover_photos"
-      - "./data/api/imgs/profile_photos:/app/imgs/profile_photos"
+      - "./data/api/imgs/gym_layout:/app/imgs/gym_layout"
       - "./data/api/videos/raw:/app/videos/raw"
       - "./data/api/videos/processed:/app/videos/processed"
       - "./data/api/videos/thumb:/app/videos/thumb"

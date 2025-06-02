@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import func
 
-from .. import schemas
+from ..schemas import schemas
 from ..db import get_db
 from ..models import Climbs, Routes
 from ..users import User, current_active_user

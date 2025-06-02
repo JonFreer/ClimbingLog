@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.sql import func
 
-from .. import schemas
+from ..schemas import schemas
 from ..db import get_db
 from ..models import Activities, Climbs, Reactions
 from ..users import User, current_active_user

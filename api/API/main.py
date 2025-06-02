@@ -16,9 +16,10 @@ from .routers import (
     routes,
     sets,
     users,
-    video
+    video,
+    gyms
 )
-from .schemas import UserCreate, UserRead, UserUpdate
+from .schemas.schemas import UserCreate, UserRead, UserUpdate
 from .users import auth_backend, current_active_user, fastapi_users
 
 
@@ -74,3 +75,4 @@ app.include_router(users.router)
 app.include_router(activities.router)
 app.include_router(reactions.router)
 app.include_router(video.router)
+app.include_router(gyms.router)

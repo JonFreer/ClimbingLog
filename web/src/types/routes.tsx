@@ -95,3 +95,10 @@ export type Meta = {
   total: number;
   totalPages: number;
 };
+
+export interface Gym {
+  id: string;
+  name: string;
+  location: string;
+  about: string;
+}

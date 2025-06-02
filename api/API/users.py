@@ -14,7 +14,7 @@ from sqlalchemy.future import select
 
 from .db import get_user_db
 from .models import User
-from .schemas import UserCreate, UserUpdate
+from .schemas.schemas import UserCreate, UserUpdate
 
 SECRET = "SECRET"
 

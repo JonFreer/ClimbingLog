@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Example</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="myCanvas" width="500" height="400"></canvas>
+    <script>
+
+        const lines = [{ joined: false, points: [] }]
+
+        // const img = new Image();
+        // img.src = 'data/api/imgs/gym_layout/7ac4a514-b417-48ef-b61b-81a3192b2a44.svg';
+        // img.onload = function () {
+        //     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        // };
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Example: Draw a rectangle
+
+        // img.onload = function () {
+        //     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        //     // Fetch the SVG data
+        //     fetch(img.src)
+        //         .then(response => response.text())
+        //         .then(svgText => {
+        //             const parser = new DOMParser();
+        //             const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
+        //             const elements = svgDoc.querySelectorAll('polygon, polyline, path');
+
+        //             elements.forEach((element) => {
+        //                 console.log(`Element: ${element}`);
+        //                 console.log(`Tag Name: ${element.tagName}`);
+
+        //                 if (element.tagName === 'polygon' || element.tagName === 'polyline') {
+        //                     const pointList = element.points;
+        //                     for (let i = 0; i < pointList.length; i++) {
+        //                         const point = pointList[i];
+        //                         ctx.beginPath();
+        //                         ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
+        //                         ctx.fill();
+        //                     }
+        //                 } else if (element.tagName === 'path') {
+        //                     // console.log(`Path data: ${element.getAttribute('d')}`);
+        //                     const pathData = element.getAttribute('d');
+        //                     // const path = new Path2D(pathData);
+        //                     // ctx.strokeStyle = 'red';
+        //                     // ctx.lineWidth = 4;
+        //                     // ctx.lineJoin = 'round'; // Ensures corners are rounded
+        //                     // ctx.lineCap = 'round';  // Ensures line ends are rounded
+
+
+        //                     // ctx.stroke(path);
+
+        //                     // Extract coordinates from the path data
+        //                     const coordinates = [];
+        //                     const commands = pathData.split(/(?=[a-zA-Z])/); // Split by commands (e.g., 'm', 'l', 'z')
+        //                     let currentX = 0;
+        //                     let currentY = 0;
+
+        //                     commands.forEach(command => {
+        //                         const type = command[0];
+        //                         const values = command.slice(1).trim().split(/[\s,]+/).map(Number);
+
+        //                         if (type === 'm' || type === 'l') {
+        //                             for (let i = 0; i < values.length; i += 2) {
+        //                                 currentX += values[i];
+        //                                 currentY += values[i + 1];
+        //                                 coordinates.push({ x: currentX, y: currentY });
+        //                             }
+        //                         } else if (type === 'M' || type === 'L') {
+        //                             for (let i = 0; i < values.length; i += 2) {
+        //                                 currentX = values[i];
+        //                                 currentY = values[i + 1];
+        //                                 coordinates.push({ x: currentX, y: currentY });
+        //                             }
+        //                         }
+        //                         // Handle other commands if needed (e.g., 'z', 'h', 'v', etc.)
+        //                     });
+
+        //                     console.log('Extracted Coordinates:', coordinates);
+
+        //                     // Draw circles at the extracted coordinates
+        //                     coordinates.forEach(coord => {
+        //                         ctx.beginPath();
+        //                         ctx.arc(coord.x, coord.y, 5, 0, Math.PI * 2);
+        //                         ctx.fillStyle = 'blue';
+        //                         ctx.fill();
+        //                     });
+
+        //                     ctx.strokeStyle = '#5e5e5e';
+        //                     ctx.lineWidth = 7;
+
+        //                     coordinates.push(coordinates[0]); // Close the path by adding the first point again
+        //                     coordinates.push(coordinates[1]);
+        //                     coordinates.push(coordinates[2]);
+
+        //                     lines.push(coordinates);
+
+        //                     drawLines(coordinates);
+
+        //                 }
+        //             });
+        //         });
+        // };
+
+        function drawPoints(line) {
+            line.points.forEach(point => {
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = '#9999ff50';
+                ctx.fill();
+            });
+        }
+
+        function drawLines(line) {
+            var startX = null, startY = null;
+            var endX = null, endY = null;
+
+            const coordinates = line.points.slice();
+
+            if (!line.joined) {
+                // If the line is joined, we need to close the path by connecting the last point to the first
+                if (coordinates.length > 1) {
+                    coordinates.unshift(coordinates[0]);
+                    coordinates.push(coordinates[coordinates.length - 1]);
+                }
+            } else {
+                // If not joined, we can just draw the points as they are
+                if (coordinates.length > 3) {
+
+                    coordinates.push(coordinates[0]);
+                    coordinates.push(coordinates[1]);
+                    coordinates.push(coordinates[2]); // Added to ensure the third point is included
+                }
+            }
+
+            curve_ratio = 0.9
+            for (let i = 0; i < coordinates.length - 2; i++) {
+
+                // starting point is 90% towards the next point (point b)
+                startX = coordinates[i].x * (1 - curve_ratio) + coordinates[i + 1].x * curve_ratio;
+                startY = coordinates[i].y * (1 - curve_ratio) + coordinates[i + 1].y * curve_ratio;
+
+                // control point is the next point in the array
+                const controlX = (coordinates[i + 1].x); // control point x
+                const controlY = (coordinates[i + 1].y); // control point y
+
+                if (endX != null) {
+                    // draw a straigntline between startX and endX
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(endX, endY);
+                    ctx.stroke();
+                }
+
+                // end point is halfway between the two next points
+                endX = coordinates[i + 1].x * (curve_ratio) + coordinates[i + 2].x * (1 - curve_ratio);
+                endY = coordinates[i + 1].y * (curve_ratio) + coordinates[i + 2].y * (1 - curve_ratio);
+
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.quadraticCurveTo(coordinates[i + 1].x, coordinates[i + 1].y, endX, endY);
+                ctx.stroke();
+            }
+        }
+
+        canvas.addEventListener('click', (event) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+            var line = null;
+            lines.forEach(coordinates => {
+                for (let i = 0; i < coordinates.length - 1; i++) {
+                    const startX = coordinates[i].x;
+                    const startY = coordinates[i].y;
+                    const endX = coordinates[i + 1].x;
+                    const endY = coordinates[i + 1].y;
+
+                    // Create a path for the line segment
+                    const linePath = new Path2D();
+                    linePath.moveTo(startX, startY);
+                    linePath.lineTo(endX, endY);
+
+                    // Check if the click is within the stroke of the line
+                    if (ctx.isPointInStroke(linePath, mouseX, mouseY)) {
+                        console.log(`Line clicked: Start (${startX}, ${startY}), End (${endX}, ${endY})`);
+                        line = linePath
+                        break;
+                    }
+                }
+            });
+
+            var pointClicked = null;
+            lines.forEach(coordinates => {
+                coordinates.points.forEach(point => {
+                    const pointPath = new Path2D();
+                    pointPath.arc(point.x, point.y, 5, 0, Math.PI * 2);
+
+                    // Check if the click is within the filled area of the point
+                    if (ctx.isPointInPath(pointPath, mouseX, mouseY)) {
+                        console.log(`Point clicked: (${point.x}, ${point.y})`);
+                        pointClicked = { x: point.x, y: point.y }; // Updated to store the actual point object
+                    }
+                });
+            });
+
+            if (line) {
+
+            }
+
+            else if (pointClicked) {
+                if (!lines[0].joined && pointClicked.x === lines[0].points[0].x && pointClicked.y === lines[0].points[0].y) {
+                    // If the first point is clicked and the line is not joined, close the line
+                    lines[0].joined = true;
+                    // lines[0].points.push(lines[0].points[0]); // Close the path by adding the first point again
+                } else {
+                    // Remove the clicked point from the points array
+                    lines[0].points = lines[0].points.filter(p => p.x !== pointClicked.x || p.y !== pointClicked.y);
+                }
+            }
+            else {
+                lines[0].points.push({ x: mouseX, y: mouseY });
+            }
+
+
+
+
+            render();
+        });
+
+        function render() {
+            const canvas = document.getElementById('myCanvas');
+            const ctx = canvas.getContext('2d');
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            console.log('Rendering lines:', lines);
+            // Draw the lines
+            lines.forEach(coordinates => {
+                drawLines(coordinates);
+                drawPoints(coordinates);
+            });
+        }
+    </script>
+</body>
+
+</html>

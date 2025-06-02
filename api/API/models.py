@@ -42,7 +42,9 @@ class Circuits(Base):
     )
     name: str = Column(String, index=True, nullable=False)
     color: str = Column(String, index=False, nullable=False)
-
+    gym_id: uuid.UUID = Column(
+        UUID(as_uuid=True), ForeignKey("gyms.id"), index=True, nullable=False
+    )
 
 class Sets(Base):
     __tablename__ = "sets"
@@ -128,3 +130,13 @@ class Videos(Base):
         UUID(as_uuid=True), ForeignKey("routes.id"), index=True, nullable=False
     )
     processed: bool = Column(Boolean, index=True, nullable=False, default=False)
+
+class Gym(Base):
+    __tablename__ = "gyms"
+    id: uuid.UUID = Column(
+        UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4
+    )
+    name: str = Column(String, index=True, nullable=False)
+    location: str = Column(String, index=True, nullable=False)
+    about: str = Column(String, index=False, nullable=False, default="")
+

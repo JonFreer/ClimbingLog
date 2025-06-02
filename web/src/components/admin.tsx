@@ -12,9 +12,11 @@ import { usePromoteSuperUser } from '../features/admin/api/promote-super-user';
 import { useDemoteSuperUser } from '../features/admin/api/demote-super-user';
 import { useDemoteRouteSetter } from '../features/admin/api/demote-route-setter';
 import { usePromoteRouteSetter } from '../features/admin/api/promote-route-setter';
+import { useCurrentGym } from '@/features/gyms/store/current-gym';
 
 export function AdminPage() {
-  const circuits = useCircuits().data?.data || {};
+  const { current_gym } = useCurrentGym();
+  const circuits = useCircuits({ gym_id: current_gym || '' }).data?.data || {};
   const users = useAllUsers().data || [];
 
   const promoteSuperUserMutation = usePromoteSuperUser({

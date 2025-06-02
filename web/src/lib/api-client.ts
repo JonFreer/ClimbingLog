@@ -1,5 +1,5 @@
 import Axios, { InternalAxiosRequestConfig } from 'axios';
-import { useNotifications } from '../components/ui/notifications';
+import { Notification, useNotifications } from '../components/ui/notifications';
 
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
   if (config.headers) {
@@ -29,7 +29,7 @@ api.interceptors.response.use(
         type: 'error',
         title: 'Error',
         message,
-      });
+      } as Notification);
     }
 
     // if (error.response?.status === 401) {

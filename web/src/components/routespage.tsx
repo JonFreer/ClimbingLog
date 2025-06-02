@@ -16,12 +16,15 @@ import { useSets } from '../features/sets/api/get-sets';
 import { useClimbs } from '../features/climbs/api/get-climbs';
 import { useProjects } from '../features/projects/api/get-projects';
 import { Checkbox, Menu, MenuButton, MenuItems } from '@headlessui/react';
+import { useCurrentGym } from '@/features/gyms/store/current-gym';
 
 export function RoutesPage() {
+  const { current_gym } = useCurrentGym();
   const routes = useRoutes().data || {};
-  const sets = useSets().data ?? {};
-  const circuits = useCircuits().data?.data ?? {};
-  const circuitsOrder = useCircuits().data?.order ?? [];
+  const sets = useSets({ gym_id: current_gym || '' }).data ?? {};
+  const circuits = useCircuits({ gym_id: current_gym || '' }).data?.data ?? {};
+  const circuitsOrder =
+    useCircuits({ gym_id: current_gym || '' }).data?.order ?? [];
   const climbs = useClimbs().data ?? [];
   const projects = useProjects().data ?? [];
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
@@ -109,6 +112,7 @@ export function RoutesPage() {
                   ],
               })) || []
           }
+          gym_id={current_gym || ''}
           selected_id={selectedRoute}
           updateDots={() => {}}
           setSelected={setSelectedRoute}

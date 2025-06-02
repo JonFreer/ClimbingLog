@@ -12,6 +12,7 @@ import { UserCircleIcon } from '@heroicons/react/24/solid';
 import { useState } from 'react';
 import { NavLink } from 'react-router';
 import { useLogout, useUser } from '@/lib/auth';
+import { GymDropDown } from '@/features/gyms/components/gym-dropdown';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -80,11 +81,15 @@ export function NavBar() {
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex shrink-0 items-center">
-              <img
-                alt="VolumeDB"
-                src="/logo.svg"
-                className="h-8 w-auto" // This will invert the colors and apply a hue shift to the SVG
-              />
+              {window.location.pathname != '/' ? (
+                <img
+                  alt="VolumeDB"
+                  src="/logo.svg"
+                  className="h-8 w-auto" // This will invert the colors and apply a hue shift to the SVG
+                />
+              ) : (
+                <GymDropDown />
+              )}
             </div>
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">

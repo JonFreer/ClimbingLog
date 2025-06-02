@@ -52,7 +52,7 @@ class Circuit(BaseModel):
     id: uuid.UUID
     name: str
     color: str
-
+    gym_id: uuid.UUID
 
 class Set(BaseModel):
     id: uuid.UUID
@@ -124,3 +124,4 @@ class Video(BaseModel):
     time: datetime.datetime
     username: str
     has_profile_photo: bool
+

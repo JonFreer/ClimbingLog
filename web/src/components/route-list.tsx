@@ -8,14 +8,17 @@ import { useClimbs } from '../features/climbs/api/get-climbs';
 import { useProjects } from '../features/projects/api/get-projects';
 import { useSidebarState } from './ui/sidebar/sidebar-state';
 import { cmpStringsWithNumbers } from '@/utils/sort';
+import { useCurrentGym } from '@/features/gyms/store/current-gym';
 
 export function RouteList() {
+  const { current_gym } = useCurrentGym();
   const routes = useRoutes().data || {};
-  const sets = useSets().data || {};
+  const sets = useSets({ gym_id: current_gym || '' }).data || {};
   const climbs = useClimbs().data ?? [];
   const projects = useProjects().data ?? [];
-  const circuits = useCircuits().data?.data ?? {};
-  const circuitsOrder = useCircuits().data?.order ?? [];
+  const circuits = useCircuits({ gym_id: current_gym || '' }).data?.data ?? {};
+  const circuitsOrder =
+    useCircuits({ gym_id: current_gym || '' }).data?.order ?? [];
 
   const [sortType, setSortType] = useState(() => {
     const savedSortType = localStorage.getItem('sortType');
@@ -127,9 +130,10 @@ function RouteDropDown({
   name: string;
   color: string;
 }) {
+  const { current_gym } = useCurrentGym();
   const [open, setOpen] = useState(false);
-  const circuits = useCircuits().data?.data ?? {};
-  const sets = useSets().data || {};
+  const circuits = useCircuits({ gym_id: current_gym || '' }).data?.data ?? {};
+  const sets = useSets({ gym_id: current_gym || '' }).data || {};
   const { openSidebar } = useSidebarState();
 
   return (
