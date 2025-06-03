@@ -7,7 +7,7 @@ isort==6.0.1
 SQLAlchemy==2.0.41
 psycopg2==2.9.10
 requests==2.32.3
-pytest==8.3.5 
+pytest==8.4.0 
 fastapi-users[sqlalchemy]==14.0.1
 asyncpg==0.30.0
 pillow==11.2.1
