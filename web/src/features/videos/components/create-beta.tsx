@@ -133,17 +133,14 @@ export const CreateBeta = ({ route_id }: CreateBetaProps) => {
                               <div
                                 className="mt-4 p-2 bg-gray-600 text-white font-semibold rounded-lg cursor-pointer hover:bg-gray-700"
                                 onClick={() => {
-                                  inputRef.current?.click();
+                                  setSource('');
                                 }}
                               >
                                 Choose new video
                               </div>
                             </>
                           ) : (
-                            <div
-                              className="min-w-60 mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 cursor-pointer"
-                              onClick={() => inputRef.current?.click()}
-                            >
+                            <div className="min-w-60 mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                               <div className="text-center">
                                 <PhotoIcon
                                   aria-hidden="true"
@@ -155,6 +152,14 @@ export const CreateBeta = ({ route_id }: CreateBetaProps) => {
                                     className="w-full text-center relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-hidden focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                                   >
                                     <span>Upload a video</span>
+                                    <input
+                                      id="file-upload"
+                                      ref={inputRef}
+                                      className="sr-only"
+                                      type="file"
+                                      onChange={handleFileChange}
+                                      accept="video/mp4,video/quicktime"
+                                    />
                                   </label>
                                 </div>
                                 <p className="text-xs/5 text-gray-600">
@@ -163,14 +168,6 @@ export const CreateBeta = ({ route_id }: CreateBetaProps) => {
                               </div>
                             </div>
                           )}
-                          <input
-                            id="file-upload"
-                            ref={inputRef}
-                            className="sr-only"
-                            type="file"
-                            onChange={handleFileChange}
-                            accept=".mov,.mp4"
-                          />
                         </div>
                       </div>
                     </div>
