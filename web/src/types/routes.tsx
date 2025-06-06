@@ -8,6 +8,10 @@ export interface Route {
   x: number;
   y: number;
   climb_count: number;
+  color: string;
+  user_sends: number;
+  user_attempts: number;
+  gym_id: string;
 }
 
 export interface Circuit {
@@ -15,6 +19,7 @@ export interface Circuit {
   name: string;
   open: boolean;
   color: string;
+  gym_id: string;
 }
 
 export interface User {
@@ -30,6 +35,7 @@ export interface User {
   route_setter: boolean;
   has_profile_photo: boolean;
   has_cover_photo: boolean;
+  home_gym: string;
 }
 
 export interface Climb {
@@ -76,7 +82,7 @@ export interface UserNamePair {
 }
 
 export interface ClimbSlim {
-  route_id: string;
+  route: Route;
   time: string;
 }
 
@@ -84,6 +90,7 @@ export interface Activity {
   id: string;
   user: string;
   time: string;
+  gym_id: string;
   climbs: ClimbSlim[];
   username: string;
   has_profile_photo: boolean;
@@ -95,10 +102,3 @@ export type Meta = {
   total: number;
   totalPages: number;
 };
-
-export interface Gym {
-  id: string;
-  name: string;
-  location: string;
-  about: string;
-}

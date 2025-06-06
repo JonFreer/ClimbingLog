@@ -24,7 +24,7 @@ api.interceptors.response.use(
     // console.error("API error:", error);
     const message = error.response?.data?.message || error.message;
 
-    if (error.response?.status !== 401) {
+    if (error.response?.status !== 401 && error.response?.status !== 404) {
       useNotifications.getState().addNotification({
         type: 'error',
         title: 'Error',

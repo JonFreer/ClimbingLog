@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNotifications } from '@/components/ui/notifications';
+import { Notification, useNotifications } from '@/components/ui/notifications';
 import { useCreateCircuit } from '../api/create-circuit';
 import {
   Dialog,
@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from '@headlessui/react';
 
-export const CreateCircuit = () => {
+export const CreateCircuit = ({ gym_id }: { gym_id: string }) => {
   const [open, setOpen] = useState(false);
 
   const { addNotification } = useNotifications();
@@ -19,10 +19,11 @@ export const CreateCircuit = () => {
         addNotification({
           type: 'success',
           title: 'Circuit Created',
-        });
+        } as Notification);
         setOpen(false);
       },
     },
+    gym_id,
   });
 
   return (
@@ -60,8 +61,9 @@ export const CreateCircuit = () => {
                   const values = Object.fromEntries(formData.entries()) as {
                     name: string;
                     color: string;
+                    gym_id: string;
                   };
-                  createCircuitMutation.mutate({ data: values });
+                  createCircuitMutation.mutate({ data: { ...values, gym_id } });
                 }}
               >
                 <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">

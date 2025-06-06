@@ -13,9 +13,7 @@ import {
 import { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { useParams } from 'react-router';
-import { useCircuits } from '../features/circuits/api/get-circuits';
 import { useRoutes } from '../features/routes/api/get-routes';
-import { useSets } from '../features/sets/api/get-sets';
 import { useUser } from '../lib/auth';
 import { useSidebarState } from './ui/sidebar/sidebar-state';
 import { api } from '@/lib/api-client';
@@ -51,8 +49,8 @@ export const options = {
 
 export default function Profile() {
   const routes = useRoutes().data || [];
-  const circuits = useCircuits().data?.data || {};
-  const sets = useSets().data || {};
+  // const circuits = useCircuits().data?.data || {};
+  // const sets = useSets().data || {};
 
   const { data: user_me } = useUser();
 
@@ -186,11 +184,6 @@ export default function Profile() {
 
   return (
     <div className="bg-gray-100 min-h-screen p-4 sm:mb-8 mb-14">
-      {/* <RouteSideBar
-        route={routes[sidebarRoute]}
-        closeCallback={() => setSidebarRoute(undefined)}
-      ></RouteSideBar> */}
-
       <div className="max-w-3xl mx-auto bg-white rounded-t-xl relative">
         {/* <img className="max-h-56 w-full object-cover shadow-lg rounded-t-xl  border-4 border-white" src={`https://www.abcwalls.co.uk/wp-content/uploads/2024/01/DepotClimbingSocialUse-178-USE.jpg`} alt="Profile" /> */}
         {!user.has_cover_photo ? (
@@ -328,7 +321,7 @@ export function RouteCardProfile(props: {
       className="cursor-pointer w-36 max-w-xs rounded-lg shadow-md bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out"
       onClick={() => props.setSidebarRoute(props.route)}
     >
-      <div className="bg-white relative">
+      <div className="relative">
         <img
           className={'rounded-lg'}
           src={'/api/img_thumb/' + props.route.id + '.webp'}

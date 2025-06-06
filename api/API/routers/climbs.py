@@ -9,7 +9,7 @@ from sqlalchemy.sql import func
 
 from ..schemas import schemas
 from ..db import get_db
-from ..models import Activities, Climbs, Reactions
+from ..models import Activities, Climbs, Reactions, Routes, Sets, Circuits
 from ..users import User, current_active_user
 
 router = APIRouter()
@@ -72,12 +72,27 @@ async def create_send(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(current_active_user),
 ):
-    # Check if an activity already exists for this user today
+    
+    # Get gym_id from the route 
 
+    gym_id = await db.execute(
+        select(Circuits.gym_id)
+        .select_from(Routes) 
+        .where(Routes.id == route_id)
+        .outerjoin(Sets, Sets.id == Routes.set_id)  # Join with Sets
+        .outerjoin(Circuits, Circuits.id == Sets.circuit_id)  
+        )
+    
+    gym_id = gym_id.scalars().first()
+    # Check if an activity already exists for this user today
+    if not gym_id:
+        raise HTTPException(status_code=404, detail="Route not found")
+    
     activity = await db.execute(
         select(Activities).where(
             Activities.user == user.id,
             func.date(Activities.time) == datetime.datetime.today().date(),
+            Activities.gym_id == gym_id
         )
     )
 
@@ -85,7 +100,7 @@ async def create_send(
     if existing_activity:
         current_activity = existing_activity
     else:
-        current_activity = Activities(time=datetime.datetime.now(), user=user.id)
+        current_activity = Activities(time=datetime.datetime.now(), user=user.id, gym_id=gym_id)
         db.add(current_activity)
         await db.commit()
         await db.refresh(current_activity)

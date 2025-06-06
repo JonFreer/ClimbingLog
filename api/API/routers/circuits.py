@@ -31,12 +31,13 @@ async def get_all_circuits(
 async def create_circuit(
     name: Annotated[str, Form(...)],
     color: Annotated[str, Form(...)],
+    gym_id: Annotated[uuid.UUID, Form(...)],
     db: AsyncSession = Depends(get_db),
     user: User = Depends(current_active_user),
 ):
     if not user.is_superuser and not user.route_setter:
         raise HTTPException(status_code=403, detail="Not enough permissions")
-    new_circuit = Circuits(name=name, color=color)
+    new_circuit = Circuits(name=name, color=color, gym_id=gym_id)
     db.add(new_circuit)
     await db.commit()
     await db.refresh(new_circuit)

@@ -10,12 +10,15 @@ import { UpdateRoute } from '../features/routes/components/update-route';
 import { useSets } from '../features/sets/api/get-sets';
 import { CreateSet } from '../features/sets/components/create-set';
 import { useSidebarState } from './ui/sidebar/sidebar-state';
+import { useCurrentGym } from '@/features/gyms/store/current-gym';
 
 export function RouteSettingPage() {
+  const { current_gym } = useCurrentGym();
   const routes = useRoutes().data || {};
-  const circuits = useCircuits()?.data?.data || {};
-  const circuitOrder = useCircuits()?.data?.order || [];
-  const sets = useSets().data || {};
+  const circuits = useCircuits({ gym_id: current_gym || '' })?.data?.data || {};
+  const circuitOrder =
+    useCircuits({ gym_id: current_gym || '' })?.data?.order || [];
+  const sets = useSets({ gym_id: current_gym || '' }).data || {};
 
   const [openCircuit, setOpenCircuit] = useState<string>('');
   const [selectedSet, setSelectedSet] = useState<string>('');
@@ -102,7 +105,7 @@ export function RouteSettingPage() {
                 ))}
             </select>
           </span>
-          <CreateSet circuit_id={openCircuit} />
+          <CreateSet circuit={circuits[openCircuit]} />
         </div>
       )}
 
@@ -114,7 +117,10 @@ export function RouteSettingPage() {
               year: 'numeric',
             })}
           </span>
-          <CreateRoute set_id={selectedSet} circuit_id={openCircuit} />
+          <CreateRoute
+            set={sets[selectedSet]}
+            circuit={circuits[openCircuit]}
+          />
         </div>
       )}
 
@@ -131,8 +137,8 @@ export function RouteSettingPage() {
               </span>
 
               <UpdateRoute
-                set_id={selectedSet}
-                circuit_id={openCircuit}
+                set={sets[selectedSet]}
+                circuit={circuits[openCircuit]}
                 route={route}
               />
               <DeleteRoute id={route.id}></DeleteRoute>

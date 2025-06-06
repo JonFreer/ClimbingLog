@@ -2,7 +2,7 @@ import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState } from 'react';
 import { useUser } from '../lib/auth';
 import { useUpdateUser } from '../features/user/api/update-user';
-import { useNotifications } from './ui/notifications';
+import { Notification, useNotifications } from './ui/notifications';
 import { UserNameInput } from './ui/form/username';
 
 export default function Settings() {
@@ -14,7 +14,7 @@ export default function Settings() {
         addNotification({
           type: 'success',
           title: 'Settings Updated',
-        });
+        } as Notification);
       },
     },
   });
@@ -93,7 +93,11 @@ export default function Settings() {
               </label>
               <ImageUploadProfilePic
                 imageCallback={(image) => console.log(image)}
-                defaultUrl={''}
+                defaultUrl={
+                  (user.data.has_profile_photo
+                    ? `/api/profile_photo/${user.data.id}`
+                    : '') || ''
+                }
               />
             </div>
 
@@ -106,7 +110,11 @@ export default function Settings() {
               </label>
               <ImageUpload
                 imageCallback={(image) => console.log(image)}
-                defaultUrl={''}
+                defaultUrl={
+                  user.data.has_cover_photo
+                    ? `/api/cover_photo/${user.data.id}`
+                    : ''
+                }
               />
             </div>
           </div>
@@ -458,23 +466,28 @@ export function ImageUploadProfilePic(props: {
           onChange={handleImageChange}
         />
         <label htmlFor="upload-profile-pic" className="cursor-pointer">
-          {preview ? (
-            <img src={preview} alt="Preview" className="mx-auto mb-4" />
-          ) : (
-            <div className="mt-2 flex items-center gap-x-3">
+          <div className="mt-2 flex items-center gap-x-3">
+            {preview ? (
+              <img
+                src={preview}
+                alt="Preview"
+                className="rounded-full size-12 object-cover"
+              />
+            ) : (
               <UserCircleIcon
                 aria-hidden="true"
                 className="size-12 text-gray-300"
               />
-              <button
-                type="button"
-                onClick={triggerFileInput}
-                className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-              >
-                Change
-              </button>
-            </div>
-          )}
+            )}
+
+            <button
+              type="button"
+              onClick={triggerFileInput}
+              className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            >
+              Change
+            </button>
+          </div>
         </label>
       </div>
     </div>

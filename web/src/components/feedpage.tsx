@@ -12,6 +12,7 @@ import { useUserListState } from './ui/userlist/userlist-state';
 import { useAllVideos } from '@/features/videos/api/get-all-videos';
 import { Activity, Video } from '@/types/routes';
 import { FeedVideo } from '@/features/videos/components/beta';
+import { useGyms } from '@/features/gyms/api/get-gyms';
 
 export default function Feed() {
   const videos = useAllVideos().data || [];
@@ -66,8 +67,14 @@ export default function Feed() {
 
 function VideoCard({ video }: { video: Video }) {
   const routes = useRoutes().data || {};
-  const sets = useSets().data || {};
-  const circuits = useCircuits().data?.data || {};
+  const gymId = routes[video.route]?.gym_id;
+  const sets = useSets({ gym_id: gymId }).data || {};
+  const circuits = useCircuits({ gym_id: gymId }).data?.data || {};
+  const gym = (useGyms().data || {})[gymId];
+
+  if (!routes[video.route]) {
+    return <></>;
+  }
 
   return (
     <div className="bg-white p-4 mt-4 pb-2" key={video.username + video.time}>
@@ -83,6 +90,7 @@ function VideoCard({ video }: { video: Video }) {
         </a>{' '}
         <div className="ml-auto font-normal text-sm">
           {new Date(video.time).toDateString()}
+          <div className="text-right text-gray-500">{gym.name}</div>
         </div>
       </div>
 
@@ -107,12 +115,14 @@ function VideoCard({ video }: { video: Video }) {
 
 function ActivityCard({ activity }: { activity: Activity }) {
   const user = useUser();
-  const routes = useRoutes().data || {};
-  const sets = useSets().data || {};
-  const circuits = useCircuits().data?.data || {};
-  const circuitsOrder = useCircuits().data?.order || [];
+  const sets = useSets({ gym_id: activity.gym_id }).data || {};
+  const circuits = useCircuits({ gym_id: activity.gym_id }).data?.data || {};
+  const circuitsOrder =
+    useCircuits({ gym_id: activity.gym_id }).data?.order || [];
   const { openSidebar } = useSidebarState();
   const { openUserList } = useUserListState();
+
+  const gym = (useGyms().data || {})[activity.gym_id];
 
   const createReactionMutation = useCreateReaction({
     mutationConfig: {
@@ -143,6 +153,7 @@ function ActivityCard({ activity }: { activity: Activity }) {
         </a>{' '}
         <div className="ml-auto font-normal text-sm">
           {new Date(activity.time).toDateString()}
+          <div className="text-right text-gray-500">{gym.name}</div>
         </div>
       </div>
 
@@ -152,9 +163,7 @@ function ActivityCard({ activity }: { activity: Activity }) {
             .map((circuit_id) => circuits[circuit_id])
             .map((circuit) => {
               const circuitClimbCount = activity.climbs.filter(
-                (climb) =>
-                  sets[routes[climb.route_id]?.set_id]?.circuit_id ===
-                  circuit.id,
+                (climb) => sets[climb.route.set_id]?.circuit_id === circuit.id,
               ).length;
 
               return (
@@ -182,10 +191,10 @@ function ActivityCard({ activity }: { activity: Activity }) {
                   if (!climb_a || !climb_b) return 0;
 
                   const index_a = circuitsOrder.indexOf(
-                    sets[routes[climb_a.route_id]?.set_id]?.circuit_id,
+                    sets[climb_a.route.set_id]?.circuit_id,
                   );
                   const index_b = circuitsOrder.indexOf(
-                    sets[routes[climb_b.route_id]?.set_id]?.circuit_id,
+                    sets[climb_b.route.set_id]?.circuit_id,
                   );
                   return index_b - index_a;
                 })
@@ -193,8 +202,8 @@ function ActivityCard({ activity }: { activity: Activity }) {
                   return (
                     climb && (
                       <RouteCardProfile
-                        key={climb.route_id + climb.time}
-                        route={routes[climb.route_id]}
+                        key={climb.route.id + climb.time}
+                        route={climb.route}
                         circuits={circuits}
                         sets={sets}
                         climb={climb}

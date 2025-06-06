@@ -86,6 +86,10 @@ export default function RouteSideBar() {
     y: 0,
     grade: '',
     climb_count: 0,
+    color: 'black',
+    user_sends: 0,
+    user_attempts: 0,
+    gym_id: '',
   });
 
   useEffect(() => {

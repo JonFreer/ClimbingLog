@@ -1,6 +1,9 @@
+import { ImageSelect } from '@/components/ui/form/image-select';
 import MapDraw from '@/components/ui/map/map-draw';
-import MapLocation, { Area } from '@/components/ui/map/map-location';
-import { Line } from '@/components/ui/map/types';
+import MapLocation from '@/components/ui/map/map-location';
+import { Notification, useNotifications } from '@/components/ui/notifications';
+import { useCreateGym } from '@/features/gyms/api/create-gym';
+import { Area, Line } from '@/types/gym';
 import { useState } from 'react';
 
 export default function CreateGym() {
@@ -17,6 +20,27 @@ export default function CreateGym() {
       name: 'Area 1',
     },
   ]);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    location: '',
+    about: '',
+    file: '',
+  });
+
+  const { addNotification } = useNotifications();
+
+  const createGymMutation = useCreateGym({
+    mutationConfig: {
+      onSuccess: () => {
+        addNotification({
+          type: 'success',
+          title: 'Gym Created',
+        } as Notification);
+      },
+    },
+  });
+
   return (
     <div className="bg-gray-100 min-h-screen p-4 sm:mb-8 mb-14">
       <div className="max-w-3xl mx-auto bg-white rounded-xl relative shadow-xl p-5">
@@ -25,7 +49,7 @@ export default function CreateGym() {
             <>
               <div className="text-xl font-bold">Create New Gym</div>
 
-              <BasicInfo />
+              <BasicInfo formData={formData} setFormData={setFormData} />
               <button
                 type="submit"
                 className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -88,7 +112,13 @@ export default function CreateGym() {
                   className="w-full bg-green-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                   onClick={(e) => {
                     e.preventDefault();
-                    setStage(3);
+                    console.log(formData.file);
+                    createGymMutation.mutate({
+                      data: {
+                        ...formData,
+                        layout: JSON.stringify({ lines, areas }),
+                      },
+                    });
                   }}
                 >
                   Create!
@@ -102,7 +132,13 @@ export default function CreateGym() {
   );
 }
 
-function BasicInfo() {
+function BasicInfo({
+  formData,
+  setFormData,
+}: {
+  formData: any;
+  setFormData: (data: any) => void;
+}) {
   return (
     <form className="mt-4 space-y-4">
       <div>
@@ -116,8 +152,10 @@ function BasicInfo() {
           type="text"
           id="name"
           name="name"
+          value={formData.name}
           className="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Enter gym name"
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
         />
       </div>
       <div>
@@ -133,6 +171,10 @@ function BasicInfo() {
           name="location"
           className="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Birmingham, UK"
+          onChange={(e) =>
+            setFormData({ ...formData, location: e.target.value })
+          }
+          value={formData.location}
         />
       </div>
       <div>
@@ -148,8 +190,15 @@ function BasicInfo() {
           rows={4}
           className="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Write about the gym"
+          onChange={(e) => setFormData({ ...formData, about: e.target.value })}
+          value={formData.about}
         ></textarea>
       </div>
+
+      <ImageSelect
+        defaultUrl=""
+        imageCallback={(file) => setFormData({ ...formData, file: file })}
+      />
     </form>
   );
 }

@@ -3,20 +3,13 @@ import {
   WrenchIcon,
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
-import { colors } from '../types/colors';
-import { DeleteCircuit } from '../features/circuits/components/delete-circuit';
-import { CreateCircuit } from '../features/circuits/components/create-circuit';
-import { useCircuits } from '../features/circuits/api/get-circuits';
 import { useAllUsers } from '../features/admin/api/get-all-users';
 import { usePromoteSuperUser } from '../features/admin/api/promote-super-user';
 import { useDemoteSuperUser } from '../features/admin/api/demote-super-user';
 import { useDemoteRouteSetter } from '../features/admin/api/demote-route-setter';
 import { usePromoteRouteSetter } from '../features/admin/api/promote-route-setter';
-import { useCurrentGym } from '@/features/gyms/store/current-gym';
 
 export function AdminPage() {
-  const { current_gym } = useCurrentGym();
-  const circuits = useCircuits({ gym_id: current_gym || '' }).data?.data || {};
   const users = useAllUsers().data || [];
 
   const promoteSuperUserMutation = usePromoteSuperUser({
@@ -45,31 +38,6 @@ export function AdminPage() {
 
   return (
     <div className="m-5 sm:mb-8 mb-14">
-      <div className="flex items-center">
-        <span className="font-bold text-2xl mt-4">Circuits</span>
-        <CreateCircuit />
-      </div>
-
-      <div>
-        {Object.values(circuits).map((circuit) => (
-          <div
-            key={circuit.id}
-            className="flex items-center w-full shadow-sm rounded-lg mt-2"
-          >
-            <span
-              className={
-                'text-lg font-bold text-white uppercase px-2 py-2 pr-10 w-52 text-center rounded-l-lg clip-path truncate ' +
-                (colors[circuit.color] || '')
-              }
-            >
-              {circuit.name}
-            </span>
-            <span className="p-2">{circuit.name}</span>
-            <DeleteCircuit circuit_id={circuit.id} />
-          </div>
-        ))}
-      </div>
-
       <h1 className="font-bold text-2xl mt-4">Users: {users.length}</h1>
 
       <div className="grid grid-cols-auto gap-4">

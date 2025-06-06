@@ -1,20 +1,19 @@
-import { useNotifications } from '@/components/ui/notifications';
+import { useNotifications, Notification } from '@/components/ui/notifications';
 import { useCreateRoute } from '../api/create-route';
 import RouteModal from './route-modal';
 import { useRoutes } from '../api/get-routes';
-import { useCircuits } from '../../circuits/api/get-circuits';
 import { colors } from '@/types/colors';
 import { useState } from 'react';
+import { Circuit, Set } from '@/types/routes';
 
 type CreateRouteProps = {
-  set_id: string;
-  circuit_id: string;
+  set: Set;
+  circuit: Circuit;
 };
 
-export const CreateRoute = ({ set_id, circuit_id }: CreateRouteProps) => {
+export const CreateRoute = ({ set, circuit }: CreateRouteProps) => {
   const [open, setOpen] = useState(false);
   const routes = useRoutes().data || [];
-  const circuits = useCircuits().data?.data || {};
 
   const { addNotification } = useNotifications();
 
@@ -24,7 +23,7 @@ export const CreateRoute = ({ set_id, circuit_id }: CreateRouteProps) => {
         addNotification({
           type: 'success',
           title: 'Route Created',
-        });
+        } as Notification);
         setOpen(false);
       },
       onError: (error) => {
@@ -32,7 +31,7 @@ export const CreateRoute = ({ set_id, circuit_id }: CreateRouteProps) => {
           type: 'error',
           title: 'Route Creation Failed',
           message: error.message,
-        });
+        } as Notification);
       },
     },
   });
@@ -42,7 +41,7 @@ export const CreateRoute = ({ set_id, circuit_id }: CreateRouteProps) => {
       <span
         className={
           'ml-2 px-2 text-sm py-2 rounded-lg font-bold text-white cursor-pointer ' +
-          (circuits[circuit_id] ? colors[circuits[circuit_id].color] : '')
+          (colors[circuit.color] || 'bg-gray-500')
         }
         onClick={() => {
           setOpen(true);
@@ -51,10 +50,9 @@ export const CreateRoute = ({ set_id, circuit_id }: CreateRouteProps) => {
         New Route
       </span>
       <RouteModal
+        circuit={circuit}
         routes={routes}
-        circuits={circuits}
-        set_id={set_id}
-        circuit_id={circuit_id}
+        set={set}
         route={null}
         open={open}
         setRoute={createRouteMutation}

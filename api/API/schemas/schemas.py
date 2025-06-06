@@ -1,7 +1,7 @@
 import datetime
-import uuid
 from typing import Optional
-
+import uuid
+from .route import Route, RouteWithClimbCount
 from fastapi_users import schemas
 from pydantic import BaseModel
 
@@ -14,7 +14,7 @@ class UserRead(schemas.BaseUser[uuid.UUID]):
     route_setter: bool
     has_profile_photo: bool
     has_cover_photo: bool
-
+    home_gym: Optional[uuid.UUID]
 
 class UserCreate(schemas.BaseUserCreate):
     username: str
@@ -24,7 +24,7 @@ class UserUpdate(schemas.BaseUserUpdate):
     profile_visible: Optional[bool]
     send_visible: Optional[bool]
     about: Optional[str]
-
+    home_gym: Optional[uuid.UUID] 
 
 class UserPublic(BaseModel):
     id: uuid.UUID
@@ -35,18 +35,6 @@ class UserPublic(BaseModel):
     route_setter: bool
     has_profile_photo: bool
     has_cover_photo: bool
-
-
-class Route(BaseModel):
-    name: str
-    id: uuid.UUID
-    grade: str
-    location: str
-    style: str
-    set_id: uuid.UUID
-    x: float
-    y: float
-
 
 class Circuit(BaseModel):
     id: uuid.UUID
@@ -91,7 +79,7 @@ class ClimbFeed(BaseModel):
     has_profile_photo: bool
 
 class ClimbShort(BaseModel):
-    route_id: uuid.UUID
+    route: RouteWithClimbCount
     time: datetime.datetime
 
 class Activity(BaseModel):
@@ -102,19 +90,13 @@ class Activity(BaseModel):
     username: str
     has_profile_photo: bool
     reactions: list[UserNamePair]
+    gym_id: uuid.UUID
 
 
 class Reaction(BaseModel):
     id: uuid.UUID
     user: uuid.UUID
     activity: uuid.UUID
-
-
-class RouteWithClimbCount(Route):
-    climb_count: int
-
-    class Config:
-        from_attributes = True
 
 class Video(BaseModel):
     id: uuid.UUID

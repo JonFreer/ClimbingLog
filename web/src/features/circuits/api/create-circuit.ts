@@ -10,6 +10,7 @@ import { getCircuitsQueryOptions } from './get-circuits';
 export const createCircuitInputSchema = z.object({
   name: z.string().min(1, 'Required'),
   color: z.string().min(1, 'Required'),
+  gym_id: z.string().min(1, 'Required'),
 });
 
 export type CreateCircuitInput = z.infer<typeof createCircuitInputSchema>;
@@ -22,6 +23,7 @@ export const createCircuit = ({
   const formData = new FormData();
   formData.append('name', data.name);
   formData.append('color', data.color);
+  formData.append('gym_id', data.gym_id);
   return api.post('/circuits/create', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -31,10 +33,12 @@ export const createCircuit = ({
 
 type UseCreateCircuitOptions = {
   mutationConfig?: MutationConfig<typeof createCircuit>;
+  gym_id: string;
 };
 
 export const useCreateCircuit = ({
   mutationConfig,
+  gym_id,
 }: UseCreateCircuitOptions) => {
   const queryClient = useQueryClient();
 
@@ -43,7 +47,7 @@ export const useCreateCircuit = ({
   return useMutation({
     onSuccess: (...args) => {
       queryClient.invalidateQueries({
-        queryKey: getCircuitsQueryOptions().queryKey,
+        queryKey: getCircuitsQueryOptions(gym_id).queryKey,
       });
       onSuccess?.(...args);
     },

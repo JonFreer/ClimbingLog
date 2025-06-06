@@ -19,7 +19,9 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     about = Column(String, index=False, nullable=False, default="")
     has_profile_photo = Column(Boolean, index=False, nullable=False, default=False)
     has_cover_photo = Column(Boolean, index=False, nullable=False, default=False)
-
+    home_gym = Column(
+        UUID(as_uuid=True), ForeignKey("gyms.id"), index=True, nullable=True
+    )
 
 class Routes(Base):
     __tablename__ = "routes"
@@ -103,6 +105,9 @@ class Activities(Base):
     user: uuid.UUID = Column(
         UUID(as_uuid=True), ForeignKey("user.id"), index=True, nullable=False
     )
+    gym_id: uuid.UUID = Column(
+        UUID(as_uuid=True), ForeignKey("gyms.id"), index=True, nullable=False
+    )
 
 
 class Reactions(Base):
@@ -139,4 +144,5 @@ class Gym(Base):
     name: str = Column(String, index=True, nullable=False)
     location: str = Column(String, index=True, nullable=False)
     about: str = Column(String, index=False, nullable=False, default="")
+    layout: str = Column(String, index=False, nullable=False, default="")
 

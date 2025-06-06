@@ -9,7 +9,7 @@ WORKDIR /app
 COPY ./requirements.txt /app/
 
 # Create necessary directories in a single RUN command to reduce image layers
-RUN mkdir -p ./imgs/routes/full ./imgs/routes/thumb ./imgs/cover_photos ./imgs/profile_photos ./imgs/gym_layout ./videos/raw ./videos/processed ./videos/thub \
+RUN mkdir -p ./imgs/routes/full ./imgs/routes/thumb ./imgs/cover_photos ./imgs/profile_photos ./imgs/gym ./videos/raw ./videos/processed ./videos/thub \
     && pip install --no-cache-dir -r requirements.txt
 
 WORKDIR /app

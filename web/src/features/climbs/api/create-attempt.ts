@@ -4,6 +4,7 @@ import { MutationConfig } from '@/lib/react-query';
 import { Route } from '@/types/routes';
 
 import { getClimbsQueryOptions } from './get-climbs';
+import { getRoutesQueryOptions } from '@/features/routes/api/get-routes';
 
 export const createAttempt = ({
   route_id,
@@ -28,6 +29,9 @@ export const useCreateAttempt = ({
     onSuccess: (...args) => {
       queryClient.invalidateQueries({
         queryKey: getClimbsQueryOptions().queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: getRoutesQueryOptions().queryKey,
       });
       onSuccess?.(...args);
     },

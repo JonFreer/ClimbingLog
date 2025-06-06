@@ -1,7 +1,5 @@
-import { useNotifications } from '@/components/ui/notifications';
+import { Notification, useNotifications } from '@/components/ui/notifications';
 import { useCreateSet } from '../api/create-set';
-
-import { useCircuits } from '../../circuits/api/get-circuits';
 import { colors } from '@/types/colors';
 import { useState } from 'react';
 import {
@@ -10,14 +8,14 @@ import {
   DialogPanel,
   DialogTitle,
 } from '@headlessui/react';
+import { Circuit } from '@/types/routes';
 
 type CreateSetProps = {
-  circuit_id: string;
+  circuit: Circuit;
 };
 
-export const CreateSet = ({ circuit_id }: CreateSetProps) => {
+export const CreateSet = ({ circuit }: CreateSetProps) => {
   const [open, setOpen] = useState(false);
-  const circuits = useCircuits().data?.data || {};
 
   const { addNotification } = useNotifications();
 
@@ -27,7 +25,7 @@ export const CreateSet = ({ circuit_id }: CreateSetProps) => {
         addNotification({
           type: 'success',
           title: 'Set Created',
-        });
+        } as Notification);
         setOpen(false);
       },
     },
@@ -38,7 +36,7 @@ export const CreateSet = ({ circuit_id }: CreateSetProps) => {
       <span
         className={
           'ml-2 px-2 text-sm py-2 rounded-lg font-bold text-white cursor-pointer ' +
-          (circuits[circuit_id] ? colors[circuits[circuit_id].color] : '')
+          (circuit ? colors[circuit.color] : '')
         }
         onClick={() => {
           setOpen(true);
@@ -73,7 +71,8 @@ export const CreateSet = ({ circuit_id }: CreateSetProps) => {
                     data: {
                       name: data.name as string,
                       date: data.date as string,
-                      circuit_id: circuit_id,
+                      circuit_id: circuit.id,
+                      gym_id: circuit.gym_id,
                     },
                   });
                 }}

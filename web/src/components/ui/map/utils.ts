@@ -1,3 +1,4 @@
+import { Area, Layout } from '@/types/gym';
 import { Line, Transform } from './types';
 
 export function getCoordinates(
@@ -30,6 +31,8 @@ export function drawPoints(line: Line, ctx: CanvasRenderingContext2D) {
 }
 
 export function drawLine(line: Line, ctx: CanvasRenderingContext2D) {
+  const curve_ratio = 0.9;
+
   if (line.style == 'mat') {
     ctx.strokeStyle = '#9e9e9e';
   } else if (line.style == 'wall') {
@@ -58,7 +61,6 @@ export function drawLine(line: Line, ctx: CanvasRenderingContext2D) {
     }
   }
 
-  const curve_ratio = 0.8;
   for (let i = 0; i < coordinates.length - 2; i++) {
     // starting point is 90% towards the next point (point b)
     startX =
@@ -91,4 +93,36 @@ export function drawLine(line: Line, ctx: CanvasRenderingContext2D) {
     ctx.quadraticCurveTo(controlX, controlY, endX, endY);
     ctx.stroke();
   }
+}
+
+//string takes the form of lines: and areas:
+export function drawLines(layout: Layout, ctx: CanvasRenderingContext2D) {
+  ctx.lineWidth = 2.5;
+
+  layout.lines.forEach((line) => {
+    if (line.style == 'mat') {
+      drawLine(line, ctx);
+    }
+  });
+  layout.lines.forEach((line) => {
+    if (line.style == 'wall') {
+      drawLine(line, ctx);
+    }
+  });
+}
+
+export function drawText(area: Area, ctx: CanvasRenderingContext2D) {
+  ctx.fillStyle = '#fff';
+  ctx.font = '8px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const centerX =
+    area.points.reduce((sum, point) => sum + point.x, 0) / area.points.length;
+  const centerY =
+    area.points.reduce((sum, point) => sum + point.y, 0) / area.points.length;
+  ctx.font = '8px Arial';
+  ctx.strokeStyle = '#0000008e';
+  ctx.lineWidth = 1;
+  ctx.strokeText(area.name, centerX, centerY);
+  ctx.fillText(area.name, centerX, centerY);
 }

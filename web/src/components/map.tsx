@@ -1,6 +1,8 @@
+import { Gym } from '@/types/gym';
 import { useRef, useState, useEffect } from 'react';
+import { drawLines } from './ui/map/utils';
 
-export interface Dot {
+interface Dot {
   x: number;
   y: number;
   isDragging: boolean;
@@ -16,7 +18,7 @@ const DraggableDotsCanvas = (props: {
   selected_id: string | null;
   updateDots: (dots: Dot[]) => void;
   setSelected: (id: string) => void;
-  gym_id: string;
+  gym: Gym;
 }) => {
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
   const [isDragging, setIsDragging] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -99,14 +101,15 @@ const DraggableDotsCanvas = (props: {
 
   useEffect(() => {
     // Load SVG
-    const img = new Image();
-    img.src = '/api/gyms/' + props.gym_id + '/layout';
-    img.onload = () => {
-      console.log('svg loaded', img.width, img.height);
-      svgImageRef.current = img;
-      drawCanvas();
-    };
-  }, [props.gym_id]);
+    // const img = new Image();
+    // img.src = '/api/gyms/' + props.gym_id + '/layout';
+    // img.onload = () => {
+    //   console.log('svg loaded', img.width, img.height);
+    //   svgImageRef.current = img;
+    //   drawCanvas();
+    // };
+    drawCanvas();
+  }, [props.gym.id]);
 
   function drawCanvas() {
     const ctx = canvasRef.current?.getContext('2d');
@@ -152,6 +155,8 @@ const DraggableDotsCanvas = (props: {
       if (svgImageRef.current) {
         ctx.drawImage(svgImageRef.current, -55, -70);
       }
+
+      drawLines(props.gym.layout, ctx);
 
       // Draw dots
 

@@ -1,27 +1,8 @@
 import { useRef, useState } from 'react';
 import { Canvas } from './canvas';
 import { Line, Transform } from './types';
-import { drawLine, drawPoints } from './utils';
-
-export interface Area {
-  joined: boolean;
-  points: { x: number; y: number; isDragging: boolean }[];
-  style: 'wall' | 'mat';
-  name: string; // Optional color property for future use
-  color: string;
-}
-
-function drawText(area: Area, ctx: CanvasRenderingContext2D) {
-  ctx.fillStyle = '#0000005e';
-  ctx.font = '8px Arial';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  const centerX =
-    area.points.reduce((sum, point) => sum + point.x, 0) / area.points.length;
-  const centerY =
-    area.points.reduce((sum, point) => sum + point.y, 0) / area.points.length;
-  ctx.fillText(area.name, centerX, centerY);
-}
+import { drawLine, drawPoints, drawText } from './utils';
+import { Area } from '@/types/gym';
 
 function drawPolygon(area: Area, ctx: CanvasRenderingContext2D) {
   ctx.fillStyle = area.color || '#5e5e5e5e';

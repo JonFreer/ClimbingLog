@@ -27,8 +27,6 @@ import { RequestPasswordReset } from './features/auth/components/request-passwor
 import { PasswordResetForm } from './features/auth/components/password-reset-form';
 import 'material-symbols/rounded.css';
 import { GymsPage } from './pages/gyms';
-import MapLocation from './components/ui/map/map-location';
-import MapPage from './components/ui/map/map-page';
 import CreateGym from './pages/create-gym';
 
 const ProtectedRoute = ({
@@ -149,22 +147,6 @@ function App() {
           }
         />
 
-        <Route
-          path="/map"
-          element={
-            <ProtectedRoute authed={user.data && user.data.is_superuser}>
-              <MapPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/map-l"
-          element={
-            <ProtectedRoute authed={user.data && user.data.is_superuser}>
-              <MapLocation />
-            </ProtectedRoute>
-          }
-        />
         <Route
           path="/route_setting"
           element={
