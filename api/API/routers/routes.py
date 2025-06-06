@@ -22,19 +22,26 @@ router = APIRouter()
 @router.get("/routes/get_all", response_model=List[RouteWithClimbCount], tags=["routes"])
 async def get_all_routes(
     response: Response,
-    user:User  = Depends(current_active_user), #TODO: Update this so that is can be optionally used offline
+    user: Optional[User] = Depends(optional_user), #TODO: Update this so that is can be optionally used offline
     db: AsyncSession = Depends(get_db),
 ):
 
-    # result = await db.execute(select(Routes))
-    # routes = result.scalars().all()
-    # return routes
     result = await db.execute(
         select(
             Routes,
             func.sum(case((Climbs.sent == True, 1), else_=0)).label("climb_count"),
-            func.sum(case((and_(Climbs.sent == True,Climbs.user==user.id), 1), else_=0)).label("user_sends"),
-            func.sum(case((and_(Climbs.sent == False,Climbs.user==user.id), 1), else_=0)).label("user_attempts"),
+            func.sum(
+                case(
+                    (and_(Climbs.sent == True, Climbs.user == user.id) if user else False, 1),
+                    else_=0,
+                )
+            ).label("user_sends"),
+            func.sum(
+                case(
+                    (and_(Climbs.sent == False, Climbs.user == user.id) if user else False, 1),
+                    else_=0,
+                )
+            ).label("user_attempts"),
             Circuits.color.label("circuit_color"),
             Circuits.gym_id.label("gym_id")
     

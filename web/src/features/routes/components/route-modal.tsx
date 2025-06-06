@@ -14,6 +14,7 @@ import { colors, colorsBold, colorsHex } from '@/types/colors';
 import { useGyms } from '@/features/gyms/api/get-gyms';
 import MapDots, { Dot } from '@/components/ui/map/map-dot';
 import { useRoutes } from '../api/get-routes';
+import point_in_polygon from 'point-in-polygon';
 
 export default function RouteModal(props: {
   set: Set;
@@ -86,6 +87,22 @@ export default function RouteModal(props: {
     grade: props.route ? props.route.name : '',
     img: null,
   });
+
+  useEffect(() => {
+    const areas = gym.layout.areas;
+    const dot = dots[dots.length - 1];
+    if (dot && areas.length > 0) {
+      const area = areas.find((area) =>
+        point_in_polygon(
+          [dot.x, dot.y],
+          area.points.map((p) => [p.x, p.y]),
+        ),
+      );
+      if (area) {
+        setLocation(area.name);
+      }
+    }
+  }, [dots]);
 
   useEffect(() => {
     const circuite_name = props.circuit.name;
