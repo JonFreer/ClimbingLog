@@ -42,6 +42,7 @@ export const CreateBeta = ({ route_id }: CreateBetaProps) => {
   });
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('File changed:', event.target.files);
     const file = event.target.files[0];
     const url = URL.createObjectURL(file);
     setSource(url);
@@ -129,45 +130,48 @@ export const CreateBeta = ({ route_id }: CreateBetaProps) => {
                                 controls
                                 src={source}
                               />
-
-                              <div
-                                className="mt-4 p-2 bg-gray-600 text-white font-semibold rounded-lg cursor-pointer hover:bg-gray-700"
-                                onClick={() => {
-                                  setSource('');
-                                }}
-                              >
-                                Choose new video
-                              </div>
                             </>
                           ) : (
-                            <div className="min-w-60 mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                            <></>
+                          )}
+
+                          <label
+                            htmlFor="file-upload"
+                            className={
+                              !source
+                                ? 'min-w-60 mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10'
+                                : ''
+                            }
+                          >
+                            {!source ? (
                               <div className="text-center">
                                 <PhotoIcon
                                   aria-hidden="true"
                                   className="mx-auto size-12 text-gray-300"
                                 />
                                 <div className="mt-4 flex text-sm/6 text-gray-600">
-                                  <label
-                                    htmlFor="file-upload"
-                                    className="w-full text-center relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-hidden focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                                  >
+                                  <div className="w-full text-center relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-hidden focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
                                     <span>Upload a video</span>
-                                    <input
-                                      id="file-upload"
-                                      ref={inputRef}
-                                      className="sr-only"
-                                      type="file"
-                                      onChange={handleFileChange}
-                                      accept="video/mp4,video/quicktime"
-                                    />
-                                  </label>
+                                  </div>
                                 </div>
                                 <p className="text-xs/5 text-gray-600">
                                   MOV or MP4
                                 </p>
                               </div>
-                            </div>
-                          )}
+                            ) : (
+                              <div className="w-full text-center relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-hidden focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
+                                Upload a new video
+                              </div>
+                            )}
+                            <input
+                              id="file-upload"
+                              ref={inputRef}
+                              className="sr-only"
+                              type="file"
+                              onChange={handleFileChange}
+                              accept="video/mp4,video/quicktime"
+                            />
+                          </label>
                         </div>
                       </div>
                     </div>
