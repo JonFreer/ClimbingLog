@@ -8,7 +8,6 @@ import { queryClient } from '../main';
 
 const getUser = async (): Promise<User> => {
   const response = await api.get('/users/me');
-  response.home_gym = '51cd5847-4935-4b7a-ae3d-f5b8f9c7b6c9';
   return response;
 };
 

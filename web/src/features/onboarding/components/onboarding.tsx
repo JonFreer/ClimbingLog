@@ -50,6 +50,7 @@ export default function Onboarding() {
               username: user?.data.username,
               send_visible: user?.data.send_visible,
               profile_visible: user?.data.profile_visible,
+              home_gym: user?.data?.home_gym,
             },
           });
         }}
@@ -93,8 +94,16 @@ function HomeGymPicker({
   setHomeGym: (gymId: string | null) => void;
   homeGym: string | null;
 }) {
+  const user = useUser();
   const gyms = useGyms().data || {};
   const [open, setOpen] = useState(false);
+  const updateUserMutation = useUpdateUser({
+    mutationConfig: {
+      onSuccess: () => {
+        setOpen(false);
+      },
+    },
+  });
   return (
     <>
       {homeGym ? (
@@ -161,6 +170,15 @@ function HomeGymPicker({
                           key={gym.id}
                           className="flex hover:bg-gray-100 p-2 rounded w-full cursor-pointer text-left"
                           onClick={() => {
+                            updateUserMutation.mutate({
+                              data: {
+                                home_gym: gym.id,
+                                username: user.data?.username,
+                                send_visible: user.data?.send_visible,
+                                profile_visible: user.data?.profile_visible,
+                                about: user.data?.about,
+                              },
+                            });
                             setHomeGym(gym.id);
                             setOpen(false);
                           }}

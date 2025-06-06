@@ -6,10 +6,11 @@ import { MutationConfig } from '@/lib/react-query';
 import { User } from '@/types/routes';
 
 export const updateUserInputSchema = z.object({
-  username: z.string().min(1, 'Required'),
-  about: z.string(),
-  profile_visible: z.boolean(),
-  send_visible: z.boolean(),
+  username: z.string().min(1, 'Required').optional(),
+  about: z.string().optional(),
+  profile_visible: z.boolean().optional(),
+  send_visible: z.boolean().optional(),
+  home_gym: z.string().optional(),
 });
 
 export type UpdateUserInput = z.infer<typeof updateUserInputSchema>;

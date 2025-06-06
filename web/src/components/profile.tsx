@@ -1,5 +1,5 @@
 import { colors, colorsHex } from '../types/colors';
-import { Circuit, Climb, ClimbSlim, Route, Set, User } from '../types/routes';
+import { Climb, ClimbSlim, Route, User } from '../types/routes';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
 import {
   Chart as ChartJS,
@@ -17,6 +17,9 @@ import { useRoutes } from '../features/routes/api/get-routes';
 import { useUser } from '../lib/auth';
 import { useSidebarState } from './ui/sidebar/sidebar-state';
 import { api } from '@/lib/api-client';
+import { useSets } from '@/features/sets/api/get-sets';
+import { useCircuits } from '@/features/circuits/api/get-circuits';
+import { useGyms } from '@/features/gyms/api/get-gyms';
 
 ChartJS.register(
   CategoryScale,
@@ -58,6 +61,7 @@ export default function Profile() {
   const [climbs, setClimbs] = useState<Climb[]>([]);
   const { openSidebar } = useSidebarState();
   const { id } = useParams();
+  const gyms = useGyms().data || {};
 
   function fetchUser() {
     const username = id || user_me?.username;
@@ -90,61 +94,9 @@ export default function Profile() {
     fetchClimbs();
   }, [id]);
 
-  const labels = Object.values(sets)
-    .map((set) =>
-      new Date(set.date).toLocaleString('default', {
-        month: 'long',
-        year: 'numeric',
-      }),
-    )
-    .filter((value, index, self) => self.indexOf(value) === index) // Remove duplicates
-    .sort((a, b) => {
-      const [aMonth, aYear] = a.split(' ');
-      const [bMonth, bYear] = b.split(' ');
-      return (
-        new Date(`${aYear}-${aMonth}-01`).getTime() -
-        new Date(`${bYear}-${bMonth}-01`).getTime()
-      );
-    }); // Sort by date
-
   const sent_ids = climbs
     .filter((climb) => climb.sent == true)
     .map((climb) => climb.route);
-
-  const out_data: any = {};
-
-  Object.values(sets).forEach((set) => {
-    const n_complete = Object.values(routes).filter(
-      (route) => route.set_id === set.id && sent_ids.includes(route.id),
-    ).length;
-
-    const date = new Date(set.date).toLocaleString('default', {
-      month: 'long',
-      year: 'numeric',
-    });
-    const color = circuits[set.circuit_id]?.color;
-
-    if (color) {
-      out_data[color] = out_data[color] || {};
-      out_data[color][date] = out_data[color][date] || {};
-      out_data[color][date] = n_complete;
-    }
-  });
-
-  const data = {
-    labels: labels,
-    datasets: Object.values(circuits).map((circuit) => {
-      const data = labels.map((label) => {
-        return out_data[circuit.color]?.[label] || 0;
-      });
-
-      return {
-        label: circuit.name,
-        data: data,
-        backgroundColor: colorsHex[circuit.color],
-      };
-    }),
-  };
 
   const locationCounts = Object.entries(
     climbs
@@ -181,7 +133,17 @@ export default function Profile() {
       acc[style] = count;
       return acc;
     }, {} as Record<string, number>);
-
+  if (!user) {
+    return (
+      <div className="bg-gray-100 min-h-screen p-4 sm:mb-8 mb-14">
+        <div className="max-w-3xl mx-auto bg-white rounded-t-xl relative">
+          <div className="p-8 text-center text-gray-600">
+            Loading profile...
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="bg-gray-100 min-h-screen p-4 sm:mb-8 mb-14">
       <div className="max-w-3xl mx-auto bg-white rounded-t-xl relative">
@@ -214,14 +176,15 @@ export default function Profile() {
 
           <div className="absolute left-48 top-22 font text-md text-gray-800 top-4"></div>
         </div>
+        <div className="mt-16 mx-8 font-semibold">
+          Home gym: {gyms[user.home_gym].name}
+        </div>
 
-        <div className="mt-16 m-8">{user.about}</div>
+        <div className="mt-2 m-8">{user.about}</div>
 
         <div className="mt-8 m-8 font-bold">
           Total sends: {sent_ids.length}
-          <div className="h-64">
-            <Bar options={options} data={data} />
-          </div>
+          <Graph user={user} sent_ids={sent_ids}></Graph>
           {locationCounts && Object.keys(locationCounts).length > 0 && (
             <div className="mt-4">
               <div className="font-bold">Location Breakdown</div>
@@ -275,8 +238,6 @@ export default function Profile() {
                     <RouteCardProfile
                       key={climb.route}
                       route={routes[climb.route]}
-                      circuits={circuits}
-                      sets={sets}
                       climb={climb}
                       setSidebarRoute={() => openSidebar(routes[climb.route])}
                     />
@@ -292,13 +253,79 @@ export default function Profile() {
   );
 }
 
+function Graph({ user, sent_ids }: { user: User | false; sent_ids: string[] }) {
+  const gym = user ? user?.home_gym || '' : '';
+  const sets = useSets({ gym_id: gym }).data || {};
+  const circuits = useCircuits({ gym_id: gym }).data?.data || {};
+  const routes = useRoutes().data || {};
+  const labels = Object.values(sets)
+    .map((set) =>
+      new Date(set.date).toLocaleString('default', {
+        month: 'long',
+        year: 'numeric',
+      }),
+    )
+    .filter((value, index, self) => self.indexOf(value) === index) // Remove duplicates
+    .sort((a, b) => {
+      const [aMonth, aYear] = a.split(' ');
+      const [bMonth, bYear] = b.split(' ');
+      return (
+        new Date(`${aYear}-${aMonth}-01`).getTime() -
+        new Date(`${bYear}-${bMonth}-01`).getTime()
+      );
+    }); // Sort by date
+
+  const out_data: any = {};
+
+  Object.values(sets).forEach((set) => {
+    const n_complete = Object.values(routes).filter(
+      (route) => route.set_id === set.id && sent_ids.includes(route.id),
+    ).length;
+
+    const date = new Date(set.date).toLocaleString('default', {
+      month: 'long',
+      year: 'numeric',
+    });
+    const color = circuits[set.circuit_id]?.color;
+
+    if (color) {
+      out_data[color] = out_data[color] || {};
+      out_data[color][date] = out_data[color][date] || {};
+      out_data[color][date] = n_complete;
+    }
+  });
+
+  const data = {
+    labels: labels,
+    datasets: Object.values(circuits).map((circuit) => {
+      const data = labels.map((label) => {
+        return out_data[circuit.color]?.[label] || 0;
+      });
+
+      return {
+        label: circuit.name,
+        data: data,
+        backgroundColor: colorsHex[circuit.color],
+      };
+    }),
+  };
+
+  return (
+    <div className="h-64">
+      <Bar options={options} data={data} />
+    </div>
+  );
+}
+
 export function RouteCardProfile(props: {
   route: Route;
-  circuits: Record<string, Circuit>;
-  sets: Record<string, Set>;
   climb: Climb | ClimbSlim;
   setSidebarRoute: (route: Route) => void;
 }) {
+  const circuits =
+    useCircuits({ gym_id: props.route?.gym_id }).data?.data || {};
+  const sets = useSets({ gym_id: props.route?.gym_id }).data || {};
+
   if (props.route === undefined) {
     return <div></div>;
   }
@@ -329,11 +356,8 @@ export function RouteCardProfile(props: {
         <div
           className={
             'absolute bottom-1 m-1 p-1 px-3 rounded-sm text-white ' +
-            (props.sets[props.route.set_id]
-              ? colors[
-                  props.circuits[props.sets[props.route.set_id].circuit_id]
-                    .color
-                ]
+            (sets[props.route.set_id]
+              ? colors[circuits[sets[props.route.set_id].circuit_id].color]
               : 'bg-gray-500')
           }
         >

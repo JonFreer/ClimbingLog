@@ -34,6 +34,7 @@ export default function Settings() {
             about: e.target.about.value,
             profile_visible: e.target.profile_visible.checked,
             send_visible: e.target.send_visible.checked,
+            home_gym: user.data.home_gym,
           },
         });
       }}

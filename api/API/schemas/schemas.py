@@ -35,6 +35,7 @@ class UserPublic(BaseModel):
     route_setter: bool
     has_profile_photo: bool
     has_cover_photo: bool
+    home_gym: Optional[uuid.UUID]
 
 class Circuit(BaseModel):
     id: uuid.UUID
