@@ -110,7 +110,7 @@ export function RoutesPage() {
                   climbs.filter(
                     (climb) => climb.route === route.id && climb.sent,
                   ).length == 0,
-                radius: 4,
+                radius: 6,
                 draggable: false,
                 color:
                   colorsHex[
@@ -122,6 +122,7 @@ export function RoutesPage() {
           selected_id={selectedRoute}
           updateDots={() => {}}
           setSelected={setSelectedRoute}
+          editMode={false}
         />
       </div>
 
@@ -230,7 +231,7 @@ function MapFilter({
     <Menu>
       <MenuButton
         className={
-          'absolute top-5 right-8 size-12 z-1 rounded-full bg-white shadow-lg hover:bg-gray-50 cursor-pointer flex items-center justify-center text-gray-600'
+          'z-1 absolute top-5 right-8 size-12 rounded-full bg-white shadow-lg hover:bg-gray-50 cursor-pointer flex items-center justify-center text-gray-600'
         }
       >
         <span className="absolute -inset-1.5" />
@@ -250,7 +251,7 @@ function MapFilter({
       ) : null}
       <MenuItems
         transition
-        className="absolute right-7 mt-10 pt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+        className="z-100 absolute right-7 mt-10 pt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
       >
         <div className="px-4 py-2 text-sm text-gray-700 font-semibold">
           Filter

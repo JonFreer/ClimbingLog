@@ -118,6 +118,7 @@ export default function MapDots({
           translateX: 0,
           translateY: 30,
         }}
+        updates={[dots, gym]}
       />
     </div>
   );

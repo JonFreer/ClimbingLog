@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { TouchEvent, useEffect, useRef, useState } from 'react';
 import { Transform } from './types';
-import { getCoordinates } from './utils';
+import { getCoordinates, getPinchDistance, getTouchCenter } from './utils';
 import { zoomOnWheel } from './scroll';
 
 //drawAfter is a function that will be called after the canvas is drawn
@@ -15,7 +15,16 @@ export const Canvas: React.FC<{
   onMove?: (click: { x: number; y: number }) => void;
   onUp?: () => void;
   defaultTransform?: Transform;
-}> = ({ drawAfter, preDrag, onClick, onMove, onUp, defaultTransform }) => {
+  updates?: any[];
+}> = ({
+  drawAfter,
+  preDrag,
+  onClick,
+  onMove,
+  onUp,
+  defaultTransform,
+  updates, // eslint-disable-line @typescript-eslint/no-unused-vars
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const transformRef = useRef<Transform>(
     defaultTransform
@@ -29,6 +38,11 @@ export const Canvas: React.FC<{
   const lastMousePosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const firstMousePosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
+
+  //touch controls
+  const initialPinchDistanceRef = useRef(0);
+  const initialScaleRef = useRef(1);
+  const lastPinchCenterRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -78,11 +92,10 @@ export const Canvas: React.FC<{
   useEffect(() => {
     window.addEventListener('resize', handleResize);
     handleResize();
-
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }); // Re-run on updates to ensure canvas resizes correctly
 
   function handleResize() {
     const canvas = canvasRef.current;
@@ -122,6 +135,67 @@ export const Canvas: React.FC<{
 
   function handleMouseDown(event: React.MouseEvent<HTMLCanvasElement>) {
     event.preventDefault();
+    startMove(event);
+  }
+
+  function handleTouchStart(event: React.TouchEvent<HTMLCanvasElement>) {
+    event.preventDefault();
+    if (!canvasRef.current) {
+      return;
+    }
+    if (event.touches.length === 2) {
+      initialPinchDistanceRef.current = getPinchDistance(event.touches);
+      initialScaleRef.current = transformRef.current.scale;
+      lastPinchCenterRef.current = getTouchCenter(
+        event.touches,
+        canvasRef.current,
+      );
+    }
+    startMove(event.touches[0]);
+  }
+
+  const handleTouchMove = (event: TouchEvent<HTMLCanvasElement>) => {
+    // event.preventDefault();
+    if (!canvasRef.current) {
+      return;
+    }
+    if (event.touches.length === 2) {
+      const newPinchDistance = getPinchDistance(event.touches);
+      const scaleAmount = newPinchDistance / initialPinchDistanceRef.current;
+      const newScale = initialScaleRef.current * scaleAmount;
+      const center = getTouchCenter(event.touches, canvasRef.current);
+      const dx = center.x - lastPinchCenterRef.current.x;
+      const dy = center.y - lastPinchCenterRef.current.y;
+
+      const newTranslateX =
+        center.x -
+        ((center.x - transformRef.current.translateX) * newScale) /
+          transformRef.current.scale;
+      const newTranslateY =
+        center.y -
+        ((center.y - transformRef.current.translateY) * newScale) /
+          transformRef.current.scale;
+
+      transformRef.current = {
+        scale: newScale,
+        translateX: newTranslateX + dx,
+        translateY: newTranslateY + dy,
+      };
+      lastPinchCenterRef.current = center;
+      draw();
+    } else {
+      move(event.touches[0]);
+    }
+  };
+
+  function handleTouchEnd() {
+    // no event parameter needed
+    setIsDraggingCanvas(false);
+    onUp?.();
+  }
+
+  //shared startMove function for touchStart and mousedown
+  function startMove(event: React.MouseEvent<HTMLCanvasElement> | React.Touch) {
     if (!canvasRef.current) {
       return;
     }
@@ -133,7 +207,6 @@ export const Canvas: React.FC<{
     );
 
     const can_drag = preDrag?.(click); // ?? true;
-    console.log('can_drag', can_drag, click);
     if (can_drag) {
       setIsDraggingCanvas(true);
       lastMousePosRef.current = { x: event.clientX, y: event.clientY };
@@ -141,9 +214,8 @@ export const Canvas: React.FC<{
     }
   }
 
-  const handleMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
-    event.preventDefault();
-    console.log('isDraggingCanvas', isDraggingCanvas);
+  //shared move function for mouseMove and touchMove
+  function move(event: React.MouseEvent<HTMLCanvasElement> | React.Touch) {
     if (!canvasRef.current) {
       return;
     }
@@ -165,6 +237,11 @@ export const Canvas: React.FC<{
       );
       onMove?.(click);
     }
+  }
+
+  const handleMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    event.preventDefault();
+    move(event);
   };
 
   function handleMouseLeave() {
@@ -183,7 +260,6 @@ export const Canvas: React.FC<{
       lastMousePosRef.current.x != firstMousePosRef.current.x &&
       lastMousePosRef.current.y != firstMousePosRef.current.y
     ) {
-      console.log('Mouse moved, not a click');
       return;
     }
 
@@ -193,7 +269,6 @@ export const Canvas: React.FC<{
       transformRef.current,
     );
     // Handle click logic here if needed
-    console.log('Canvas clicked at:', click);
 
     onClick?.(click);
   }
@@ -208,6 +283,10 @@ export const Canvas: React.FC<{
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
+        // Touch events
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         onWheel={(event) => {
           zoomOnWheel(event, draw, transformRef, canvasRef);
         }}

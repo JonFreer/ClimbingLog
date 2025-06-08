@@ -16,6 +16,10 @@ export function GymDropDown() {
   const user = useUser();
   useEffect(() => {
     if (Object.keys(gyms).length > 0 && !current_gym) {
+      if (user.data?.home_gym && gyms[user.data.home_gym]) {
+        setCurrentGym(user.data.home_gym);
+        return;
+      }
       const firstGymId = Object.keys(gyms)[0];
       setCurrentGym(firstGymId);
     }

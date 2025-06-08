@@ -1,8 +1,7 @@
 import { Area, Layout } from '@/types/gym';
 import { Line, Transform } from './types';
-
 export function getCoordinates(
-  event: React.MouseEvent<HTMLCanvasElement>,
+  event: React.MouseEvent<HTMLCanvasElement> | React.Touch,
   canvas: HTMLCanvasElement,
   transform: Transform,
 ) {
@@ -12,6 +11,16 @@ export function getCoordinates(
   const y = (event.clientY - rect.top - transform.translateY) / transform.scale;
 
   return { x, y };
+}
+
+export function getTouchCenter(
+  touchList: React.TouchList,
+  canvas: HTMLCanvasElement,
+) {
+  const rect = canvas.getBoundingClientRect();
+  const centerX = (touchList[0].clientX + touchList[1].clientX) / 2 - rect.left;
+  const centerY = (touchList[0].clientY + touchList[1].clientY) / 2 - rect.top;
+  return { x: centerX, y: centerY };
 }
 
 export function drawPoints(line: Line, ctx: CanvasRenderingContext2D) {
@@ -126,3 +135,9 @@ export function drawText(area: Area, ctx: CanvasRenderingContext2D) {
   ctx.strokeText(area.name, centerX, centerY);
   ctx.fillText(area.name, centerX, centerY);
 }
+
+export const getPinchDistance = (touches: React.TouchList) => {
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+};
