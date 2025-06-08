@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Circuit, Set } from '../types/routes';
 import { RouteList } from './route-list';
-import DraggableDotsCanvas from './map';
 import {
   colors,
   colorsBold,
@@ -16,12 +15,18 @@ import { useSets } from '../features/sets/api/get-sets';
 import { useClimbs } from '../features/climbs/api/get-climbs';
 import { useProjects } from '../features/projects/api/get-projects';
 import { Checkbox, Menu, MenuButton, MenuItems } from '@headlessui/react';
+import { useCurrentGym } from '@/features/gyms/store/current-gym';
+import { useGyms } from '@/features/gyms/api/get-gyms';
+import MapDots from './ui/map/map-dot';
 
 export function RoutesPage() {
+  const { current_gym } = useCurrentGym();
+  const gyms = useGyms().data || {};
   const routes = useRoutes().data || {};
-  const sets = useSets().data ?? {};
-  const circuits = useCircuits().data?.data ?? {};
-  const circuitsOrder = useCircuits().data?.order ?? [];
+  const sets = useSets({ gym_id: current_gym || '' }).data ?? {};
+  const circuits = useCircuits({ gym_id: current_gym || '' }).data?.data ?? {};
+  const circuitsOrder =
+    useCircuits({ gym_id: current_gym || '' }).data?.order ?? [];
   const climbs = useClimbs().data ?? [];
   const projects = useProjects().data ?? [];
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
@@ -62,11 +67,15 @@ export function RoutesPage() {
 
   const selectedRouteData = routes[selectedRoute] || null;
 
+  if (!gyms[current_gym || '']) {
+    return <>{current_gym}</>;
+  }
+
   return (
     <div className="sm:mb-8 mb-16 relative px-4">
       <MapFilter filterState={filterState} setFilterState={setFilterState} />
       <div className="shadow-xl shadow-slate-200/60 z-10 mb-4 bg-white rounded-3xl ">
-        <DraggableDotsCanvas
+        <MapDots
           dots={
             Object.values(routes)
               .filter(
@@ -109,6 +118,7 @@ export function RoutesPage() {
                   ],
               })) || []
           }
+          gym={gyms[current_gym || '']}
           selected_id={selectedRoute}
           updateDots={() => {}}
           setSelected={setSelectedRoute}

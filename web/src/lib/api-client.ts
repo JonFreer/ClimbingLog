@@ -1,5 +1,5 @@
 import Axios, { InternalAxiosRequestConfig } from 'axios';
-import { useNotifications } from '../components/ui/notifications';
+import { Notification, useNotifications } from '../components/ui/notifications';
 
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
   if (config.headers) {
@@ -24,12 +24,12 @@ api.interceptors.response.use(
     // console.error("API error:", error);
     const message = error.response?.data?.message || error.message;
 
-    if (error.response?.status !== 401) {
+    if (error.response?.status !== 401 && error.response?.status !== 404) {
       useNotifications.getState().addNotification({
         type: 'error',
         title: 'Error',
         message,
-      });
+      } as Notification);
     }
 
     // if (error.response?.status === 401) {

@@ -7,31 +7,51 @@ from fastapi.responses import FileResponse, Response
 from PIL import Image, ImageOps
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy import func
+from sqlalchemy import func, and_
+from sqlalchemy import case
 
-from .. import schemas
+from ..schemas.route import RouteWithClimbCount, Route
+from ..schemas import schemas
 from ..db import get_db
-from ..models import Climbs, Routes
-from ..users import User, current_active_user
+from ..models import Circuits, Climbs, Routes, Sets
+from ..users import User, current_active_user, optional_user
 
 router = APIRouter()
 
 
-@router.get("/routes/get_all", response_model=List[schemas.RouteWithClimbCount], tags=["routes"])
+@router.get("/routes/get_all", response_model=List[RouteWithClimbCount], tags=["routes"])
 async def get_all_routes(
     response: Response,
+    user: Optional[User] = Depends(optional_user), #TODO: Update this so that is can be optionally used offline
     db: AsyncSession = Depends(get_db),
 ):
-    # result = await db.execute(select(Routes))
-    # routes = result.scalars().all()
-    # return routes
+
     result = await db.execute(
         select(
             Routes,
-            func.count(Climbs.id).label("climb_count")
-        ).outerjoin(Climbs, (Climbs.route == Routes.id) & (Climbs.sent == True))
-        .group_by(Routes.id)
-    )
+            func.sum(case((Climbs.sent == True, 1), else_=0)).label("climb_count"),
+            func.sum(
+                case(
+                    (and_(Climbs.sent == True, Climbs.user == user.id) if user else False, 1),
+                    else_=0,
+                )
+            ).label("user_sends"),
+            func.sum(
+                case(
+                    (and_(Climbs.sent == False, Climbs.user == user.id) if user else False, 1),
+                    else_=0,
+                )
+            ).label("user_attempts"),
+            Circuits.color.label("circuit_color"),
+            Circuits.gym_id.label("gym_id")
+    
+        )
+           .outerjoin(Climbs, Climbs.route == Routes.id)
+            .outerjoin(Sets, Sets.id == Routes.set_id)  # Join with Sets
+            .outerjoin(Circuits, Circuits.id == Sets.circuit_id)  # Join with Circuits
+            .group_by(Routes.id, Circuits.color, Circuits.gym_id)  # Group by Routes.id and Circuits.color #TODO: I think I can just group by route_id
+
+    )   
     routes_with_counts = [
         {
             "id": route.id,
@@ -43,8 +63,12 @@ async def get_all_routes(
             "x": route.x,
             "y": route.y,
             "climb_count": climb_count,
+            "user_sends": user_sends,
+            "user_attempts": user_attempts,
+            "color": circuit_color if circuit_color is not None else "Unknown",
+            "gym_id": gym_id
         }
-        for route, climb_count in result.all()
+        for route, climb_count, user_sends, user_attempts, circuit_color, gym_id in result.all()
     ]
     return routes_with_counts
 
@@ -80,7 +104,7 @@ async def get_route(
     return {"users": sent_by, "num_users": len(user_ids)}
 
 
-@router.post("/routes/create_with_image", response_model=schemas.Route, tags=["routes"])
+@router.post("/routes/create_with_image", response_model=Route, tags=["routes"])
 async def create_route_with_image(
     name: Annotated[str, Form(...)],
     grade: Annotated[str, Form(...)],
@@ -120,7 +144,7 @@ async def create_route_with_image(
     return new_route
 
 
-@router.patch("/routes/update", response_model=schemas.Route, tags=["routes"])
+@router.patch("/routes/update", response_model=Route, tags=["routes"])
 async def update_route(
     route_id: Annotated[uuid.UUID, Form(...)],
     name: Annotated[str, Form(...)],

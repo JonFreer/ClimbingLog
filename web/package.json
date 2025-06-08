@@ -29,6 +29,7 @@
     "jsdom": "^26.1.0",
     "material-symbols": "^0.31.3",
     "npm": "^11.2.0",
+    "point-in-polygon": "^1.1.0",
     "react": "^19.0.0",
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.0.0",
@@ -43,6 +44,7 @@
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@tailwindcss/postcss": "^4.0.17",
+    "@types/point-in-polygon": "^1.1.5",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",

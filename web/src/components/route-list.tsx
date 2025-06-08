@@ -4,18 +4,19 @@ import { colors, colorsBorder, colorsPastel } from '../types/colors';
 import { useRoutes } from '../features/routes/api/get-routes';
 import { useCircuits } from '../features/circuits/api/get-circuits';
 import { useSets } from '../features/sets/api/get-sets';
-import { useClimbs } from '../features/climbs/api/get-climbs';
 import { useProjects } from '../features/projects/api/get-projects';
 import { useSidebarState } from './ui/sidebar/sidebar-state';
 import { cmpStringsWithNumbers } from '@/utils/sort';
+import { useCurrentGym } from '@/features/gyms/store/current-gym';
 
 export function RouteList() {
+  const { current_gym } = useCurrentGym();
   const routes = useRoutes().data || {};
-  const sets = useSets().data || {};
-  const climbs = useClimbs().data ?? [];
+  const sets = useSets({ gym_id: current_gym || '' }).data || {};
   const projects = useProjects().data ?? [];
-  const circuits = useCircuits().data?.data ?? {};
-  const circuitsOrder = useCircuits().data?.order ?? [];
+  const circuits = useCircuits({ gym_id: current_gym || '' }).data?.data ?? {};
+  const circuitsOrder =
+    useCircuits({ gym_id: current_gym || '' }).data?.order ?? [];
 
   const [sortType, setSortType] = useState(() => {
     const savedSortType = localStorage.getItem('sortType');
@@ -26,12 +27,12 @@ export function RouteList() {
     localStorage.setItem('sortType', JSON.stringify(sortType));
   }, [sortType]);
 
-  let sent_ids: string[] = [];
-  if (climbs != undefined) {
-    sent_ids = climbs
-      .filter((climb) => climb.sent == true)
-      .map((climb) => climb.route);
-  }
+  // let sent_ids: string[] = [];
+  // if (climbs != undefined) {
+  //   sent_ids = climbs
+  //     .filter((climb) => climb.sent == true)
+  //     .map((climb) => climb.route);
+  // }
 
   if (circuits == undefined) {
     return <div> Loading </div>;
@@ -57,14 +58,13 @@ export function RouteList() {
         {projects.length > 0 ? (
           <RouteDropDown
             name={'Your Projects'}
-            sent_ids={sent_ids}
             routes={Object.values(routes)
               .filter((route) => projects.includes(route.id))
               .sort((a, b) => {
                 if (sortType.id == 1) {
                   return cmpStringsWithNumbers(a.name, b.name);
                 } else if (sortType.id == 2) {
-                  return sent_ids.includes(a.id) ? -1 : 1;
+                  return a.user_sends > b.user_sends ? -1 : 1;
                 } else if (sortType.id == 3) {
                   return a.climb_count > b.climb_count ? -1 : 1;
                 } else if (sortType.id == 4) {
@@ -87,14 +87,13 @@ export function RouteList() {
           .map((circuit) => (
             <RouteDropDown
               name={circuit.name}
-              sent_ids={sent_ids}
               routes={Object.values(routes)
                 .filter((route) => route.set_id === active_sets[circuit.id]?.id)
                 .sort((a, b) => {
                   if (sortType.id == 1) {
                     return cmpStringsWithNumbers(a.name, b.name);
                   } else if (sortType.id == 2) {
-                    return sent_ids.includes(a.id) ? -1 : 1;
+                    return a.user_sends > b.user_sends ? -1 : 1;
                   } else if (sortType.id == 3) {
                     return a.climb_count > b.climb_count ? -1 : 1;
                   } else if (sortType.id == 4) {
@@ -118,18 +117,17 @@ export function RouteList() {
 
 function RouteDropDown({
   routes,
-  sent_ids,
   name,
   color,
 }: {
   routes: Route[];
-  sent_ids: string[];
   name: string;
   color: string;
 }) {
+  const { current_gym } = useCurrentGym();
   const [open, setOpen] = useState(false);
-  const circuits = useCircuits().data?.data ?? {};
-  const sets = useSets().data || {};
+  const circuits = useCircuits({ gym_id: current_gym || '' }).data?.data ?? {};
+  const sets = useSets({ gym_id: current_gym || '' }).data || {};
   const { openSidebar } = useSidebarState();
 
   return (
@@ -150,9 +148,8 @@ function RouteDropDown({
             <div className="ml-auto">
               {' '}
               {
-                Object.values(routes).filter((route) =>
-                  sent_ids.includes(route.id),
-                ).length
+                Object.values(routes).filter((route) => route.user_sends > 0)
+                  .length
               }{' '}
               / {Object.values(routes).length}
             </div>
@@ -163,8 +160,8 @@ function RouteDropDown({
                 className={` h-3 rounded-full bg-linear-to-r  ${color}`}
                 style={{
                   width: `${
-                    (Object.values(routes).filter((route) =>
-                      sent_ids.includes(route.id),
+                    (Object.values(routes).filter(
+                      (route) => route.user_sends > 0,
                     ).length /
                       Object.values(routes).length) *
                     100
@@ -173,26 +170,6 @@ function RouteDropDown({
               ></div>
             </div>
           </div>
-          {/* <div className="flex items-center w-full">
-            <span
-              className={`text-lg font-bold text-white uppercase px-4 py-2 pr-10 min-w-52 rounded-l-lg clip-path ${color}`}
-            >
-              {name}
-            </span>
-            <span className={'font-bold ml-auto mr-2'}>
-              {
-                Object.values(routes).filter((route) =>
-                  sent_ids.includes(route.id),
-                ).length
-              }{' '}
-              / {Object.values(routes).length} Routes
-            </span>
-          </div>
-          <ChevronRightIcon
-            className={`h-5 w-5 mr-3 transform transition-transform ${
-              open ? 'rotate-90' : ''
-            }`}
-          /> */}
         </button>
         {open && (
           <div className="ml mt-2" key={'projects'}>
@@ -218,7 +195,7 @@ function RouteDropDown({
                         <h3 className="text-lg leading-6 font-medium text-gray-900">
                           {route.name}
                         </h3>
-                        {sent_ids.includes(route.id) ? (
+                        {route.user_sends > 0 ? (
                           <span
                             className={
                               'ml-auto inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white ' +

@@ -26,6 +26,8 @@ import { useJustRegistered } from './features/auth/hooks/just-registered';
 import { RequestPasswordReset } from './features/auth/components/request-password-reset';
 import { PasswordResetForm } from './features/auth/components/password-reset-form';
 import 'material-symbols/rounded.css';
+import { GymsPage } from './pages/gyms';
+import CreateGym from './pages/create-gym';
 
 const ProtectedRoute = ({
   authed,
@@ -127,6 +129,24 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/gyms"
+          element={
+            <ProtectedRoute authed={user.data && user.data.is_superuser}>
+              <GymsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/create_gym"
+          element={
+            <ProtectedRoute authed={user.data && user.data.is_superuser}>
+              <CreateGym />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/route_setting"
           element={

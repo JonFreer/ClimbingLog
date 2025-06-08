@@ -14,7 +14,7 @@ from sqlalchemy.future import select
 
 from .db import get_user_db
 from .models import User
-from .schemas import UserCreate, UserUpdate
+from .schemas.schemas import UserCreate, UserUpdate
 
 SECRET = "SECRET"
 
@@ -106,3 +106,8 @@ fastapi_users = FastAPIUsers[User, uuid.UUID](get_user_manager, [auth_backend])
 
 current_active_user = fastapi_users.current_user(active=True)
 current_active_superuser = fastapi_users.current_user(active=True, superuser=True)
+
+async def optional_user(
+    user: User = Depends(fastapi_users.current_user(optional=True))
+) -> Optional[User]:
+    return user 

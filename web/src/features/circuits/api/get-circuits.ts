@@ -16,11 +16,13 @@ export const orderedColors = [
   'Orange',
 ];
 
-export const getCircuits = (): Promise<{
+export const getCircuits = (
+  gym_id: string,
+): Promise<{
   data: Record<string, Circuit>;
   order: string[];
 }> => {
-  return api.get(`/api/circuits/get_all`).then((response) => {
+  return api.get(`/circuits/${gym_id}`).then((response) => {
     const circuitsArray = response;
     const circuitsDict = circuitsArray.reduce(
       (dict: Record<string, Circuit>, circuit: Circuit) => {
@@ -48,10 +50,10 @@ export const getCircuits = (): Promise<{
   });
 };
 
-export const getCircuitsQueryOptions = () => {
+export const getCircuitsQueryOptions = (gym_id: string) => {
   return queryOptions({
-    queryKey: ['circuits'],
-    queryFn: () => getCircuits(),
+    queryKey: ['circuits', gym_id],
+    queryFn: () => getCircuits(gym_id),
     placeholderData: { data: {}, order: [] },
     // select: (response) => response,
   });
@@ -61,9 +63,12 @@ type UseCircuitsOptions = {
   queryConfig?: QueryConfig<typeof getCircuitsQueryOptions>;
 };
 
-export const useCircuits = ({ queryConfig = {} }: UseCircuitsOptions = {}) => {
+export const useCircuits = ({
+  gym_id,
+  queryConfig = {},
+}: UseCircuitsOptions & { gym_id: string }) => {
   return useQuery({
-    ...getCircuitsQueryOptions(),
+    ...getCircuitsQueryOptions(gym_id),
     ...queryConfig,
   });
 };

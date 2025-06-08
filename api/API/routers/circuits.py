@@ -6,7 +6,7 @@ from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from .. import schemas
+from ..schemas import schemas
 from ..db import get_db
 from ..models import Circuits
 from ..users import User, current_active_user
@@ -15,13 +15,14 @@ router = APIRouter()
 
 
 @router.get(
-    "/circuits/get_all", response_model=List[schemas.Circuit], tags=["circuits"]
+    "/circuits/{gym_id}", response_model=List[schemas.Circuit], tags=["circuits"]
 )
 async def get_all_circuits(
+    gym_id: uuid.UUID,
     response: Response,
     db: AsyncSession = Depends(get_db),
 ):
-    result = await db.execute(select(Circuits))
+    result = await db.execute(select(Circuits).filter(Circuits.gym_id == gym_id))
     circuits = result.scalars().all()
     return circuits
 
@@ -30,12 +31,13 @@ async def get_all_circuits(
 async def create_circuit(
     name: Annotated[str, Form(...)],
     color: Annotated[str, Form(...)],
+    gym_id: Annotated[uuid.UUID, Form(...)],
     db: AsyncSession = Depends(get_db),
     user: User = Depends(current_active_user),
 ):
     if not user.is_superuser and not user.route_setter:
         raise HTTPException(status_code=403, detail="Not enough permissions")
-    new_circuit = Circuits(name=name, color=color)
+    new_circuit = Circuits(name=name, color=color, gym_id=gym_id)
     db.add(new_circuit)
     await db.commit()
     await db.refresh(new_circuit)

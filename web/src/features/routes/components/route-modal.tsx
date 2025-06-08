@@ -1,23 +1,24 @@
-import { Route, Circuit } from '@/types/routes';
+import { Route, Circuit, Set } from '@/types/routes';
 import { useEffect, useState } from 'react';
 import { UseMutationResult } from '@tanstack/react-query';
-import { Dot } from '@/components/map';
+
 import {
   Dialog,
   DialogBackdrop,
   DialogPanel,
   DialogTitle,
 } from '@headlessui/react';
-import DraggableDotsCanvas from '@/components/map';
 import { CreateRouteInput } from '../api/create-route';
 import { UpdateRouteInput } from '../api/update-route';
 import { colors, colorsBold, colorsHex } from '@/types/colors';
+import { useGyms } from '@/features/gyms/api/get-gyms';
+import MapDots, { Dot } from '@/components/ui/map/map-dot';
+import { useRoutes } from '../api/get-routes';
+import point_in_polygon from 'point-in-polygon';
 
 export default function RouteModal(props: {
-  routes: Record<string, Route>;
-  circuits: Record<string, Circuit>;
-  set_id: string;
-  circuit_id: string;
+  set: Set;
+  circuit: Circuit;
   route: Route | null;
   open: boolean;
   setRoute: UseMutationResult<
@@ -30,22 +31,6 @@ export default function RouteModal(props: {
   >;
   setOpen: (bool: boolean) => void;
 }) {
-  const locations = [
-    'Smol Slab',
-    'Slab',
-    'Skip',
-    'Cave',
-    'Shutter Right',
-    'Shutter Left',
-    'Comp Wall',
-    'Comp Overhang',
-    'Fire Escape',
-    'Island N',
-    'Island S',
-    'Island E',
-    'Island W',
-    'Ondra',
-  ];
   const styles_list = [
     'Slab',
     'Vertical',
@@ -73,26 +58,22 @@ export default function RouteModal(props: {
     'Deadpoint',
     'Campus',
   ];
+  const routes = useRoutes().data || {};
   const [location, setLocation] = useState<string>('');
   const [styles, setStyles] = useState<string[]>([]);
+  const gym = (useGyms().data || {})[props.circuit.gym_id];
 
-  const [dots, setDots] = useState<Dot[]>([
-    {
-      x: props.route ? props.route.x : 0,
-      y: props.route ? props.route.y : 0,
-      isDragging: false,
-      complete: true,
-      radius: 6,
-      draggable: true,
-      color: colorsHex[props.circuits[props.circuit_id]?.color],
-      id: '',
-    },
-  ]);
+  const routes_in_set = Object.values(routes).filter(
+    (route) => route.set_id == props.set.id,
+  );
 
-  const circuite_name = props.circuits[props.circuit_id]?.name || '';
+  const [dots, setDots] = useState<Dot[]>([]);
+  const locations = gym.layout.areas.map((area) => area.name);
 
-  const num_routes_in_set = Object.values(props.routes).filter(
-    (route) => route.set_id === props.set_id,
+  const circuite_name = props.circuit.name || '';
+
+  const num_routes_in_set = Object.values(routes).filter(
+    (route) => route.set_id === props.set.id,
   ).length;
 
   const [formData, setFormData] = useState<{
@@ -108,9 +89,25 @@ export default function RouteModal(props: {
   });
 
   useEffect(() => {
-    const circuite_name = props.circuits[props.circuit_id]?.name || '';
-    const num_routes_in_set = Object.values(props.routes).filter(
-      (route) => route.set_id === props.set_id,
+    const areas = gym.layout.areas;
+    const dot = dots[dots.length - 1];
+    if (dot && areas.length > 0) {
+      const area = areas.find((area) =>
+        point_in_polygon(
+          [dot.x, dot.y],
+          area.points.map((p) => [p.x, p.y]),
+        ),
+      );
+      if (area) {
+        setLocation(area.name);
+      }
+    }
+  }, [dots]);
+
+  useEffect(() => {
+    const circuite_name = props.circuit.name;
+    const num_routes_in_set = Object.values(routes).filter(
+      (route) => route.set_id === props.set.id,
     ).length;
     console.log('Circuit name: ', circuite_name);
     console.log('Number of routes in set: ', num_routes_in_set);
@@ -123,19 +120,32 @@ export default function RouteModal(props: {
       grade: props.route ? props.route.name : '',
       img: null,
     });
-    setDots([
-      {
-        x: props.route ? props.route.x : 0,
-        y: props.route ? props.route.y : 0,
-        isDragging: false,
-        complete: true,
-        radius: 6,
-        draggable: true,
-        color: colorsHex[props.circuits[props.circuit_id]?.color],
-        id: '',
-      },
-    ]);
-  }, [props.route, props.set_id, props.open]);
+    setDots(
+      routes_in_set
+        .map((route) => ({
+          x: route.x,
+          y: route.y,
+          isDragging: false,
+          complete: false,
+          radius: 4,
+          draggable: false,
+          color: colorsHex[props.circuit.color],
+          id: '',
+        }))
+        .concat([
+          {
+            x: props.route ? props.route.x : 0,
+            y: props.route ? props.route.y : 0,
+            isDragging: false,
+            complete: true,
+            radius: 6,
+            draggable: true,
+            color: colorsHex[props.circuit.color],
+            id: '',
+          },
+        ]),
+    );
+  }, [props.route, props.set.id, props.open]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -155,9 +165,9 @@ export default function RouteModal(props: {
         location: location,
         grade: formData.grade,
         style: styles.join(','),
-        set_id: props.set_id,
-        x: dots[0].x.toString(),
-        y: dots[0].y.toString(),
+        set_id: props.set.id,
+        x: dots[dots.length - 1].x.toString(),
+        y: dots[dots.length - 1].y.toString(),
         file: formData.img,
       },
     });
@@ -167,7 +177,7 @@ export default function RouteModal(props: {
     <Dialog
       open={props.open}
       onClose={() => props.setOpen(false)}
-      className="relative z-10"
+      className="relative z-200"
     >
       <DialogBackdrop
         transition
@@ -215,10 +225,13 @@ export default function RouteModal(props: {
                       </label>
                     </div>
 
-                    <DraggableDotsCanvas
+                    <MapDots
                       dots={dots}
                       updateDots={(dots) => setDots(dots)}
                       setSelected={() => {}}
+                      gym={gym}
+                      selected_id={null}
+                      editMode={true}
                     />
                     <div>
                       <div className="flex items-center justify-between">
@@ -265,14 +278,8 @@ export default function RouteModal(props: {
                             className={
                               'justify-center rounded-md  px-3 py-2 text-sm shadow-md sm:w-auto mb-1 cursor-pointer select-none ' +
                               (location === loc
-                                ? `${
-                                    colors[
-                                      props.circuits[props.circuit_id].color
-                                    ]
-                                  } hover:${
-                                    colorsBold[
-                                      props.circuits[props.circuit_id].color
-                                    ]
+                                ? `${colors[props.circuit.color]} hover:${
+                                    colorsBold[props.circuit.color]
                                   } text-white`
                                 : 'bg-white hover:bg-gray-100 text-gray-500')
                             }
@@ -306,14 +313,8 @@ export default function RouteModal(props: {
                             className={
                               'justify-center rounded-md  px-3 py-2 text-sm shadow-md sm:w-auto mb-1 cursor-pointer select-none ' +
                               (styles.includes(loc)
-                                ? `${
-                                    colors[
-                                      props.circuits[props.circuit_id].color
-                                    ]
-                                  } hover:${
-                                    colorsBold[
-                                      props.circuits[props.circuit_id].color
-                                    ]
+                                ? `${colors[props.circuit.color]} hover:${
+                                    colorsBold[props.circuit.color]
                                   } text-white`
                                 : 'bg-white hover:bg-gray-100 text-gray-500')
                             }

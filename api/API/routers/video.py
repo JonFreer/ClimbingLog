@@ -1,6 +1,6 @@
 
 import datetime
-from .. import schemas
+from ..schemas import schemas
 from ..db import get_db
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile,Form
 from fastapi.responses import FileResponse, Response

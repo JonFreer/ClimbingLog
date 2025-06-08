@@ -1,21 +1,17 @@
-import { useNotifications } from '@/components/ui/notifications';
+import { useNotifications, Notification } from '@/components/ui/notifications';
 import { useUpdateRoute } from '../api/update-route';
-import { Route } from '@/types/routes';
+import { Circuit, Route, Set } from '@/types/routes';
 import RouteModal from './route-modal';
-import { useRoutes } from '../api/get-routes';
-import { useCircuits } from '../../circuits/api/get-circuits';
 import { useState } from 'react';
 import { PencilIcon } from '@heroicons/react/24/outline';
 type EditRouteProps = {
-  set_id: string;
-  circuit_id: string;
+  set: Set;
+  circuit: Circuit;
   route: Route;
 };
 
-export const UpdateRoute = ({ set_id, circuit_id, route }: EditRouteProps) => {
+export const UpdateRoute = ({ set, circuit, route }: EditRouteProps) => {
   const [open, setOpen] = useState(false);
-  const { data: routes } = useRoutes();
-  const { data: circuits } = useCircuits();
 
   const { addNotification } = useNotifications();
 
@@ -25,7 +21,7 @@ export const UpdateRoute = ({ set_id, circuit_id, route }: EditRouteProps) => {
         addNotification({
           type: 'success',
           title: 'Route Updated',
-        });
+        } as Notification);
         setOpen(false);
       },
       onError: (error) => {
@@ -33,7 +29,7 @@ export const UpdateRoute = ({ set_id, circuit_id, route }: EditRouteProps) => {
           type: 'error',
           title: 'Route Update Failed',
           message: error.message,
-        });
+        } as Notification);
       },
     },
   });
@@ -49,10 +45,8 @@ export const UpdateRoute = ({ set_id, circuit_id, route }: EditRouteProps) => {
         <PencilIcon aria-hidden="true" className="h-5 w-5" />
       </button>
       <RouteModal
-        routes={routes?.data || []}
-        circuits={circuits?.data || {}}
-        set_id={set_id}
-        circuit_id={circuit_id}
+        set={set}
+        circuit={circuit}
         route={route}
         open={open}
         setRoute={updateRouteMutation}

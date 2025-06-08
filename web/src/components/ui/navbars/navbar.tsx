@@ -12,6 +12,7 @@ import { UserCircleIcon } from '@heroicons/react/24/solid';
 import { useState } from 'react';
 import { NavLink } from 'react-router';
 import { useLogout, useUser } from '@/lib/auth';
+import { GymDropDown } from '@/features/gyms/components/gym-dropdown';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -32,6 +33,7 @@ export function NavBar() {
 
   if (user.data && user.data.is_superuser) {
     navigation.push({ name: 'Admin', href: '/admin', current: false });
+    navigation.push({ name: 'Gyms', href: '/gyms', current: false });
   }
 
   if (user.data && user.data.route_setter) {
@@ -80,11 +82,15 @@ export function NavBar() {
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex shrink-0 items-center">
-              <img
-                alt="VolumeDB"
-                src="/logo.svg"
-                className="h-8 w-auto" // This will invert the colors and apply a hue shift to the SVG
-              />
+              {window.location.pathname != '/' ? (
+                <img
+                  alt="VolumeDB"
+                  src="/logo.svg"
+                  className="h-8 w-auto" // This will invert the colors and apply a hue shift to the SVG
+                />
+              ) : (
+                <GymDropDown />
+              )}
             </div>
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
@@ -114,16 +120,6 @@ export function NavBar() {
 
           {user.data ? (
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              {/* <button
-                type="button"
-                className="relative rounded-full bg-none p-1 text-indigo-200 hover:text-white focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-              >
-                <span className="absolute -inset-1.5" />
-                <span className="sr-only">View notifications</span>
-                <BellIcon aria-hidden="true" className="size-6" />
-              </button> */}
-
-              {/* Profile dropdown */}
               <Menu as="div" className="relative ml-3">
                 <div>
                   <MenuButton className="relative flex rounded-full bg-none text-sm focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-500">
@@ -210,26 +206,31 @@ export function NavBar() {
           animation: 'bounce-down 0.4s ease-out',
         }}
       >
-        {/* <div className="space-y-1 px-2 pb-3 pt-2"> */}
-        {navigation.map((item) => (
-          <NavLink
-            onClick={() => setPath(item.href)}
-            key={item.name}
-            to={item.href}
-            aria-current={
-              item.href === window.location.pathname ? 'page' : undefined
-            }
-            className={classNames(
-              item.href === window.location.pathname
-                ? 'bg-gray-200 text-gray-700'
-                : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700',
-              'block rounded-md px-3 py-2 text-base font-medium mt-1',
-            )}
-          >
-            {item.name}
-          </NavLink>
-        ))}
-        {/* </div> */}
+        {({ close }) => (
+          <>
+            {navigation.map((item) => (
+              <NavLink
+                onClick={() => {
+                  setPath(item.href);
+                  close();
+                }}
+                key={item.name}
+                to={item.href}
+                aria-current={
+                  item.href === window.location.pathname ? 'page' : undefined
+                }
+                className={classNames(
+                  item.href === window.location.pathname
+                    ? 'bg-gray-200 text-gray-700'
+                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700',
+                  'block rounded-md px-3 py-2 text-base font-medium mt-1',
+                )}
+              >
+                {item.name}
+              </NavLink>
+            ))}
+          </>
+        )}
       </PopoverPanel>
     </Popover>
   );

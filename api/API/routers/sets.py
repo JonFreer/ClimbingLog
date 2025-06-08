@@ -7,9 +7,9 @@ from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from .. import schemas
+from ..schemas import schemas
 from ..db import get_db
-from ..models import Routes, Sets
+from ..models import Circuits, Routes, Sets
 from ..users import User, current_active_user
 
 router = APIRouter()
@@ -17,12 +17,17 @@ router = APIRouter()
 # update circuit_id to set_id
 
 
-@router.get("/sets/get_all", response_model=List[schemas.Set], tags=["sets"])
+@router.get("/sets/{gym_id}", response_model=List[schemas.Set], tags=["sets"])
 async def get_all_sets(
+    gym_id: uuid.UUID,
     response: Response,
     db: AsyncSession = Depends(get_db),
 ):
-    result = await db.execute(select(Sets))
+    result = await db.execute(
+        select(Sets)
+        .join(Circuits, Sets.circuit_id == Circuits.id)
+        .filter(Circuits.gym_id == gym_id)
+    )
     sets = result.scalars().all()
     return sets
 
