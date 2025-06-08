@@ -62,7 +62,13 @@ export default function MapLocation({
       drawPolygon(area, ctx);
       drawText(area, ctx);
     }
-    drawPoints(areas[activeLineIndex], ctx);
+
+    drawPoints(
+      areas[
+        activeLineIndex >= areas.length ? areas.length - 1 : activeLineIndex
+      ],
+      ctx,
+    );
   }
 
   function preDrag(click: { x: number; y: number }) {

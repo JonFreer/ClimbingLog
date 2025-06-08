@@ -113,6 +113,11 @@ export default function MapDots({
         onClick={onClick}
         onMove={onMove}
         onUp={onUp}
+        defaultTransform={{
+          scale: 1.4,
+          translateX: 0,
+          translateY: 30,
+        }}
       />
     </div>
   );

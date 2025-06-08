@@ -33,6 +33,7 @@ export function NavBar() {
 
   if (user.data && user.data.is_superuser) {
     navigation.push({ name: 'Admin', href: '/admin', current: false });
+    navigation.push({ name: 'Gyms', href: '/gyms', current: false });
   }
 
   if (user.data && user.data.route_setter) {
@@ -205,26 +206,31 @@ export function NavBar() {
           animation: 'bounce-down 0.4s ease-out',
         }}
       >
-        {/* <div className="space-y-1 px-2 pb-3 pt-2"> */}
-        {navigation.map((item) => (
-          <NavLink
-            onClick={() => setPath(item.href)}
-            key={item.name}
-            to={item.href}
-            aria-current={
-              item.href === window.location.pathname ? 'page' : undefined
-            }
-            className={classNames(
-              item.href === window.location.pathname
-                ? 'bg-gray-200 text-gray-700'
-                : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700',
-              'block rounded-md px-3 py-2 text-base font-medium mt-1',
-            )}
-          >
-            {item.name}
-          </NavLink>
-        ))}
-        {/* </div> */}
+        {({ close }) => (
+          <>
+            {navigation.map((item) => (
+              <NavLink
+                onClick={() => {
+                  setPath(item.href);
+                  close();
+                }}
+                key={item.name}
+                to={item.href}
+                aria-current={
+                  item.href === window.location.pathname ? 'page' : undefined
+                }
+                className={classNames(
+                  item.href === window.location.pathname
+                    ? 'bg-gray-200 text-gray-700'
+                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700',
+                  'block rounded-md px-3 py-2 text-base font-medium mt-1',
+                )}
+              >
+                {item.name}
+              </NavLink>
+            ))}
+          </>
+        )}
       </PopoverPanel>
     </Popover>
   );

@@ -14,13 +14,18 @@ export const Canvas: React.FC<{
   onClick?: (click: { x: number; y: number }) => void;
   onMove?: (click: { x: number; y: number }) => void;
   onUp?: () => void;
-}> = ({ drawAfter, preDrag, onClick, onMove, onUp }) => {
+  defaultTransform?: Transform;
+}> = ({ drawAfter, preDrag, onClick, onMove, onUp, defaultTransform }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const transformRef = useRef<Transform>({
-    scale: 1,
-    translateX: 0,
-    translateY: 0,
-  });
+  const transformRef = useRef<Transform>(
+    defaultTransform
+      ? defaultTransform
+      : {
+          scale: 1,
+          translateX: 0,
+          translateY: 0,
+        },
+  );
   const lastMousePosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const firstMousePosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
@@ -35,8 +40,8 @@ export const Canvas: React.FC<{
     // Set initial translation to center (0, 0)
     transformRef.current = {
       ...transformRef.current,
-      translateX: width / 2,
-      translateY: height / 2,
+      translateX: width / 2 + (defaultTransform?.translateX || 0),
+      translateY: height / 2 + (defaultTransform?.translateY || 0),
     };
 
     draw();

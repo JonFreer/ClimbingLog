@@ -11,6 +11,7 @@ import { useSets } from '../features/sets/api/get-sets';
 import { CreateSet } from '../features/sets/components/create-set';
 import { useSidebarState } from './ui/sidebar/sidebar-state';
 import { useCurrentGym } from '@/features/gyms/store/current-gym';
+import { GymDropDown } from '@/features/gyms/components/gym-dropdown';
 
 export function RouteSettingPage() {
   const { current_gym } = useCurrentGym();
@@ -57,6 +58,9 @@ export function RouteSettingPage() {
       <div className="flex gap-4 mt-5">
         <h1 className="font-bold text-3xl">Route Setting</h1>
       </div>
+      <div className="flex items-centerjustify-between mx-auto mt-4">
+        <GymDropDown />
+      </div>
 
       <div className=" flex justify-center gap-2 flex-wrap text-white my-4">
         {circuitOrder.map((circuit_id) => {
@@ -80,7 +84,7 @@ export function RouteSettingPage() {
         })}
       </div>
 
-      {openCircuit && (
+      {openCircuit && circuits[openCircuit] != undefined && (
         <div className="flex m-2">
           <span className={`font-bold text-lg rounded-lg text-gray-900`}>
             {' '}
@@ -109,7 +113,7 @@ export function RouteSettingPage() {
         </div>
       )}
 
-      {selectedSet != '' && (
+      {selectedSet != '' && circuits[openCircuit] != undefined && (
         <div className="m-2 flex items-center justify-between">
           <span>
             {new Date(sets[selectedSet]?.date || '').toLocaleString('default', {
@@ -125,6 +129,7 @@ export function RouteSettingPage() {
       )}
 
       {selectedSet != '' &&
+        circuits[openCircuit] != undefined &&
         Object.values(routes)
           .filter((route) => route.set_id === selectedSet)
           .map((route) => (

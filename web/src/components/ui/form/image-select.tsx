@@ -79,23 +79,27 @@ export function ImageSelect(props: {
           onChange={handleImageChange}
         />
         <label htmlFor="upload-profile-pic" className="cursor-pointer">
-          {preview ? (
-            <img src={preview} alt="Preview" className="mx-auto mb-4" />
-          ) : (
-            <div className="mt-2 flex items-center gap-x-3">
+          <div className="mt-2 flex items-center gap-x-3">
+            {preview ? (
+              <img
+                src={preview}
+                alt="Preview"
+                className="size-12 rounded-full object-cover"
+              />
+            ) : (
               <UserCircleIcon
                 aria-hidden="true"
                 className="size-12 text-gray-300"
               />
-              <button
-                type="button"
-                onClick={triggerFileInput}
-                className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-              >
-                Change
-              </button>
-            </div>
-          )}
+            )}
+            <button
+              type="button"
+              onClick={triggerFileInput}
+              className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            >
+              Change
+            </button>
+          </div>
         </label>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Canvas } from './canvas';
 import { Line, Transform } from './types';
-import { drawLine, drawPoints } from './utils';
+import { drawLines, drawPoints } from './utils';
 
 export default function MapDraw({
   lines,
@@ -15,11 +15,15 @@ export default function MapDraw({
   const lastPointPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const [activeLineIndex, setActiveLineIndex] = useState<number>(0);
   const [style, setStyle] = useState<'wall' | 'mat'>('wall');
+  const imageRef = useRef<HTMLImageElement | null>(null);
 
   function drawAfter(
     ctx: CanvasRenderingContext2D,
     transformRef: React.RefObject<Transform>, // eslint-disable-line @typescript-eslint/no-unused-vars
   ) {
+    if (imageRef.current) {
+      ctx.drawImage(imageRef.current, -100, -150, 200, 250);
+    }
     // draw placemarker rectangle
     ctx.setLineDash([10]);
     ctx.strokeStyle = '#aeaeae';
@@ -30,16 +34,31 @@ export default function MapDraw({
 
     // draw lines and points
     ctx.setLineDash([]);
-    ctx.lineWidth = 4;
+    drawLines({ lines: lines, areas: [] }, ctx);
 
-    lines.forEach((line) => {
-      if (line.style == 'mat') drawLine(line, ctx);
-    });
-    lines.forEach((line) => {
-      if (line.style == 'wall') drawLine(line, ctx);
-    });
+    drawPoints(
+      lines[
+        activeLineIndex >= lines.length ? lines.length - 1 : activeLineIndex
+      ],
+      ctx,
+    );
+  }
 
-    drawPoints(lines[activeLineIndex], ctx);
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const src = event.target?.result as string;
+        // Create and store the Image object in the ref
+        const img = new Image();
+        img.src = src;
+        img.onload = () => {
+          imageRef.current = img;
+        };
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   function preDrag(click: { x: number; y: number }) {
@@ -49,7 +68,6 @@ export default function MapDraw({
       const radius = 5; // Define the radius for the clickable area around the point
       if (distance < radius + 1) {
         lastPointPosition.current = { x: point.x, y: point.y };
-        console.log('Point clicked:', point);
         setLines((prevLines) =>
           prevLines.map((line) => ({
             ...line,
@@ -60,7 +78,6 @@ export default function MapDraw({
             ),
           })),
         );
-        console.log('returning false');
         return false;
       }
     }
@@ -99,7 +116,6 @@ export default function MapDraw({
 
       const lineWidth = 5; // Define the clickable width of the line
       if (distance <= lineWidth && isWithinSegment) {
-        console.log('Line clicked:', { startX, startY, endX, endY, i }, click);
         lineClicked = { startX, startY, endX, endY, i };
         break;
       }
@@ -145,7 +161,6 @@ export default function MapDraw({
         }
       }
     } else if (lineClicked != null) {
-      console.log('Line clicked:', lineClicked);
       // add a new point inbetween the two points of the line
 
       setLines((prevLines) => {
@@ -161,7 +176,6 @@ export default function MapDraw({
               }
             : line,
         );
-        console.log('Updated points:', updatedLines);
         return updatedLines;
       });
     } else {
@@ -224,6 +238,14 @@ export default function MapDraw({
 
   return (
     <div className="relative">
+      <div className="">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="cursor-pointer shadow-md p-2 rounded-lg bg-white border border-gray-300"
+        />
+      </div>
       <Canvas
         drawAfter={drawAfter}
         preDrag={preDrag}
@@ -286,6 +308,10 @@ export default function MapDraw({
 
                     if (activeLineIndex >= index) {
                       setActiveLineIndex(Math.max(activeLineIndex - 1, 0));
+                      console.log(
+                        'Active line index updated to:',
+                        Math.max(activeLineIndex - 1, 0),
+                      );
                     }
                     updatedLines.splice(index, 1);
                     return updatedLines;

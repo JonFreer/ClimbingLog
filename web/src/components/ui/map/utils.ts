@@ -24,7 +24,7 @@ export function drawPoints(line: Line, ctx: CanvasRenderingContext2D) {
       ctx.fillStyle = '#0000ff5e';
     }
     ctx.beginPath();
-    ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
+    ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
     ctx.fill();
     ctx.closePath();
   });
@@ -34,9 +34,9 @@ export function drawLine(line: Line, ctx: CanvasRenderingContext2D) {
   const curve_ratio = 0.9;
 
   if (line.style == 'mat') {
-    ctx.strokeStyle = '#9e9e9e';
+    ctx.strokeStyle = '#e5e5e5';
   } else if (line.style == 'wall') {
-    ctx.strokeStyle = '#000000';
+    ctx.strokeStyle = '#323232';
   }
 
   let startX = null,
@@ -97,7 +97,7 @@ export function drawLine(line: Line, ctx: CanvasRenderingContext2D) {
 
 //string takes the form of lines: and areas:
 export function drawLines(layout: Layout, ctx: CanvasRenderingContext2D) {
-  ctx.lineWidth = 2.5;
+  ctx.lineWidth = 2.8;
 
   layout.lines.forEach((line) => {
     if (line.style == 'mat') {

@@ -9,7 +9,7 @@ from sqlalchemy.future import select
 from PIL import Image, ImageOps
 
 from .. import schemas
-from ..schemas.gym import Gym as GymSchema, GymCreate
+from ..schemas.gym import Gym as GymSchema
 from ..db import get_db
 from ..models import Circuits, Gym
 from ..users import User, current_active_user, current_active_superuser
@@ -57,7 +57,11 @@ async def create_gym(
 @router.patch("/gyms/{gym_id}", response_model=GymSchema, tags=["gyms"])
 async def update_gym(
     gym_id: uuid.UUID,
-    gym: GymCreate,
+    name: Annotated[str | None, Form()] = None,
+    location: Annotated[str | None, Form()] = None,
+    about: Annotated[str | None, Form()] = None,
+    layout: Annotated[str | None, Form()] = None,
+    file: UploadFile | None = File(None), 
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(current_active_superuser),
 ):
@@ -70,8 +74,22 @@ async def update_gym(
     if not existing_gym:
         raise HTTPException(status_code=404, detail="Gym not found")
     
-    for key, value in gym.dict(exclude_unset=True).items():
-        setattr(existing_gym, key, value)
+    if name is not None:
+        existing_gym.name = name
+    if location is not None:
+        existing_gym.location = location
+    if about is not None:
+        existing_gym.about = about
+    if layout is not None:
+        existing_gym.layout = layout
+    
+    if file is not None:
+        request_object_content = await file.read()
+        im = Image.open(io.BytesIO(request_object_content))
+        MAX_SIZE_2 = (250, 250)
+        im = ImageOps.fit(im, MAX_SIZE_2, Image.LANCZOS)
+        # Save the image
+        im.save("./imgs/gym/" + str(existing_gym.id) + ".webp", "webp", quality=70)
     
     db.add(existing_gym)
     await db.commit()

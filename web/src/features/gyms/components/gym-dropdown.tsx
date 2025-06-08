@@ -30,7 +30,7 @@ export function GymDropDown() {
       <PopoverButton className="flex ml-auto cursor-pointer font-semibold rounded-xl px-2 bg-none focus:outline-2 focus:-outline-offset-2 focus:outline-blue-200 text-md">
         <img
           src={`/api/gyms/${current_gym}/image`}
-          className="size-8 bg-amber-600 rounded-full mr-4"
+          className="size-8 bg-white rounded-full mr-4"
         />
         <div className="text-md/8 pt-1">{gyms[current_gym || ''].name}</div>
       </PopoverButton>
@@ -43,37 +43,44 @@ export function GymDropDown() {
           animation: 'bounce-down 0.4s ease-out',
         }}
       >
-        <div className="max-w-80 mx-auto w-full font-semibold text-gray-700 ">
-          <div className="flex mx-auto justify-center mb-6">
-            <img
-              src={`/api/gyms/${current_gym}/image`}
-              className="size-8 bg-amber-600 rounded-full mr-4"
-            />
-            <div className="text-md/8 pt-1">{gyms[current_gym || ''].name}</div>
-          </div>
-          {Object.values(gyms).map((gym) => (
-            <button
-              className="flex hover:bg-gray-100 p-2 rounded w-full cursor-pointer text-left"
-              onClick={() => setCurrentGym(gym.id)}
-            >
+        {({ close }) => (
+          <div className="max-w-80 mx-auto w-full font-semibold text-gray-700 ">
+            <div className="flex mx-auto justify-center mb-6">
               <img
-                src={`/api/gyms/${gym.id}/image`}
-                className="size-8 bg-amber-600 rounded-full m-2 mr-4"
+                src={`/api/gyms/${current_gym}/image`}
+                className="size-8 bg-white rounded-full mr-4"
               />
-              <div>
-                <div className="text-gray-700 font-semibold relative">
-                  {gym.name}
-                </div>
-                <div className="text-gray-500">{gym.location}</div>
+              <div className="text-md/8 pt-1">
+                {gyms[current_gym || ''].name}
               </div>
-              {gym.id == user.data?.home_gym ? (
-                <HomeIcon className="size-6 m-3 ml-auto text-gray-400"></HomeIcon>
-              ) : (
-                <></>
-              )}
-            </button>
-          ))}
-        </div>
+            </div>
+            {Object.values(gyms).map((gym) => (
+              <button
+                className="flex hover:bg-gray-100 p-2 rounded w-full cursor-pointer text-left"
+                onClick={() => {
+                  setCurrentGym(gym.id);
+                  close();
+                }}
+              >
+                <img
+                  src={`/api/gyms/${gym.id}/image`}
+                  className="size-8 bg-white rounded-full m-2 mr-4"
+                />
+                <div>
+                  <div className="text-gray-700 font-semibold relative">
+                    {gym.name}
+                  </div>
+                  <div className="text-gray-500">{gym.location}</div>
+                </div>
+                {gym.id == user.data?.home_gym ? (
+                  <HomeIcon className="size-6 m-3 ml-auto text-gray-400"></HomeIcon>
+                ) : (
+                  <></>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
       </PopoverPanel>
     </Popover>
   );
