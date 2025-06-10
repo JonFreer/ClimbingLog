@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
 import { Canvas } from './canvas';
-import { Line, Transform } from './types';
+import { Transform } from './types';
 import { drawLine, drawPoints, drawText } from './utils';
-import { Area } from '@/types/gym';
+import { Area, Line } from '@/types/gym';
 
 function drawPolygon(area: Area, ctx: CanvasRenderingContext2D) {
   ctx.fillStyle = area.color || '#5e5e5e5e';
@@ -134,7 +134,8 @@ export default function MapLocation({
       }
     }
 
-    let pointClicked: { x: number; y: number } | null = null;
+    let pointClicked: { x: number; y: number; isDragging: boolean } | null =
+      null;
 
     areas[activeLineIndex].points.forEach((point) => {
       const distance = Math.hypot(point.x - click.x, point.y - click.y);
@@ -251,9 +252,10 @@ export default function MapLocation({
         onMove={onMove}
         onUp={onUp}
       />
-      <div className="absolute top-2 w-full">
+      <div className="w-full">
         <div className="mx-auto w-fit">
           <input
+            placeholder="Area Name"
             type="text"
             value={areas[activeLineIndex]?.name || ''}
             onChange={(e) => {
@@ -264,17 +266,17 @@ export default function MapLocation({
                 ),
               );
             }}
-            placeholder="Enter area name"
             className="border rounded px-2 py-1 bg-white shadow-md"
           />
         </div>
       </div>
-      <div className="flex flex-col absolute top-4 right-4 rounded-lg shadow-lg p-4 bg-white">
+      <div className="flex flex-col rounded-lg shadow-lg p-4 bg-white">
         {areas.map((area, index) => (
           <div
             className={`flex px-2 py-1 items-center cursor-pointer ${
               index == activeLineIndex ? 'bg-gray-100 font-semibold' : ''
             }`}
+            key={index}
           >
             <span
               className="w-full"
@@ -283,7 +285,7 @@ export default function MapLocation({
             >
               <span className="ml-2 mr-4">{area.name}</span>
             </span>
-            <button
+            <div
               onClick={() => {
                 if (lines.length > 1) {
                   setAreas((prevAreas) => {
@@ -300,10 +302,10 @@ export default function MapLocation({
               className="!text-[22px]  px-2  material-symbols-rounded font-bold ml-auto cursor-pointer hover:bg-gray-50 rounded-full text-gray-200 hover:text-gray-500"
             >
               delete
-            </button>
+            </div>
           </div>
         ))}
-        <button
+        <div
           className="bg-green-600 hover:bg-green-700 cursor-pointer text-white font-semibold px-2 py-1 rounded-lg flex justify-center mt-2"
           onClick={() => {
             setAreas((prevAreas) => [
@@ -322,7 +324,7 @@ export default function MapLocation({
           }}
         >
           New Area
-        </button>
+        </div>
       </div>
     </div>
   );

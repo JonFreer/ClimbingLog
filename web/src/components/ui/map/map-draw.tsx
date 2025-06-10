@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react';
 import { Canvas } from './canvas';
-import { Line, Transform } from './types';
+import { Transform } from './types';
 import { drawLines, drawPoints } from './utils';
+import { Line } from '@/types/gym';
 
 export default function MapDraw({
   lines,
@@ -238,14 +239,6 @@ export default function MapDraw({
 
   return (
     <div className="relative">
-      <div className="">
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="cursor-pointer shadow-md p-2 rounded-lg bg-white border border-gray-300"
-        />
-      </div>
       <Canvas
         drawAfter={drawAfter}
         preDrag={preDrag}
@@ -253,9 +246,16 @@ export default function MapDraw({
         onMove={onMove}
         onUp={onUp}
       />
-      <div className="absolute top-2 w-full">
-        <div className="mx-auto w-fit">
-          <button
+      <div className="flex gap-2 m-4 justify-between">
+        <input
+          type="file"
+          accept="image/*"
+          placeholder="Upload trace image"
+          onChange={handleFileChange}
+          className="cursor-pointer shadow-md p-2 rounded-lg bg-white border border-gray-300 w-50"
+        />
+        <div className="flex">
+          <div
             className={`shadow-md p-2 px-6 rounded-l-lg font-semibold cursor-pointer ${
               style == 'wall'
                 ? 'bg-violet-600 hover:bg-violet-700 text-white'
@@ -264,9 +264,9 @@ export default function MapDraw({
             onClick={() => updateStyle('wall')}
           >
             Wall
-          </button>
-          <button
-            className={`shadow-md p-2  rounded-r-lg font-semibold cursor-pointer ${
+          </div>
+          <div
+            className={`shadow-md p-2  rounded-r-lg font-semibold cursor-pointer text-nowrap ${
               style == 'mat'
                 ? 'bg-violet-600 hover:bg-violet-700 text-white'
                 : 'bg-violet-200 hover:bg-violet-300 text-gray-900'
@@ -274,10 +274,10 @@ export default function MapDraw({
             onClick={() => updateStyle('mat')}
           >
             Pad Area
-          </button>
+          </div>
         </div>
       </div>
-      <div className="flex flex-col absolute top-4 right-4 rounded-lg shadow-lg p-4 bg-white">
+      <div className="flex flex-col rounded-lg shadow-lg p-4 bg-white">
         {lines.map((line, index) => (
           <div
             className={`flex px-2 py-1 items-center cursor-pointer ${
@@ -300,7 +300,7 @@ export default function MapDraw({
                 {line.style == 'mat' ? 'Pad' : 'Wall'}
               </span>
             </span>
-            <button
+            <div
               onClick={() => {
                 if (lines.length > 1) {
                   setLines((prevLines) => {
@@ -321,10 +321,10 @@ export default function MapDraw({
               className="!text-[22px]  px-2  material-symbols-rounded font-bold ml-auto cursor-pointer hover:bg-gray-50 rounded-full text-gray-200 hover:text-gray-500"
             >
               delete
-            </button>
+            </div>
           </div>
         ))}
-        <button
+        <div
           className="bg-green-600 hover:bg-green-700 cursor-pointer text-white font-semibold px-2 py-1 rounded-lg flex justify-center mt-2"
           onClick={() => {
             setLines((prevLines) => [
@@ -335,7 +335,7 @@ export default function MapDraw({
           }}
         >
           New Line
-        </button>
+        </div>
       </div>
     </div>
   );

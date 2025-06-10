@@ -2,8 +2,10 @@ import { useCircuits } from '@/features/circuits/api/get-circuits';
 import { CreateCircuit } from '@/features/circuits/components/create-circuit';
 import { DeleteCircuit } from '@/features/circuits/components/delete-circuit';
 import { useGyms } from '@/features/gyms/api/get-gyms';
+import { EditGymAreas } from '@/features/gyms/components/edit-gym-areas';
 import { EditGymImage } from '@/features/gyms/components/edit-gym-image';
 import { EditGymInfo } from '@/features/gyms/components/edit-gym-info';
+import { EditGymLayout } from '@/features/gyms/components/edit-gym-layout';
 import { GymDropDown } from '@/features/gyms/components/gym-dropdown';
 import { useCurrentGym } from '@/features/gyms/store/current-gym';
 import { colors } from '@/types/colors';
@@ -82,10 +84,15 @@ export function GymsPage() {
 function EditMenu() {
   const [editInfoOpen, setEditInfoOpen] = useState(false);
   const [editImageOpen, setEditImageOpen] = useState(false);
+  const [editLayoutOpen, setEditLayoutOpen] = useState(false);
+  const [editAreasOpen, setEditAreasOpen] = useState(false);
+
   return (
     <>
       <EditGymInfo setOpen={setEditInfoOpen} open={editInfoOpen} />
       <EditGymImage setOpen={setEditImageOpen} open={editImageOpen} />
+      <EditGymLayout setOpen={setEditLayoutOpen} open={editLayoutOpen} />
+      <EditGymAreas setOpen={setEditAreasOpen} open={editAreasOpen} />
 
       <Menu as="div" className="relative ml-3">
         <div>
@@ -119,12 +126,18 @@ function EditMenu() {
             </div>
           </MenuItem>
           <MenuItem>
-            <div className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 data-focus:outline-hidden cursor-pointer">
+            <div
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 data-focus:outline-hidden cursor-pointer"
+              onClick={() => setEditLayoutOpen(true)}
+            >
               Edit Gym Shape
             </div>
           </MenuItem>
           <MenuItem>
-            <div className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 data-focus:outline-hidden cursor-pointer">
+            <div
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 data-focus:outline-hidden cursor-pointer"
+              onClick={() => setEditAreasOpen(true)}
+            >
               Edit Gym Areas
             </div>
           </MenuItem>
