@@ -22,6 +22,10 @@ export const getCircuits = (
   data: Record<string, Circuit>;
   order: string[];
 }> => {
+  if (gym_id === '' || gym_id === undefined) {
+    return Promise.resolve({ data: {}, order: [] });
+  }
+
   return api.get(`/circuits/${gym_id}`).then((response) => {
     const circuitsArray = response;
     const circuitsDict = circuitsArray.reduce(

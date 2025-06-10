@@ -57,17 +57,18 @@ async def get_paginated_activities(
                 func.sum(case((and_(Climbs.sent == True, Climbs.user == user.id), 1), else_=0)).label("user_sends"),
                 func.sum(case((and_(Climbs.sent == False, Climbs.user == user.id), 1), else_=0)).label("user_attempts"),
                 Circuits.color.label("circuit_color"),
+                Circuits.gym_id.label("gym_id")
             )
             .outerjoin(Climbs, Climbs.route == Routes.id)
             .outerjoin(Sets, Sets.id == Routes.set_id)  # Join with Sets
             .outerjoin(Circuits, Circuits.id == Sets.circuit_id)  # Join with Circuits
             .where(Climbs.activity == activity.id)
-            .group_by(Routes.id, Climbs.time, Circuits.color)  # Group by Routes.id, Climbs.time, and Circuits.color
+            .group_by(Routes.id, Climbs.time, Circuits.color, Circuits.gym_id)  # Group by Routes.id, Climbs.time, and Circuits.color
         )
         activity_dict = activity._asdict()  # Convert the Row object to a dictionary
 
         routes = {}
-        for route,time, climb_count, user_sends, user_attempts, circuit_color in climbs_result.all():
+        for route,time, climb_count, user_sends, user_attempts, circuit_color, gym_id in climbs_result.all():
                 routes[route.id] = {
                     "route": {
                         "id": route.id,
@@ -82,6 +83,7 @@ async def get_paginated_activities(
                         "user_sends": user_sends,
                         "user_attempts": user_attempts,
                         "color": circuit_color if circuit_color is not None else "Unknown",
+                        "gym_id": gym_id
                     },
                     "time": time,
                 }
@@ -158,17 +160,18 @@ async def get_all_activities(
                 func.sum(case((and_(Climbs.sent == True, Climbs.user == user.id), 1), else_=0)).label("user_sends"),
                 func.sum(case((and_(Climbs.sent == False, Climbs.user == user.id), 1), else_=0)).label("user_attempts"),
                 Circuits.color.label("circuit_color"),
+                Circuits.gym_id.label("gym_id")
             )
             .outerjoin(Climbs, Climbs.route == Routes.id)
             .outerjoin(Sets, Sets.id == Routes.set_id)  # Join with Sets
             .outerjoin(Circuits, Circuits.id == Sets.circuit_id)  # Join with Circuits
             .where(Climbs.activity == activity.id)
-            .group_by(Routes.id, Climbs.time, Circuits.color)  # Group by Routes.id, Climbs.time, and Circuits.color
+            .group_by(Routes.id, Climbs.time, Circuits.color, Circuits.gym_id)  # Updated to group by gym_id
         )
       
         activity_dict = activity._asdict()  # Convert the Row object to a dictionary
         routes = {}
-        for route,time, climb_count, user_sends, user_attempts, circuit_color in climbs_result.all():
+        for route,time, climb_count, user_sends, user_attempts, circuit_color, gym_id in climbs_result.all():
             routes[route.id] = {
                 "route": {
                     "id": route.id,
@@ -183,6 +186,7 @@ async def get_all_activities(
                     "user_sends": user_sends,
                     "user_attempts": user_attempts,
                     "color": circuit_color if circuit_color is not None else "Unknown",
+                    "gym_id": gym_id
                 },
                 "time": time,
             }
