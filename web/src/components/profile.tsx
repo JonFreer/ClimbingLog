@@ -176,9 +176,14 @@ export default function Profile() {
 
           <div className="absolute left-48 top-22 font text-md text-gray-800 top-4"></div>
         </div>
-        <div className="mt-16 mx-8 font-semibold">
-          Home gym: {gyms[user.home_gym].name}
-        </div>
+
+        {user.home_gym ? (
+          <div className="mt-16 mx-8 font-semibold">
+            Home gym: {gyms[user.home_gym].name}
+          </div>
+        ) : (
+          <></>
+        )}
 
         <div className="mt-2 m-8">{user.about}</div>
 
@@ -253,11 +258,25 @@ export default function Profile() {
   );
 }
 
-function Graph({ user, sent_ids }: { user: User | false; sent_ids: string[] }) {
+function Graph({ user, sent_ids }: { user: User; sent_ids: string[] }) {
+  const user_self = useUser().data;
   const gym = user ? user?.home_gym || '' : '';
   const sets = useSets({ gym_id: gym }).data || {};
   const circuits = useCircuits({ gym_id: gym }).data?.data || {};
   const routes = useRoutes().data || {};
+
+  if (!user.home_gym) {
+    if (user_self && user_self.id === user?.id) {
+      return (
+        <div className="h-64 flex items-center justify-center text-gray-500">
+          Set a home gym to view your climbing stats.
+        </div>
+      );
+    } else {
+      return <></>;
+    }
+  }
+
   const labels = Object.values(sets)
     .map((set) =>
       new Date(set.date).toLocaleString('default', {

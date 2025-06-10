@@ -87,7 +87,7 @@ export default function Onboarding() {
   );
 }
 
-function HomeGymPicker({
+export function HomeGymPicker({
   setHomeGym,
   homeGym,
 }: {
@@ -114,7 +114,7 @@ function HomeGymPicker({
           <>
             <img
               src={`/api/gyms/${gyms[homeGym].id}/image`}
-              className="size-8 bg-amber-600 rounded-full m-2 mr-4"
+              className="size-8 bg-white rounded-full m-2 mr-4"
             />
             <div className="text-left">
               <div className="text-gray-700 font-semibold relative">
@@ -185,7 +185,7 @@ function HomeGymPicker({
                         >
                           <img
                             src={`/api/gyms/${gym.id}/image`}
-                            className="size-8 bg-amber-600 rounded-full m-2 mr-4"
+                            className="size-8 bg-white rounded-full m-2 mr-4"
                           />
                           <div>
                             <div className="text-gray-700 font-semibold relative">

@@ -4,10 +4,14 @@ import { useUser } from '../lib/auth';
 import { useUpdateUser } from '../features/user/api/update-user';
 import { Notification, useNotifications } from './ui/notifications';
 import { UserNameInput } from './ui/form/username';
+import { HomeGymPicker } from '@/features/onboarding/components/onboarding';
 
 export default function Settings() {
   const user = useUser();
   const { addNotification } = useNotifications();
+  const [homeGym, setHomeGym] = useState<string | null>(
+    user.data?.home_gym || '',
+  );
   const updateUserMutation = useUpdateUser({
     mutationConfig: {
       onSuccess: () => {
@@ -34,7 +38,7 @@ export default function Settings() {
             about: e.target.about.value,
             profile_visible: e.target.profile_visible.checked,
             send_visible: e.target.send_visible.checked,
-            home_gym: user.data.home_gym,
+            home_gym: homeGym,
           },
         });
       }}
@@ -83,6 +87,20 @@ export default function Settings() {
                   defaultValue={user.data.about}
                 />
               </div>
+            </div>
+
+            <div className="col-span-full">
+              <label
+                htmlFor="about"
+                className="block text-sm/6 font-medium text-gray-900"
+              >
+                Home Gym
+              </label>
+              <p className="mt-3 text-sm/6 text-gray-600">
+                Select your home gym. This will be used to calculate stats on
+                your profile.
+              </p>
+              <HomeGymPicker setHomeGym={setHomeGym} homeGym={homeGym} />
             </div>
 
             <div className="col-span-full">

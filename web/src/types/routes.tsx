@@ -35,7 +35,7 @@ export interface User {
   route_setter: boolean;
   has_profile_photo: boolean;
   has_cover_photo: boolean;
-  home_gym: string;
+  home_gym: string | null;
 }
 
 export interface Climb {

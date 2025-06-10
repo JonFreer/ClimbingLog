@@ -10,7 +10,7 @@ export const updateUserInputSchema = z.object({
   about: z.string().optional(),
   profile_visible: z.boolean().optional(),
   send_visible: z.boolean().optional(),
-  home_gym: z.string().optional(),
+  home_gym: z.string().optional().nullable(),
 });
 
 export type UpdateUserInput = z.infer<typeof updateUserInputSchema>;
