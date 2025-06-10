@@ -165,24 +165,22 @@ export default function Profile() {
             <UserCircleIcon className="absolute left-4 -translate-y-2/3 rounded-full border-4 border-white shadow-lg h-36 w-36 bg-white text-gray-700"></UserCircleIcon>
           ) : (
             <img
-              className="absolute left-4 -translate-y-2/3 rounded-full border-4 border-white shadow-lg h-36 w-36"
+              className="absolute left-4 -translate-y-3/4 rounded-full border-4 border-white shadow-lg h-36 w-36"
               src={`/api/profile_photo/${user.id}`}
             />
           )}
           {/* <img className="absolute left-4 -translate-y-2/3 rounded-full border-4 border-white shadow-lg" src="https://headshots-inc.com/wp-content/uploads/2023/03/business-headshot-example-2.jpg" alt="User Profile" style={{ width: '150px', height: '150px', top: '50%' }} /> */}
-          <div className="absolute left-48 font-bold text-2xl text-gray-800 top-4">
-            @{user.username}
-          </div>
-
-          <div className="absolute left-48 top-22 font text-md text-gray-800 top-4"></div>
+        </div>
+        <div className="mt-10 mx-8 font-bold text-2xl text-gray-800 top-4">
+          @{user.username}
         </div>
 
         {user.home_gym ? (
-          <div className="mt-16 mx-8 font-semibold">
+          <div className="mt-2 mx-8 font-semibold">
             Home gym: {gyms[user.home_gym].name}
           </div>
         ) : (
-          <></>
+          <> </>
         )}
 
         <div className="mt-2 m-8">{user.about}</div>

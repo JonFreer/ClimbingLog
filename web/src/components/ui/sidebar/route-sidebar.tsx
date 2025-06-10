@@ -33,11 +33,7 @@ export default function RouteSideBar() {
   const projects = useProjects().data ?? [];
 
   const route_state = useSidebarState((state) => state.route);
-  const sets = useSets({ gym_id: route_state?.gym_id || '' }).data ?? {};
-  const circuits =
-    useCircuits({ gym_id: route_state?.gym_id || '' }).data?.data ?? {};
-  const videosQuery = useVideos({ route_id: route_state?.id || '' });
-  const videos = videosQuery.data ?? [];
+
   const closeCallback = useSidebarState((state) => state.closeSidebar);
   const deleteClimbMutation = useDeleteClimb({
     mutationConfig: {
@@ -72,9 +68,7 @@ export default function RouteSideBar() {
   });
 
   const { openUserList, closeUserList } = useUserListState();
-
   const [sentBy, setSentBy] = useState<UserList>({ users: [], num_users: 0 });
-
   const [justCompleted, setJustCompleted] = useState(false);
   const [route, setRoute] = useState<Route>({
     id: '',
@@ -91,6 +85,11 @@ export default function RouteSideBar() {
     user_attempts: 0,
     gym_id: '',
   });
+
+  const sets = useSets({ gym_id: route.gym_id || '' }).data ?? {};
+  const circuits = useCircuits({ gym_id: route.gym_id || '' }).data?.data ?? {};
+  const videosQuery = useVideos({ route_id: route.id || '' });
+  const videos = videosQuery.data ?? [];
 
   useEffect(() => {
     const processingVideo = videos.some((video) => video.processed == false);
@@ -163,7 +162,6 @@ export default function RouteSideBar() {
         transition
         className="fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out data-closed:opacity-0"
       />
-
       <div className="fixed inset-0 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
           <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
