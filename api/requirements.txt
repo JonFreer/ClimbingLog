@@ -11,4 +11,4 @@ pytest==8.4.1
 fastapi-users[sqlalchemy]==14.0.1
 asyncpg==0.30.0
 pillow==11.3.0
-alembic==1.16.2
+alembic==1.16.3
