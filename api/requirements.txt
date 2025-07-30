@@ -4,7 +4,7 @@ uvicorn==0.34.3
 autoflake==2.3.1
 black==25.1.0
 isort==6.0.1
-SQLAlchemy==2.0.41
+SQLAlchemy==2.0.42
 psycopg2==2.9.10
 requests==2.32.4
 pytest==8.4.1 
