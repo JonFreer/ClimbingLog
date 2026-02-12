@@ -27,7 +27,7 @@
     "eslint-plugin-check-file": "^3.2.0",
     "i": "^0.3.7",
     "jsdom": "^26.1.0",
-    "material-symbols": "^0.31.3",
+    "material-symbols": "^0.40.0",
     "npm": "^11.2.0",
     "point-in-polygon": "^1.1.0",
     "react": "^19.0.0",
