@@ -1,4 +1,4 @@
-fastapi==0.115.12
+fastapi==0.131.0
 itsdangerous==2.2.0
 uvicorn==0.34.3
 autoflake==2.3.1
