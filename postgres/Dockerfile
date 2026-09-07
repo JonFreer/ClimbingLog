@@ -1,4 +1,4 @@
-FROM postgres:17.7 AS prod
+FROM postgres:17.11 AS prod
 
 COPY api.sh /docker-entrypoint-initdb.d/
 
