@@ -42,7 +42,7 @@
     "react-native-safe-area-context": "5.9.1",
     "react-native-screens": "~4.27.0",
     "react-native-web": "~0.20.0",
-    "react-native-webview": "13.16.1",
+    "react-native-webview": "13.17.0",
     "react-query-auth": "^2.4.3",
     "zod": "^3.24.3"
   },
